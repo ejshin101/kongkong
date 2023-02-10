@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.kongkong.favorite.dao.IFavoriteDao">
+ 
+ <sql id="searchWhereClause">
+ 	<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchStartDate)">
+		 <![CDATA[	AND fa_date >= #{searchStartDate} ]]>
+		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchEndDate)">
+		     <![CDATA[	AND fa_date <= TO_DATE(#{searchEndDate}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS') ]]>
+		</if>
+	</if>
+	 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchCategory)">
+    	 AND fa_category = #{searchCategory}
+   	 </if>
+ </sql>
+ 
+ <select id="getFavoriteList" parameterType="String" resultType="com.kongkong.favorite.vo.FavoriteVO">
+ <include refid="common.BEFORE_PAGING_QRY"/>
+ SELECT fa_no
+       , fa_bo_no
+       , (select bo_title from free_board where fa_bo_no = bo_no ) as fa_title
+       , fa_mem_id
+       , fa_category
+       , lower(fa_category) as fa_categorys
+       , fa_date
+    FROM favorite
+   WHERE fa_mem_id = #{userId}
+  <include refid="searchWhereClause"></include>
+  ORDER BY fa_no DESC
+ <include refid="common.AFTER_PAGING_QRY"/>
+ </select>
+ 
+ <select id="getFavorite" resultType="com.kongkong.favorite.vo.FavoriteVO">
+ SELECT fa_no
+       , fa_bo_no
+       , fa_mem_id
+       , fa_category
+       , lower(fa_category) as fa_categorys
+       , fa_date
+    FROM favorite
+   WHERE fa_bo_no = #{faBoNo}
+     AND fa_category = #{faCategory}
+     AND fa_mem_id = #{faMemId}
+ </select>
+ 
+ 
+ <insert id="insertFavorite">
+ INSERT INTO favorite (
+    fa_no
+    , fa_bo_no
+    , fa_mem_id
+    , fa_category
+    , fa_date
+) VALUES (
+	seq_favorite.nextval
+    , #{faBoNo}
+    , #{faMemId}
+    , #{faCategory}
+    , SYSDATE
+)
+ </insert>
+
+<delete id="deleteFavorite">
+DELETE FROM favorite
+ WHERE fa_bo_no = #{faBoNo}
+   AND fa_category = #{faCategory}
+   AND fa_mem_id = #{faMemId}
+</delete>
+
+<select id="getFavoriteCount" parameterType="String" resultType="int">
+	SELECT COUNT(*) as tot
+	  FROM FAVORITE
+	 WHERE fa_mem_id = #{userId}
+</select>
+
+ </mapper>

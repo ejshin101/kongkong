@@ -1,0 +1,13 @@
+package com.kongkong.flight.dao;
+import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
+import com.kongkong.flight.vo.FlightVO;
+
+@Mapper
+public interface IFlightDao {
+	public List<String> getkName();
+	public List<String> geteName();
+	public String getCode(String airportName);
+	public List<FlightVO> getChat();
+	public void saveChat(FlightVO msg);
+}

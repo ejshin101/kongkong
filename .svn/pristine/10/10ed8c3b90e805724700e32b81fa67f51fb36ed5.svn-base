@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kongkong.free.dao.IFreeBoardDao">
+
+	<select id="getBoardCount" resultType="int">
+ 		SELECT COUNT( * ) AS tot
+  		  FROM free_board       
+ 		 WHERE bo_del_yn = 'N'  
+ 		 <!-- <include refid="searchWhereClause"/> -->
+ 	</select>
+ 	
+	<select id="getBoardList" resultType="com.kongkong.free.vo.FreeBoardVO">
+	<include refid="common.BEFORE_PAGING_QRY" />
+		SELECT bo_no	
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+			 , bo_pass
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , bo_reg_date
+	         , bo_mod_date
+	         , bo_del_yn
+		  FROM free_board
+		  WHERE bo_category = 'free'	
+		  	AND bo_del_yn = 'N'	
+	<include refid="common.AFTER_PAGING_QRY" />	
+	</select>
+	
+	<select id="getBoard" resultType="com.kongkong.free.vo.FreeBoardVO">
+		SELECT bo_no	
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+			 , bo_pass
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , bo_reg_date
+	         , bo_mod_date
+	         , bo_del_yn	
+		  FROM free_board
+		 WHERE bo_no = #{gracePark}	
+		   AND bo_del_yn = 'N'	
+	</select>
+	
+	<select id="getBoardQnaList" resultType="com.kongkong.free.vo.FreeBoardVO">
+		SELECT bo_no	
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+			 , bo_pass
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , bo_reg_date
+	         , bo_mod_date
+	         , bo_del_yn	
+		  FROM free_board	
+		 WHERE bo_category = 'qna'	
+		   AND bo_del_yn = 'N'	
+	</select>
+	
+	<select id="getBoardNoticeList" resultType="com.kongkong.free.vo.FreeBoardVO">
+		SELECT bo_no	
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+			 , bo_pass
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , bo_reg_date
+	         , bo_mod_date
+	         , bo_del_yn	
+		  FROM free_board	
+		  WHERE bo_category = 'notice'	
+		    AND bo_del_yn = 'N'	
+	</select>
+	
+	<select id="getBoardPopularList" resultType="com.kongkong.free.vo.FreeBoardVO">
+		SELECT bo_no	
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+			 , bo_pass
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , bo_reg_date
+	         , bo_mod_date
+	         , bo_del_yn
+		  FROM free_board	
+		 WHERE bo_del_yn = 'N'	 
+		 ORDER by bo_no	DESC				
+	</select>
+	
+	<insert id="insertBoard">
+		INSERT INTO free_board (
+				    bo_no
+				    , bo_title
+				    , bo_category
+				    , bo_writer
+				    , bo_pass
+				    , bo_content
+				    , bo_hit
+				    , bo_reg_date
+				    , bo_del_yn
+				) VALUES (
+				    seq_free_board.nextval
+				    , #{boTitle}
+				    , #{boCategory}
+				    , #{boWriter}
+				    , #{boPass}
+				    , #{boContent}
+				    , 0		
+				    , SYSDATE
+				    , 'N'
+				)
+	</insert>
+	
+	<update id="modifyBoard" parameterType="com.kongkong.free.vo.FreeBoardVO">
+ 		UPDATE free_board             
+           SET bo_title     =  #{boTitle}         
+              , bo_category =  #{boCategory}      
+              , bo_writer   =  #{boWriter}        
+              , bo_content  =  #{boContent}       
+              , bo_ip       =  #{boIp}            
+              , bo_mod_date =  SYSDATE            
+          WHERE bo_no       =  #{boNo} 
+	</update>
+	
+	<update id="deleteBoard" parameterType="com.kongkong.free.vo.FreeBoardVO">
+ 		UPDATE free_board             
+           SET bo_del_yn = 'Y'	        
+         WHERE bo_no     =  #{boNo} 
+	</update>
+	
+	
+	
+</mapper>

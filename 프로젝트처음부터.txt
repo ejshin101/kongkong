@@ -1,0 +1,23 @@
+spring legacy-spring mvc
+
+pom.xml 복사 (라이브러리 가지고 오기 --> 보통 복사함)
+프로젝트 속성(Properties) - java build path - maven dependencies 에서 다운받은 라이브러리 확인
+
+
+web.xml의 spring 설정파일(자식DispatcherServlet,부모contextLoaderLister) 위치 변경
+web.xml 인코딩 필터
+
+spring 설정파일
+(부모) contextLoaderLister : Controller 제외 하고 전부 빈 등록, 새로 생기는 이상한 빈들도...
+(자식) DispatcherServlet   : Controller 만 빈등록
+-> properties 파일 작성
+
+mybatis 설정
+----------------------------------------------------------------------------------------------
+1. 홈화면 잘 나오는지 확인
+
+2. 진짜개발
+
+Controller, Serivce, Dao, VO,		 	mapper.xml .jsp 만들기
+
+

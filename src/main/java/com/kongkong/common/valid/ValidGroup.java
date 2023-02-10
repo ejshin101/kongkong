@@ -1,0 +1,12 @@
+package com.kongkong.common.valid;
+
+public class ValidGroup {
+	public interface RegistType {}
+	public interface ModifyType {}
+	public interface InsertType{}
+	public interface UpdateType{}
+	public interface PasswordCheckType{}
+	public interface mailChk{}
+//	public interface AdminType {} 내가 필요하면 추가하기
+	
+}

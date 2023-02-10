@@ -1,0 +1,17 @@
+package com.kongkong.reservation.service;
+
+import java.util.List;
+
+import com.kongkong.exception.BizNotFoundException;
+import com.kongkong.reservation.vo.ReservationSearchVO;
+import com.kongkong.reservation.vo.ReservationVO;
+import com.kongkong.exception.BizAccessFailException;
+
+public interface IReservationService {
+	public List<ReservationVO> getReserveListParent(ReservationSearchVO reserveVO); //모든 예약 정보 가져오기
+	public ReservationVO getReserve(int bookNo); //예약 정보 하나씩 가져오기
+	public void registReserve(ReservationVO reserve);//예약 정보 등록
+	public void modifyReserve(ReservationVO reserve) throws BizNotFoundException, BizAccessFailException; //예약 정보 수정
+	public void removeReserve(ReservationVO reserve) throws BizNotFoundException, BizAccessFailException; //예약 정보 삭제
+	
+}

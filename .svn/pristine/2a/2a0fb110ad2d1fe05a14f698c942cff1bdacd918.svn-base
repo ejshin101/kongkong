@@ -1,0 +1,183 @@
+package com.kongkong.free.service;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import com.kongkong.free.dao.IFreeBoardDao;
+import com.kongkong.free.vo.BoardScopeVO;
+import com.kongkong.free.vo.FreeBoardSearchVO;
+import com.kongkong.free.vo.FreeBoardVO;
+import com.kongkong.exception.BizNotFoundException;
+import com.kongkong.exception.BizPasswordNotMatchedException;
+
+@Service
+public class FreeBoardServiceImpl implements IFreeBoardService {
+
+	@Inject
+	IFreeBoardDao freeBoardDao;
+
+	@Override
+	public int getBoardCount(FreeBoardSearchVO searchVO) {
+		return freeBoardDao.getBoardCount(searchVO);
+	}
+	
+	@Override
+	public List<FreeBoardVO> getBoardList(FreeBoardSearchVO searchVO) {
+		return freeBoardDao.getBoardList(searchVO);
+	}
+	
+	@Override
+	public List<FreeBoardVO> getBoardQnaList(FreeBoardSearchVO searchVO) {
+		return freeBoardDao.getBoardQnaList(searchVO);
+	}
+
+	@Override
+	public List<FreeBoardVO> getBoardNoticeList(FreeBoardSearchVO searchVO) {
+		return freeBoardDao.getBoardNoticeList(searchVO);
+	}
+
+	@Override
+	public List<FreeBoardVO> getBoardTip(FreeBoardSearchVO searchVO) {
+		return freeBoardDao.getBoardTip(searchVO);
+	}
+
+	@Override
+	public FreeBoardVO getBoard(int boNo) {
+
+		return freeBoardDao.getBoard(boNo);
+	}
+	
+	@Override
+	public FreeBoardVO getQnaBoard(int boNo) {
+		
+		return freeBoardDao.getQnaBoard(boNo);
+	}
+
+	@Override
+	public void registBoard(FreeBoardVO board) {
+		
+		freeBoardDao.insertBoard(board);
+		System.out.println(board.getBoNo() + " freeboardserviceImpl");
+	}
+
+	@Override
+	public void modifyBoard(FreeBoardVO board)throws BizNotFoundException {
+		FreeBoardVO vo = freeBoardDao.getBoard(board.getBoNo());
+		if(vo==null) {
+			throw new BizNotFoundException("글번호 ["+board.getBoNo()+"] 조회 실패");
+		}
+		
+		freeBoardDao.modifyBoard(board);
+	}
+	
+	@Override
+	public void removeBoard(FreeBoardVO board)throws BizNotFoundException {
+		FreeBoardVO vo = freeBoardDao.getBoard(board.getBoNo());
+		if(vo==null) {
+			throw new BizNotFoundException("글번호 ["+board.getBoNo()+"] 조회 실패");
+		}
+		freeBoardDao.deleteBoard(board);
+	}
+
+	@Override
+	public void increaseHit(int boNo) {
+		freeBoardDao.increaseHit(boNo);
+		
+	}
+
+	@Override
+	public int getNoticeBoardCount(FreeBoardSearchVO searchVO) {
+		return freeBoardDao.getNoticeBoardCount(searchVO);
+	}
+
+	@Override
+	public int getTipBoardCount(FreeBoardSearchVO searchVO) {
+		return freeBoardDao.getTipBoardCount(searchVO);
+	}
+
+	@Override
+	public int getQnaBoardCount(FreeBoardSearchVO searchVO) {
+		return freeBoardDao.getQnaBoardCount(searchVO);
+	}
+
+	@Override
+	public List<FreeBoardVO> onlyNotice() {
+		return freeBoardDao.onlyNotice();
+	}
+
+	@Override
+	public void modifyQna(FreeBoardVO board) {
+		
+		freeBoardDao.modifyQna(board);
+	}
+
+	@Override
+	public List<FreeBoardVO> onlyTip(String Code) {
+		return freeBoardDao.onlyTip(Code);
+	}
+
+	@Override
+	public List<FreeBoardVO> onlyTipBest() {
+		return freeBoardDao.onlyTipBest();
+	}
+
+	@Override
+	public List<FreeBoardVO> onlyFreeBest() {
+		return freeBoardDao.onlyFreeBest();
+	}
+	
+	@Override
+	public void singoBoard(FreeBoardVO board) {
+		 freeBoardDao.singoBoard(board);
+		
+	}
+
+	@Override
+	public void singoNopeBoard(FreeBoardVO board) {
+		freeBoardDao.singoNopeBoard(board);
+		
+	}
+
+	@Override
+	public void starScope(FreeBoardVO board) {
+		
+		freeBoardDao.starScope(board);
+	}
+
+	
+	@Override
+	public BoardScopeVO boardScope(int boNo) {
+		
+		return freeBoardDao.boardScope(boNo);
+	}
+
+	@Override
+	public BoardScopeVO boardScopeVal1(int boNo) {
+		return freeBoardDao.boardScopeVal1(boNo);
+	}
+
+	@Override
+	public BoardScopeVO boardScopeVal2(int boNo) {
+		return freeBoardDao.boardScopeVal2(boNo);
+	}
+
+	@Override
+	public BoardScopeVO boardScopeVal3(int boNo) {
+		return freeBoardDao.boardScopeVal3(boNo);
+	}
+
+	@Override
+	public BoardScopeVO boardScopeVal4(int boNo) {
+		return freeBoardDao.boardScopeVal4(boNo);
+	}
+
+	@Override
+	public BoardScopeVO boardScopeVal5(int boNo) {
+		return freeBoardDao.boardScopeVal5(boNo);
+	}
+
+
+}

@@ -1,0 +1,11 @@
+package com.kongkong.mypage.service;
+
+import com.kongkong.member.vo.MemberVO;
+
+public interface IMyPageService {
+	
+	public void infoModify(MemberVO member);
+	public void infoSelect(MemberVO member);
+	public void infoDelete(MemberVO member);
+	public void infoUpdate(MemberVO member);
+}

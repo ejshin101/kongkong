@@ -1,0 +1,38 @@
+package com.kongkong.favorite.vo;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+public class FavoriteSearchVO {
+	private String faCategory;
+	private int faBoNo;                /* 게시판 번호 */
+	private String faMemId;
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
+	
+	public String getFaCategory() {
+		return faCategory;
+	}
+	public void setFaCategory(String faCategory) {
+		this.faCategory = faCategory;
+	}
+	public int getFaBoNo() {
+		return faBoNo;
+	}
+	public void setFaBoNo(int faBoNo) {
+		this.faBoNo = faBoNo;
+	}
+
+	public String getFaMemId() {
+		return faMemId;
+	}
+
+	public void setFaMemId(String faMemId) {
+		this.faMemId = faMemId;
+	}
+	
+	
+}

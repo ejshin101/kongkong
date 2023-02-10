@@ -1,0 +1,25 @@
+package com.kongkong.admin.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.kongkong.admin.vo.AdminVO;
+import com.kongkong.free.vo.FreeBoardVO;
+import com.kongkong.member.vo.MemberVO;
+
+public interface IAdminService {
+	
+	public List<Map<String, Object>> getChatList(AdminVO adminVO);
+	
+	public List<FreeBoardVO> freeSelect(FreeBoardVO free); 
+
+	public List<FreeBoardVO> freeBlockSelect(FreeBoardVO free);
+	
+	public void blockUpdate(FreeBoardVO free);
+
+	public void blockBack(FreeBoardVO free);
+	
+	public void blockDelete (FreeBoardVO free);
+	
+	public MemberVO getMemberCount();
+}

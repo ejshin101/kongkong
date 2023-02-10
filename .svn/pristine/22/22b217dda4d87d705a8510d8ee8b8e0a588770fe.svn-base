@@ -1,0 +1,111 @@
+package com.kongkong.admin.web;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.kongkong.admin.dao.IAdminDao;
+import com.kongkong.admin.service.IAdminService;
+import com.kongkong.admin.vo.AdminVO;
+import com.kongkong.code.service.ICodeService;
+import com.kongkong.code.vo.CodeVO;
+import com.kongkong.free.vo.FreeBoardVO;
+import com.kongkong.member.vo.MemberVO;
+import com.kongkong.mypage.dao.IMyPageDao;
+
+@Controller
+public class AdminController {
+	
+	@Inject
+	private IAdminService adminService;
+
+	@Inject
+	private ICodeService codeService;
+	
+	
+	@ModelAttribute("yearcategories")
+	public List<CodeVO> yearcategories() {
+		logger.debug("년 공통코드를 처리합니다.");
+		List<CodeVO> yearcategories =  codeService.getCodeListByParent("YR00");
+		return yearcategories;
+	}
+	
+	@ModelAttribute("monthcategories")
+	public List<CodeVO> monthcategories() {
+		logger.debug("월 공통코드를 처리합니다.");
+		List<CodeVO> monthcategories =  codeService.getCodeListByParent("MN00");
+		return monthcategories;
+	}
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@RequestMapping("/admin/pageManage.wow")
+	public String adminPageManage() {
+		 
+        
+        return "admin/pageManage";
+	}
+	
+	@RequestMapping("/admin/changeGraph.wow")
+	@ResponseBody
+	public Map<String, Object> changeGraph(AdminVO adminVO) {
+		logger.debug("adminVO={}",adminVO);
+		 List<Map<String, Object>> data = adminService.getChatList(adminVO);
+		 logger.debug("data={}" , data);
+		 
+		  Map<String, Object> model = new HashMap<>();
+          
+        model.put("result", true);
+        model.put("data", data);
+        model.put("size", data.size());
+        return model;
+	}
+	
+	// 신고관리
+	
+		@RequestMapping("/admin/singo.wow")
+		public String singo_block() {
+			return "admin/singo";
+		}
+		
+		// 신고항목조회
+		@RequestMapping("/admin/realSingo.wow")
+		public String realSingo(Model model, FreeBoardVO free) {
+			
+			List<FreeBoardVO> singoInfo = adminService.freeSelect(free);
+			model.addAttribute("singoInfo", singoInfo);
+			
+			return "admin/realSingo";
+		}
+		
+		//블락항목 조회
+		@RequestMapping("/admin/block.wow")
+		public String block(Model model, FreeBoardVO free) {
+			
+			List<FreeBoardVO> blockInfo = adminService.freeBlockSelect(free);
+			model.addAttribute("blockInfo", blockInfo);
+			
+			return "admin/block";
+		}
+		
+		//블락하기
+		@RequestMapping("/admin/blockUpdate.wow")
+		public String blockUpdate( FreeBoardVO free) {
+			adminService.blockUpdate(free);
+			return "admin/singo";
+		}
+		
+		
+}

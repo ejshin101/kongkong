@@ -1,0 +1,51 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+	request.setCharacterEncoding("utf-8");
+%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<div class="row">
+			<div class="row justify-content-evenly">
+				<div class="col-12" style="height: 1000px;">
+				<table class="table table-bordered table-hover text-center fifth-gray">
+					<colgroup>
+						<col width="10%" />
+						<col width="10%" />
+						<col />
+						<col width="10%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<th>글번호</th>
+							<th>분류</th>
+							<th>QNA게시판</th>
+							<th>작성자</th>
+						</tr>
+					</thead>	
+					<tbody>
+					<c:forEach items="${QnaList}" var="QnaList">
+						<tr class="text-center">
+							<td>${QnaList.boNo}</td>
+							<td>${QnaList.boCategory}</td>
+							<td class="text-left">
+								<a href="freeView.wow?boNo=${QnaList.boNo}">
+									${QnaList.boTitle}
+								</a>
+							</td>
+							<td>${QnaList.boWriter}</td>
+						</tr>
+						</c:forEach>
+					</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+</body>
+</html>

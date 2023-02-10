@@ -1,0 +1,169 @@
+package com.kongkong.member.vo;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+
+public class MemberVO {
+	
+	@NotBlank(message = "아이디는 필수 입력 항목 입니다.")
+	@Size(min = 4, message = "최소 4글자 이상 필요합니다.")
+	@Pattern(regexp = "\\w{2,}" , message = "영문, 숫자, 언더바로 4글자 이상입니다.")
+	private String memId;
+	
+	@NotBlank(message = "비밀번호는 필수 입력 항목 입니다.")
+	@Pattern(regexp = ".*(?=^.{8,15}$)(?=.*\\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*" , message = "특수문자 / 문자 / 숫자 포함 형태의 8~15자리까지 입력 가능합니다.")
+	private String memPass;
+	
+	@Pattern(regexp = "[가-힣]{2,}",message = "한글2글자 이상입니다.")
+	private String memName;
+	
+	private String memMark;
+	private String memBir;
+	
+	@Pattern(regexp = "[0-9]{2,}",message = "숫자 2글자 이상입니다.")
+	private String memZip;
+	
+	@NotEmpty(message = "주소는 필수 입력 항목입니다.")
+	@Size(min =2, message = "최소 2글자 이상 필요합니다.")
+	private String memAdd1;
+	
+	private String memAdd2;
+	
+	@NotBlank(message = "핸드폰번호는 필수 입력 사항 입니다.")
+	@Pattern(regexp = "[0-9]{10,}",message = "(-,.)없이 숫자 10글자 이상입니다.")
+	private String memHp;
+	
+	@Pattern(regexp = "[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}"
+							, message = "이메일 식에 맞게 올바르게 입력해주세요.")
+	private String memMail;
+	
+	
+	private String memLike;
+	private int memMileage;
+	private String memDelete;
+	private String memRole;
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
+	
+	public String getMemId() {
+		return memId;
+	}
+
+	public void setMemId(String memId) {
+		this.memId = memId;
+	}
+
+	public String getMemPass() {
+		return memPass;
+	}
+
+	public void setMemPass(String memPass) {
+		this.memPass = memPass;
+	}
+
+	public String getMemName() {
+		return memName;
+	}
+
+	public void setMemName(String memName) {
+		this.memName = memName;
+	}
+
+	public String getMemMark() {
+		return memMark;
+	}
+
+	public void setMemMakr(String memMark) {
+		this.memMark = memMark;
+	}
+
+	public String getMemBir() {
+		return memBir;
+	}
+
+	public void setMemBir(String memBir) {
+		this.memBir = memBir;
+	}
+
+	public String getMemZip() {
+		return memZip;
+	}
+
+	public void setMemZip(String memZip) {
+		this.memZip = memZip;
+	}
+
+	public String getMemAdd1() {
+		return memAdd1;
+	}
+
+	public void setMemAdd1(String memAdd1) {
+		this.memAdd1 = memAdd1;
+	}
+
+	public String getMemAdd2() {
+		return memAdd2;
+	}
+
+	public void setMemAdd2(String memAdd2) {
+		this.memAdd2 = memAdd2;
+	}
+
+	public String getMemHp() {
+		return memHp;
+	}
+
+	public void setMemHp(String memHp) {
+		this.memHp = memHp;
+	}
+
+	public String getMemMail() {
+		return memMail;
+	}
+
+	public void setMemMail(String memMail) {
+		this.memMail = memMail;
+	}
+
+	public String getMemLike() {
+		return memLike;
+	}
+
+	public void setMemLike(String memLike) {
+		this.memLike = memLike;
+	}
+
+	public int getMemMileage() {
+		return memMileage;
+	}
+
+	public void setMemMileage(int memMileage) {
+		this.memMileage = memMileage;
+	}
+
+	public String getMemDelete() {
+		return memDelete;
+	}
+
+	public void setMemDelete(String memDelete) {
+		this.memDelete = memDelete;
+	}
+
+	public String getMemRole() {
+		return memRole;
+	}
+
+	public void setMemRole(String memRole) {
+		this.memRole = memRole;
+	}
+
+}

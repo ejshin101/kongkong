@@ -1,0 +1,44 @@
+package com.kongkong.main;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kongkong.member.service.IMemberService;
+import com.kongkong.member.vo.MemberVO;
+
+/**
+ * Handles requests for the application home page.
+ */
+@Controller
+public class EventPageController {
+	private IMemberService memberService;
+	
+	@RequestMapping("/event/eventHome.wow")
+	public String eventHome(Model model) throws Exception {
+		//List<MemberVO> r = memberService.getMemberList();
+		//model.addAttribute("results", r);
+		return "event/eventHome";
+	}
+	@RequestMapping("/event/ladder.wow")
+	public String ladder() {
+		return "event/ladder";
+	}
+	@RequestMapping("/event/ladder2.wow")
+	public String ladder2() {
+		return "event/ladder2";
+	}
+	
+	@RequestMapping("/event/roulette.wow")
+	public String roulette() {
+		return "event/roulette";
+	}
+	
+	@RequestMapping("/event/roulette2.wow")
+	public String roulette2() {
+		return "event/roulette2";
+	}
+
+}

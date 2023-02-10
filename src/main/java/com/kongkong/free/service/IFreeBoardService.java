@@ -1,0 +1,57 @@
+package com.kongkong.free.service;
+
+import java.util.List;
+
+import com.kongkong.exception.BizNotFoundException;
+import com.kongkong.free.vo.BoardScopeVO;
+import com.kongkong.free.vo.FreeBoardSearchVO;
+import com.kongkong.free.vo.FreeBoardVO;
+import com.kongkong.reservation.vo.ReservationVO;
+
+
+public interface IFreeBoardService {
+	
+	public int getBoardCount(FreeBoardSearchVO searchVO);
+	public int getNoticeBoardCount(FreeBoardSearchVO searchVO);
+	public int getTipBoardCount(FreeBoardSearchVO searchVO);
+	public int getQnaBoardCount(FreeBoardSearchVO searchVO);
+	public List<FreeBoardVO> getBoardList(FreeBoardSearchVO searchVO);
+	public List<FreeBoardVO> getBoardQnaList(FreeBoardSearchVO searchVO);
+	public List<FreeBoardVO> getBoardNoticeList(FreeBoardSearchVO searchVO);
+	public List<FreeBoardVO> getBoardTip(FreeBoardSearchVO searchVO);
+	public List<FreeBoardVO> onlyNotice();
+	
+	public BoardScopeVO boardScope(int boNo);
+	
+	public List<BoardScopeVO> boardScopeCountList(int boNo);
+	public BoardScopeVO boardScopeVal1(int boNo);
+	public BoardScopeVO boardScopeVal2(int boNo);
+	public BoardScopeVO boardScopeVal3(int boNo);
+	public BoardScopeVO boardScopeVal4(int boNo);
+	public BoardScopeVO boardScopeVal5(int boNo);
+	
+	
+	public List<FreeBoardVO> onlyTip(String Code);
+	public List<FreeBoardVO> onlyTipBest();
+	public List<FreeBoardVO> onlyFreeBest();
+	
+	public FreeBoardVO getBoard(int boNo);
+	public FreeBoardVO getQnaBoard(int boNo);
+	
+	public void registBoard(FreeBoardVO board);
+	public void modifyBoard(FreeBoardVO board)throws BizNotFoundException;
+	public void removeBoard(FreeBoardVO board)throws BizNotFoundException;
+	
+	public void insertMileage(ReservationVO reserve);
+	public void insertMileage2(ReservationVO reserve);
+	
+	public void starScope(FreeBoardVO board);
+	
+	public void increaseHit(int boNo);
+	
+	public void modifyQna(FreeBoardVO board);
+	
+	public void singoBoard(FreeBoardVO board);
+	
+	public void singoNopeBoard(FreeBoardVO board);
+}

@@ -1,0 +1,57 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+<div class="container">
+	<table class="table">
+			<tbody>
+				<tr>
+					<td>
+					<div class="row">
+					<div class="col-md-8">
+					<h3>${boards.boTitle}</h3>
+					</div>
+					<div class="col-md-4" style="text-align: right;">${boards.boWriter} / ${boards.boCategory} / ${boards.boRegDate}</div>
+					</div>
+					</td>
+				</tr>
+				<tr>
+					<td><pre style="background-color: white; padding:10px; overflow: auto; white-space: pre-wrap; /* pre tag내에 word wrap */">${boards.boContent}</pre></td>
+				</tr>
+			</tbody>
+		</table>
+		<hr>
+		<div class="row">
+			<div class="col-md-6" style="text-align: left;">
+              <a href="boardHome.wow" class="btn btn-primary">
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                목록
+              </a>
+            </div>
+           </div>
+          <hr>
+				<div>
+				<b>관리자 답변</b>
+				<textarea rows="3" name="reContent" class="form-control" readonly style="background-color: white;">${boards.boReply}</textarea>
+				</div>
+			<c:if test='${sessionScope.USER_INFO.userRole eq "admin"}'>
+		<form:form action="qnaModify.wow" modelAttribute="boards" method="post">
+			<form:hidden path="boNo" cssClass="form-control input-sm"/>
+			<br>
+			<b>답변등록 및 수정(관리자전용)</b>
+			<form:textarea rows="3" path="boReply" cssClass="form-control input-sm" />
+		<button type="submit" class="btn btn-info">등록 및 수정</button>
+		</form:form>
+			</c:if>
+
+</div>
+</body>
+</html>

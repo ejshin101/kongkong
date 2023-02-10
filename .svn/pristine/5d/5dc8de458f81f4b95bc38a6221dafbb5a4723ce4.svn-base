@@ -1,0 +1,60 @@
+package com.kongkong.free.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.kongkong.free.vo.BoardScopeVO;
+import com.kongkong.free.vo.FreeBoardSearchVO;
+import com.kongkong.free.vo.FreeBoardVO;
+import com.kongkong.reservation.vo.ReservationVO;
+
+@Mapper
+public interface IFreeBoardDao {
+	
+	public int getBoardCount(FreeBoardSearchVO searchVO);
+	public int getNoticeBoardCount(FreeBoardSearchVO searchVO);
+	public int getTipBoardCount(FreeBoardSearchVO searchVO);
+	public int getQnaBoardCount(FreeBoardSearchVO searchVO);
+	public List<FreeBoardVO> getBoardList(FreeBoardSearchVO searchVO);
+	public List<FreeBoardVO> getBoardQnaList(FreeBoardSearchVO searchVO);
+	public List<FreeBoardVO> getBoardNoticeList(FreeBoardSearchVO searchVO);
+	public List<FreeBoardVO> getBoardTip(FreeBoardSearchVO searchVO);
+	public List<FreeBoardVO> onlyNotice();
+	
+	
+	
+	public BoardScopeVO boardScope(int boNo);
+	
+	public List<BoardScopeVO>  boardScopeCountList(int boNo);
+	
+	public BoardScopeVO boardScopeVal1(int boNo);
+	public BoardScopeVO boardScopeVal2(int boNo);
+	public BoardScopeVO boardScopeVal3(int boNo);
+	public BoardScopeVO boardScopeVal4(int boNo);
+	public BoardScopeVO boardScopeVal5(int boNo);
+	
+	public List<FreeBoardVO> onlyTip(String Code);
+	public List<FreeBoardVO> onlyTipBest();
+	public List<FreeBoardVO> onlyFreeBest();
+	
+	public FreeBoardVO getBoard(int boNo);
+	public FreeBoardVO getQnaBoard(int boNo);
+	
+	public int insertBoard(FreeBoardVO board);
+	public int modifyBoard(FreeBoardVO board);
+	public int deleteBoard(FreeBoardVO board);
+	
+	public int insertMileage(ReservationVO reserve);
+	public int insertMileage2(ReservationVO reserve);
+	
+	public int starScope(FreeBoardVO board);
+	
+	public void increaseHit(int boNo);
+	
+	public int modifyQna(FreeBoardVO board);
+	
+	public int singoBoard(FreeBoardVO board);
+	
+	public int singoNopeBoard(FreeBoardVO board);
+}

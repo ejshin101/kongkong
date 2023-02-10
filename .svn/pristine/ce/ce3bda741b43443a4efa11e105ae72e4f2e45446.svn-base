@@ -1,0 +1,66 @@
+package com.kongkong.mypage.service;
+
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kongkong.favorite.vo.FavoriteVO;
+import com.kongkong.free.vo.FreeBoardSearchVO;
+import com.kongkong.free.vo.FreeBoardVO;
+import com.kongkong.login.vo.UserVO;
+import com.kongkong.member.vo.MemberVO;
+import com.kongkong.mypage.dao.IMyPageDao;
+import com.kongkong.reservation.vo.ReservationVO;
+
+@Service
+public class MyPageServiceImpl implements IMyPageService{
+
+	@Autowired
+	public IMyPageDao mypageDao;
+	
+	@Override
+	public void infoModify(MemberVO member) {
+		mypageDao.updateInfo(member);
+		
+	}
+
+	@Override
+	public void infoSelect(MemberVO member) {
+		mypageDao.selectInfo(member);
+		
+	}
+
+	@Override
+	public void infoDelete(MemberVO member) {
+		mypageDao.deleteInfo(member);
+		
+	}
+
+	@Override
+	public void infoUpdate(MemberVO member) {
+		mypageDao.update2Info(member);
+		
+	}
+
+	@Override
+	public List<FreeBoardVO> getBoardList(String UserId, HttpSession session) {
+		return mypageDao.getBoardList(UserId);
+	}
+
+	@Override
+	public List<ReservationVO> getReserBoardList(String UserId, HttpSession session) {
+		return mypageDao.getReserBoardList(UserId);
+	}
+
+	@Override
+	public List<FavoriteVO> getFavList(String UserId, HttpSession session) {
+		return mypageDao.getFavList(UserId);
+	}
+
+	
+
+
+}

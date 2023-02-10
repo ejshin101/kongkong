@@ -1,0 +1,152 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+<script src="https://code.highcharts.com/highcharts.src.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<title>Insert title here</title>
+</head>
+<body>
+<form:form>
+<div class="container" >
+
+<div align="center">
+            <label for="id_searchCategory" class="col-sm-2 col-sm-offset-2 control-label">년도</label>
+            <div class="col-sm-2">
+                <select id="id_searchCategory" name="searchCategory" class="form-control input-sm">
+                    <option value="">-- 전체 --</option>
+                    <c:forEach items="${yearcategories}" var="code">
+						<option value="${code.commCd}" ${searchVO.searchCategory eq code.commCd ? 'selected = "selected"' : ''}>${code.commNm}</option>
+					</c:forEach>
+                </select>
+            </div>
+              <label for="id_searchCategory" class="col-sm-2 col-sm-offset-2 control-label">월</label>
+            <div class="col-sm-2">
+                <select id="id_searchCategory" name="searchCategory" class="form-control input-sm">
+                    <option value="">-- 전체 --</option>
+                    <c:forEach items="${monthcategories}" var="code">
+						<option value="${code.commCd}" ${searchVO.searchCategory eq code.commCd ? 'selected = "selected"' : ''}>${code.commNm}</option>
+					</c:forEach>
+                </select>
+            </div>
+</div><br>
+
+<div class="row">
+<div class="list-group" align="center">
+	<a href="changeGraph.wow" type="button" class="list-group-item list-group-item-action">월별 가입 현황</a>
+	<a href="" type="button" class="list-group-item list-group-item-action">년별 가입 현황</a>
+	<a href="" type="button" class="list-group-item list-group-item-action">월별 예약 현황</a>
+	<a href="" type="button" class="list-group-item list-group-item-action">년별 예약 현황</a>
+</div>
+
+
+<figure class="highcharts-figure col-10">
+    <div id="container"></div>
+    <p class="highcharts-description">
+        admin
+    </p>
+</figure>
+
+
+
+</div>
+</div>
+</form:form>
+
+</body><!-- end.container -->
+<%@ include file="/WEB-INF/inc/footer.jsp"%>
+
+<script type="text/javascript">
+// --- 1 전역변수 선언 -----
+ var url1="<c:url value = '/admin/changeGraph.wow'/>";
+ 
+ 
+// --- 2 일반함수 선언 -----
+
+function fn_chart_redraw(c_title, c_caterory, c_y_title, c_series ){
+	Highcharts.chart('container', {
+	    chart: {
+	        type: 'line'
+	    },
+	    title: {
+	        text: 'Monthly Reservation'
+	    },
+	    subtitle: {
+	        text: c_title
+	    },
+	    xAxis: {
+	        categories: c_caterory
+	    },
+	    yAxis: {
+	        title: {
+	            text: c_y_title
+	        }
+	    },
+	    plotOptions: {
+	        line: {
+	            dataLabels: {
+	                enabled: true
+	            },
+	            enableMouseTracking: false
+	        }
+	    },
+	    series:c_series
+	});  // chart
+	
+	
+} // fn_chart_redraw 
+
+function fn_chart_call(){
+	// 화면의 년도, 월 선택값 처리 
+	
+	//
+	 // $.getJSON : AJAX 처리결과를 json으로 반환 받는 함수
+    $.getJSON(url1, function(data){
+    	if(data.result){
+    		cate=[];
+    		ser = [];
+    		ser1 = {"name":"월별 가입자", "data" : []};
+    		ser1_data = [];
+    		
+    		// 차트에 맞게 데이터 변경 
+    		$.each(data.data, function(i, el) {
+				cate.push(el.MONTH + "월" );
+				ser1_data.push( el.MEM_COUNT);
+			}) // each 
+			ser1.data = ser1_data;
+    		ser.push(ser1);
+			console.log('cate', cate);
+    		console.log('ser', ser);
+    		console.log('--------------------------------');
+			// cate = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+			// ser=[-0.9,1.0,6.3,13.3,18.9,23.6,25.8,26.3,22.4,15.5,8.9,1.6];
+    		// 차트함수 호출 
+    		fn_chart_redraw('2021년 가입자', cate, '월', ser );    		
+    		
+    	}// if(data.result)
+    });  // $.getJSON
+	
+} // fn_chart_call
+
+
+
+//--- 3 이벤트 함수 선언 -----
+
+
+
+
+//--- 4 초기화 함수 호출  -----
+
+fn_chart_call();
+
+</script>
+
+</html>

@@ -1,0 +1,14 @@
+package com.kongkong.admin.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.kongkong.admin.vo.AdminVO;
+
+@Mapper
+public interface IAdminDao {
+	public List<Map<String, Object>> getChatYearList(AdminVO adminVO);
+	public List<Map<String, Object>> getChatMonthList(AdminVO adminVO);
+}

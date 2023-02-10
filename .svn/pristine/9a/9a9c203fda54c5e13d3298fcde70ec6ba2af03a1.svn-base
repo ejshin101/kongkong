@@ -1,0 +1,12 @@
+package com.kongkong.admin.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.kongkong.admin.vo.AdminVO;
+
+public interface IAdminService {
+	
+	public List<Map<String, Object>> getChatList(AdminVO adminVO);
+
+}

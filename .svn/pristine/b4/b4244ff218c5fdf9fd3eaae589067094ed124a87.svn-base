@@ -1,0 +1,72 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+ <div id="sideBar">
+        <nav id="sideNav" class="navbar flex-column align-items-stretch p-3 ">
+            <nav class="nav nav-pills flex-column">
+	            <ul id="myBoard">
+	            	<li id="freeListLoad">자유게시판</li>
+	            	<li id="noticeListLoad">공지게시판</li>
+	            	<li id="qnaListLoad">QNA게시판</li>
+	            </ul>
+                <%-- 
+                <a class="nav-link ms-3 my-1" id="freeListLoad" href="<%=request.getContextPath()%>/free/freeList.wow">자유게시판</a>
+                <a class="nav-link ms-3 my-1" id="noticeListLoad" href="<%=request.getContextPath()%>/free/notice.wow">공지사항</a>
+                <a class="nav-link ms-3 my-1" id="" href="<%=request.getContextPath()%>/free/tip.wow">팁</a>
+                <a class="nav-link ms-3 my-1" id="qnaListLoad" href="<%=request.getContextPath()%>/free/qna.wow">QNA</a>
+                 --%>
+            </nav>
+            <a class="nav-link ms-4" href="#"><i class="far fa-caret-square-up"></i></a>
+            <a class="nav-link ms-4" href="#bottom"><i class="far fa-caret-square-down"></i></a>
+        </nav>
+</div><!--sidebar end-->
+    <div id="ad">
+        광고 문의
+    </div><!--ad end-->
+ <script type="text/javascript">
+	$(document).ready(
+			function() {
+				
+				$("#myBoard li").click(function() {
+					var selectedLi = $(this).attr("id");
+					if(selectedLi == "freeListLoad"){
+						$("#targetdiv").load("freeList.wow");
+					}else if(selectedLi == "noticeListLoad"){
+						$("#targetdiv").load("notice.wow");
+					}else if(selectedLi == "qnaListLoad"){
+						$("#targetdiv").load("qna.wow");
+					}
+				}); //myboard li click
+				
+				
+				var scrollSpy = new bootstrap.ScrollSpy(document.body, {
+					target : '#sideBar'
+				})
+				scrollSpy.addEventListener('activate.bs.scrollspy', function(
+						dataSpyEl) {
+					bootstrap.ScrollSpy.getInstance(dataSpyEl).refresh();
+				});
+				
+			});//ready
+
+	$(window).scroll(function() {
+		var scrollTop = $(document).scrollTop() + 380;
+		if (scrollTop < 380) {
+			scrollTop = 380;
+		}
+		$("#sideBar").stop();
+		$("#sideBar").animate({
+			"top" : scrollTop
+		});
+	});
+	$(window).scroll(function() {
+		var scrollTop = $(document).scrollTop() + 650;
+		if (scrollTop < 650) {
+			scrollTop = 650;
+		}
+		$("#ad").stop();
+		$("#ad").animate({
+			"top" : scrollTop
+		});
+	});
+
+</script>   

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+		  
+	<!-- DataSource, MyBatis 설정 -->
+	<bean id="dataSource"
+		  class="org.apache.commons.dbcp2.BasicDataSource" 
+		  destroy-method="close"
+		  p:driverClassName="#{app['jdbc.driverClassName']}"
+		  p:url="#{app['jdbc.url']}"
+		  p:username="#{app['jdbc.username']}"
+		  p:password="#{app['jdbc.password']}"
+		  p:maxTotal="#{app['jdbc.maxTotal']}"
+		  p:minIdle="#{app['jdbc.minIdle']}"
+		  p:validationQuery="#{app['jdbc.validationQuery']}"
+		  />
+		  <!-- mybatis : SqlSessionFactoryBean + Scan -->
+		  <!--  p:configLocation="classpath:/mybatis/mybatis-config.xml" -->
+		  
+		  
+	<!-- DataSource, MyBatis 설정 -->
+		  <bean id="mybatisConfig" class="org.apache.ibatis.session.Configuration">
+		  	<property name="mapUnderscoreToCamelCase" value="true" />
+		  	<property name="jdbcTypeForNull" value="NULL" />
+		  	<property name="callSettersOnNulls" value="true" />
+		  </bean>
+		  
+	<!--  -->
+		  <bean id="sqlSessionFactoryBean" 
+		  	  class="org.mybatis.spring.SqlSessionFactoryBean"
+			  p:dataSource-ref="dataSource"
+			  p:mapperLocations="classpath:/mybatis/mapper/*.xml" 
+			  p:configuration-ref="mybatisConfig" />
+		  
+		  <mybatis-spring:scan base-package="com.kongkong" 
+		  					   annotation="org.apache.ibatis.annotations.Mapper" />
+		  
+</beans>

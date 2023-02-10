@@ -1,0 +1,207 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="kongkong" tagdir="/WEB-INF/tags/kongkong"%>
+<html>
+<head>
+<style>
+
+/* #sideBar {
+	border-style: solid;
+	padding-left: 5px;
+	position: absolute;
+	top: 400px;
+}
+
+#ad {
+	border-style: solid;
+	position: absolute;
+	top: 650px;
+	height: 150px;
+	width: 150px;
+	background-color: aqua;
+} */
+
+	a:link {
+		color: black;
+	}
+	a:visited {
+	 color: black; 
+	}
+
+	.notice {
+	border-radius: 10px; 
+	background-color: white; 
+	font-size: small;
+	color: #007bff;
+	}
+
+</style>
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+<title>Home</title>
+</head>
+
+<body style="background-color: #FAFAFA">
+<%-- <%@ include file="/WEB-INF/inc/sidebar.jsp"%> --%>
+<div class="container">
+<!-- START : 검색 폼  --> 
+	<div style="margin: 5px;"></div>
+	<form name="frm_search" action="boardNotice.wow" method="post">
+			<input type="hidden" name="curPage" value="${searchVO.curPage}">
+	        <input type="hidden" name="rowSizePerPage" value="${searchVO.rowSizePerPage}">
+			<div style="margin: 5px;"></div>
+			<div class="row">
+				<div class="col-md-10" style="padding: 0px;">
+					<%@ include file="/WEB-INF/inc/topNotice.jsp"%>
+				</div>
+				  <div align="center" class="col-md-2 border"
+							  				  style="padding-left: 0;
+										      padding-left: 5px;
+										      padding-right: 5px;
+										      padding-top: 5px;
+										      padding-bottom: 5px;
+										      width: 210px;
+										      height: 200px;
+										      background-color: #FFFFFF;
+										      ">
+						<select id="id_searchCategory" name="searchCategory" class="form-control input-sm">
+								<option value="NOTICE"<c:if test="${searchVO.searchCategory == 'NOTICE'}"> selected </c:if>>공지사항</option>
+			            </select>
+			            <div style="margin: 5px;"></div>
+			            <select id="id_searchType" name="searchType" class="form-control input-sm">
+		                    <option value="T" ${searchVO.searchType == 'T' ? 'selected="selected"' : '' }>제목</option>
+		                    <option value="W" ${searchVO.searchType == 'W' ? 'selected="selected"' : '' }>작성자</option>
+		                    <option value="C" ${searchVO.searchType == 'C' ? 'selected="selected"' : '' }>내용</option>
+		                    <option value="I" ${searchVO.searchType == 'I' ? 'selected="selected"' : '' }>아이디</option>
+		                </select>
+		                <div style="margin: 5px;"></div>
+					  <input type="text" name="searchWord" class="form-control input-sm" value="${searchVO.searchWord}" placeholder="검색어">
+					  <div style="margin: 5px;"></div>
+				          <button type="submit" class="btn btn-dark" style="width: 182px;"><i class="fa fa-search"></i></button>
+		            <div>전체 <b style="font-size: large;">${searchVO.totalRowCount}</b> 건 조회</div>
+				</div>
+			</div>
+	</form>
+	<!-- END : 검색 폼  --> 
+	<!-- 공지게시판 시작 -->
+	<div class="row border shadow" style="background-color: white; border-radius: 20px;">
+		<div class="col-md-12" style="padding-right: 0px;padding-left: 0px;
+		">
+			<table class="table table-hover text-center">
+				<colgroup>
+					<col width="7%" />
+					<col width="10%" />
+					<col />
+					<col width="10%" />
+					<col width="10%" />
+					<col width="10%" />
+				</colgroup>
+				<thead class="table-dark">
+					<tr>
+						<th>글번호</th>
+						<th>분류</th>
+						<th>제목</th>
+						<th>작성자</th>
+						<th>등록일자</th>
+						<th>조회수</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach items="${NoticeList}" var="NoticeList" begin="0" end="3">
+						<tr class="table-primary">
+							<td><div class="border border-primary notice">공지</div></td>
+							<td>${NoticeList.boCategory}</td>
+							<td class="text-left"><a
+								href="freeView.wow?boNo=${NoticeList.boNo}">
+									${NoticeList.boTitle} </a></td>
+							<td>${NoticeList.boWriter}<c:if test='${sessionScope.USER_INFO.userId eq NoticeList.boId}'><a href="/myPage/myPageHome.wow"><i class="fas fa-user-circle"></i></a></c:if></td>
+							<td>${NoticeList.boRegDate}</td>
+							<td>${NoticeList.boHit}</td>
+						</tr>
+					</c:forEach>
+	<!-- 공지게시판 끝 -->
+	<!-- 메인게시판 시작 -->
+				<c:forEach items="${NoticeLists}" var="NoticeLists" varStatus="st">
+					<tr class="">
+						<%-- <td>${freeBoardList.size()-st.count+1}  </td> --%>
+						<td><div class="border border-primary notice">공지</div></td>
+						<td>${NoticeLists.boCategory}</td>
+						<td class="text-left">
+							<a href="freeView.wow?boNo=${NoticeLists.boNo}">
+								${NoticeLists.boTitle}
+							</a>
+						</td>
+						<td>${NoticeLists.boWriter}<c:if test='${sessionScope.USER_INFO.userId eq NoticeLists.boId}'><a href="/myPage/myPageHome.wow"><i class="fas fa-user-circle"></i></a></c:if></td>
+						<td>${NoticeLists.boRegDate}</td>
+						<td>${NoticeLists.boHit}</td>
+					</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+		</div>
+	  </div>
+	  <div style="margin: 30px;"></div>
+	  <div class ="row">
+	  	<div class="col-md-6">
+		 	<kongkong:pagingNotice pagingVO="${searchVO}"/> 
+		  	</div>
+		  	<div class="col-md-6">
+		  <c:if test='${sessionScope.USER_INFO.userRole eq "admin"}'>
+		  <div class="container">
+		  	 <div class="text-right">
+				 <a href="freeRegist.wow" class="kongkongs" style="color: white;">
+				 	<!-- <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>  -->
+				 	<i class="fa fa-sign"></i>  새글쓰기
+				 </a>
+			 </div>
+		  </div>
+		  </c:if>
+	  	</div>
+	  </div> 
+</div><!-- 컨테이너 끝 -->
+<div id="bottom"></div>
+<div style="margin: 30px;"></div>
+<%@ include file="/WEB-INF/inc/footer.jsp"%>
+</body>
+<script type="text/javascript">
+	// ---전역 변수 설정
+	//자바스크립트객체하고 jQuery 객체하고 구분하기 위한  jQuery 객체변수는 $로 시작
+	$frm = $('form[name=frm_search]');
+
+	// ---일반 함수 설정
+
+	// ---이벤트 함수 설정
+
+	// $frm 서브밋 이벤트가 발생할 때
+	// curPage = 1
+	$('button[type=submit]', $frm).click(function(e) {
+		e.preventDefault();
+		$frm.find("input[name=curPage]").val(1);
+		$frm.submit();
+	});
+
+	//id_btn_reset 클릭 할 때
+	//curPage = 1
+	//모든 객체는 초기화 해주시면 됩니다.
+
+	//페이지네이션의 a 링크 클릭
+
+		$('nav ul.pagination a[data-page]').click(function(e){
+	 e.preventDefault();
+	 $this = $(this);
+	 $frm.find("input[name=curPage]").val($this.data('page'));
+	 $frm.submit();
+	 });
+
+	//로우 사이즈 변경
+	$('#id_rowSizePerPage').change(function(e) {
+		e.preventDefault();
+		$this = $(this);
+		console.log('select val', $this.val());
+		$frm.find("input[name=curPage]").val(1);
+		$frm.find("input[name=rowSizePerPage]").val($this.val());
+		$frm.submit();
+
+	});
+</script>
+</html>

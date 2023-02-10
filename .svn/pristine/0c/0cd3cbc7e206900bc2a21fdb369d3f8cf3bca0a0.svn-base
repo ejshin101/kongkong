@@ -1,0 +1,74 @@
+package com.kongkong.favorite.web;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.kongkong.favorite.service.IFavoriteService;
+import com.kongkong.favorite.vo.FavoriteSearchVO;
+import com.kongkong.favorite.vo.FavoriteVO;
+import com.kongkong.login.vo.UserVO;
+import com.kongkong.member.service.IMemberService;
+
+@Controller
+public class FavoriteController {
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+
+	@Autowired
+	IFavoriteService favoriteService;
+
+	@Autowired
+	IMemberService memberService;
+
+	@RequestMapping("/favorite/favoriteList")
+	public String favoriteList(FavoriteSearchVO searchVO, HttpSession session, Model model) throws Exception {
+		logger.debug("searchVO={}",searchVO);
+		
+		UserVO vo = (UserVO)session.getAttribute("USER_INFO");
+		searchVO.setFaMemId(vo.getUserId());
+		List<FavoriteVO> list = favoriteService.getFavoriteList(searchVO);
+		model.addAttribute("results", list);
+		
+		return "favorite/list";
+	}
+	
+	//ajax
+	@RequestMapping(value="/favorite/regist")
+	@ResponseBody
+	public Map<String, Object> favoriteRegist(FavoriteVO favorite, HttpSession session) throws Exception{
+		logger.debug("favorite={}",favorite);
+		UserVO vo = (UserVO)session.getAttribute("USER_INFO");
+		favorite.setFaMemId(vo.getUserId());
+		favoriteService.registFavorite(favorite);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("result",true);
+		map.put("msg","정상 등록 되었습니다.");
+		return map;
+		 
+	}
+	
+	@RequestMapping(value="/favorite/remove")
+	@ResponseBody
+	public Map<String, Object> favoriteRemove(FavoriteVO favorite, HttpSession session) throws Exception{
+		logger.debug("favorite={}",favorite);
+		UserVO vo = (UserVO)session.getAttribute("USER_INFO");
+		favorite.setFaMemId(vo.getUserId());
+		favoriteService.removeFavorite(favorite);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("result",true);
+		map.put("msg","정상 삭제 되었습니다.");
+		return map;
+		
+	}
+	
+}

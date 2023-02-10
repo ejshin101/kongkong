@@ -1,0 +1,14 @@
+package com.kongkong.member.service;
+
+import java.util.List;
+
+import com.kongkong.member.vo.MemberVO;
+
+public interface IMemberService {
+	
+	public void registMember(MemberVO member) ;
+	public List<MemberVO> getMemberList();
+	public MemberVO getMember(String memId);
+	public void changeMileage(MemberVO member);
+	
+}

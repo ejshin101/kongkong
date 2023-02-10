@@ -1,0 +1,25 @@
+package com.kongkong.free.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.kongkong.free.vo.FreeBoardSearchVO;
+import com.kongkong.free.vo.FreeBoardVO;
+
+@Mapper
+public interface IFreeBoardDao {
+	
+	public int getBoardCount(FreeBoardSearchVO searchVO);
+	public List<FreeBoardVO> getBoardList(FreeBoardSearchVO searchVO);
+	public List<FreeBoardVO> getBoardQnaList(FreeBoardSearchVO searchVO);
+	public List<FreeBoardVO> getBoardNoticeList(FreeBoardSearchVO searchVO);
+	public List<FreeBoardVO> getBoardPopularList(FreeBoardSearchVO searchVO);
+	public FreeBoardVO getBoard(int boNo);
+	
+	public int insertBoard(FreeBoardVO board);
+	public int modifyBoard(FreeBoardVO board);
+	public int deleteBoard(FreeBoardVO board);
+	
+	public void increaseHit(int boNo);
+}

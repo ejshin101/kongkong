@@ -1,0 +1,18 @@
+package com.kongkong.reservation.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.kongkong.reservation.vo.ReservationSearchVO;
+import com.kongkong.reservation.vo.ReservationVO;
+
+@Mapper
+public interface IReservationDao {
+	public int getReserveCountByParent(ReservationSearchVO reserveVO);
+	public List<ReservationVO> getReserveList(ReservationSearchVO reserveVO); //모든 예약 정보 가져오기
+	public ReservationVO getReserve(String reMerchantUid); //예약 정보 하나씩 가져오기
+	public int insertReserve(ReservationVO reserve);//예약 정보 등록
+	public int updateReserve(ReservationVO reserve); //예약 정보 수정
+	public int deleteReserve(ReservationVO reserve); //예약 정보 삭제
+}

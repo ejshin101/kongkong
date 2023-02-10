@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.kongkong.admin.dao.IAdminDao">
+ 
+ 
+ <!-- 월별 가입자 현황 -->
+	<select id="getChatList" resultType="hashmap">
+		<![CDATA[
+		select a.month, nvl(b.mem_count ,0) as mem_count
+		  from (select level month from dual connect by level <= 12) a
+		        left join  (select to_number(to_char(mem_date, 'MM')) mem_month , count(1) as mem_count  
+		                              from member        
+		                           where  
+		                             to_char(mem_date,'YYYY') = '2021'
+		                            group by to_char(mem_date, 'MM') 
+		                       ) b
+		         on  (a.month = b.mem_month)   
+		order by a.month asc
+		]]>	
+	</select>
+
+ <!-- 월별 가입자 현황 -->
+ <!-- 년별 예약자 현황 -->
+ <!-- 년별 예약자 현황 -->
+ </mapper>

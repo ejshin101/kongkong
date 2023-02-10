@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kongkong.login.dao.ILoginDao">
+
+	<insert id="insertLoginLog" >
+	INSERT INTO LOG (
+    	log_id
+      , log_ip
+      , log_time
+      , log_cate
+	) VALUES (
+    	#{userId}
+      , #{userIp}
+      , sysdate
+      , 'LogIn'
+	)
+	</insert>
+	
+	<insert id="insertLogOutLog" >
+	INSERT INTO LOG (
+    	log_id
+      , log_ip
+      , log_time
+      , log_cate
+	) VALUES (
+    	#{userId}
+      , #{userIp}
+      , sysdate
+      , 'LogOut'
+	)
+	</insert>
+</mapper>

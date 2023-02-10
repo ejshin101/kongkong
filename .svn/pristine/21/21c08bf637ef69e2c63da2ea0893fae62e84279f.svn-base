@@ -1,0 +1,50 @@
+package com.kongkong.mypage.web;
+
+import javax.servlet.http.HttpSession;
+import javax.validation.groups.Default;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kongkong.common.valid.ValidGruop;
+import com.kongkong.login.vo.UserVO;
+import com.kongkong.member.vo.MemberVO;
+import com.kongkong.mypage.service.IMyPageService;
+
+@Controller
+public class myPageController {
+
+	@Autowired
+	public IMyPageService mypageService;
+	
+	@RequestMapping("/myPage/myPageHome.wow")
+	public String myPravacy( HttpSession session, Model model) {
+		UserVO userId = (UserVO)session.getAttribute("userId");
+		
+		if( userId != null) {
+			return "myPage/myPrivacy";
+		}else {
+			return "myPage/myPageHome";
+		}
+	}
+	
+	@RequestMapping("/myPage/changeModify.wow")
+	public String changeModify(@Validated({ Default.class, ValidGruop.InsertType.class }) @ModelAttribute("member") MemberVO member,BindingResult errors
+										,Model model) {
+	
+		if (errors.hasErrors()) {
+			return "myPage/myPrivacy";
+		}
+		model.addAttribute("member", member);
+		
+		mypageService.infoModify(member);;
+		
+		return "myPage/myPrivacy";
+	}
+
+}

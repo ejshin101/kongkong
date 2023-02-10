@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kongkong.reservation.dao.IReservationDao">
+
+<select id="getReserveCountByParent" parameterType="com.kongkong.reservation.vo.ReservationVO" resultType="int">
+	SELECT COUNT(*) as tot
+	  FROM reservation
+	 WHERE book_del = 'N',
+	 	   book_name = #{bookBuyerName}
+</select>
+
+<select id="getReserveList" parameterType="com.kongkong.reservation.vo.ReservationVO" resultType="com.kongkong.reservation.vo.ReservationVO">
+	SELECT book_no
+       , (select comm_nm from comm_code where comm_cd = book_cd) as book_cd_nm
+       , book_pay_method
+       , book_merchant_uid
+       , book_name
+       , book_amount
+       , book_buyer_email
+       , book_buyer_name
+       , book_buyer_tel
+       , book_buyer_addr
+       , book_buyer_postcode
+       , book_receive
+       , book_return
+       , book_id
+       , (select comm_nm from comm_code where comm_cd = book_receive_way) as book_receive_way_nm
+       , (select comm_nm from comm_code where comm_cd = book_return_way) as book_return_way_nm
+       , book_pickup_yn
+       , book_return_yn
+       , book_shipping_yn
+       , (select comm_nm from comm_code where comm_cd = book_pickup_air) as book_pickup_air_nm
+       , (select comm_nm from comm_code where comm_cd = book_return_air) as book_return_air_nm
+	  FROM reservation
+	 WHERE book_del = 'N'
+	 ORDER BY book_no DESC
+</select>
+
+<select id="getReserve" parameterType="String" resultType="com.kongkong.reservation.vo.ReservationVO">
+SELECT book_no
+       , (select comm_nm from comm_code where comm_cd = book_cd) as book_cd_nm
+       , book_pay_method
+       , book_merchant_uid
+       , book_name
+       , book_amount
+       , book_buyer_email
+       , book_buyer_name
+       , book_buyer_tel
+       , book_buyer_addr
+       , book_buyer_postcode
+       , book_receive
+       , book_return
+       , book_id
+       , (select comm_nm from comm_code where comm_cd = book_receive_way) as book_receive_way_nm
+       , (select comm_nm from comm_code where comm_cd = book_return_way) as book_return_way_nm
+       , book_pickup_yn
+       , book_return_yn
+       , book_shipping_yn
+       , (select comm_nm from comm_code where comm_cd = book_pickup_air) as book_pickup_air_nm
+       , (select comm_nm from comm_code where comm_cd = book_return_air) as book_return_air_nm
+	  FROM reservation
+	 WHERE book_merchant_uid = #{bookMerchantUid}
+
+
+</select>
+<insert id="insertReserve">
+INSERT INTO reservation (
+      book_no
+    , book_cd
+    , book_pay_method
+    , book_merchant_uid
+    , book_name
+    , book_amount
+    , book_buyer_email
+    , book_buyer_name
+    , book_buyer_tel
+    , book_buyer_addr
+    , book_buyer_postcode
+    , book_receive
+    , book_return
+    , book_del
+    , book_id
+    , book_receive_way
+    , book_return_way
+    , book_pickup_yn
+    , book_return_yn
+    , book_shipping_yn
+    , book_pickup_air
+    , book_return_air
+	) VALUES (
+	<![CDATA[
+      SEQ_RESERVATION.nextval
+    , #{bookCd}
+    , #{bookPayMethod}
+    , #{bookMerchantUid}
+    , #{bookName}
+    , #{bookAmount}
+    , #{bookBuyerEmail}
+    , #{bookBuyerName}
+    , #{bookBuyerTel}
+    , #{bookBuyerAddr}
+    , #{bookBuyerPostcode}
+    , #{bookReceive}
+    , #{bookReturn}
+    , 'N'
+    , #{bookId}
+    , #{bookReceiveWay}
+    , #{bookReturnWay}
+    , 'N'
+    , 'N'
+    , 'N'
+    , #{bookPickupAir}
+    , #{bookReturnAir}
+	)]]> 
+	
+	
+	
+</insert>
+
+<update id="updateReserve">
+
+</update>
+
+<delete id="deleteReserve">
+
+</delete>
+
+
+</mapper>

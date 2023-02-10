@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kongkong.reservation.dao.IReservationDao">
+
+<!-- startdate가 존재하면, 
+      if enddate가 존재할 때 between
+      안할때
+
+  -->
+<sql id="searchWhereClause">
+
+		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchStartDate)">
+		
+			<choose>
+				<when test="searchType == 'DT01'">
+				  <![CDATA[	AND book_receive >= #{searchStartDate} ]]>
+				</when>
+				<when test="searchType == 'DT02'">
+				<![CDATA[	AND book_return >= #{searchStartDate} ]]>
+				</when>
+				<when test="searchType == 'DT03'">
+				<![CDATA[	AND book_date  >= #{searchStartDate} ]]>
+				</when>
+			</choose>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchEndDate)">
+				<choose>
+					<when test="searchType == 'DT01'">
+					<![CDATA[	AND book_receive <= TO_DATE(#{searchEndDate},' 23:59:59', 'YYYY-MM-DD HH24:MI:SS') ]]>
+					</when>
+					<when test="searchType == 'DT02'">
+					<![CDATA[	AND book_return <= TO_DATE(#{searchEndDate},' 23:59:59', 'YYYY-MM-DD HH24:MI:SS') ]]>
+					</when>
+					<when test="searchType == 'DT03'">
+					<![CDATA[	AND book_date <= TO_DATE(#{searchEndDate},' 23:59:59', 'YYYY-MM-DD HH24:MI:SS') ]]>
+					</when>
+				</choose>
+			</if>
+			
+		</if>
+		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchCategory)">
+			AND book_cd = #{searchCategory}
+		</if>
+	</sql>
+
+<select id="getReserveList" parameterType="String" resultType="com.kongkong.reservation.vo.ReservationVO">
+	SELECT book_no
+       , (select comm_nm from comm_code where comm_cd = book_cd) as book_cd_nm
+       , book_pay_method
+       , book_merchant_uid
+       , book_name
+       , book_amount
+       , book_buyer_email
+       , book_buyer_name
+       , book_buyer_tel
+       , book_buyer_addr
+       , book_buyer_postcode
+       , book_receive
+       , book_return
+       , book_id
+       , (select comm_nm from comm_code where comm_cd = book_receive_way) as book_receive_way_nm
+       , (select comm_nm from comm_code where comm_cd = book_return_way) as book_return_way_nm
+       , book_pickup_yn
+       , book_return_yn
+       , book_shipping_yn
+       , (select comm_nm from comm_code where comm_cd = book_pickup_air) as book_pickup_air_nm
+       , (select comm_nm from comm_code where comm_cd = book_return_air) as book_return_air_nm
+       , book_date
+	  FROM reservation
+	  <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(userId)">
+	 WHERE book_del = 'N' and book_id = #{userId}
+	 </if>
+	 <if test="@org.apache.commons.lang3.StringUtils@isBlank(userId)">
+	 WHERE book_del = 'N'
+	 </if>
+	 <include refid="searchWhereClause"></include>
+	 ORDER BY book_no DESC
+</select>
+
+<select id="getReserve" parameterType="String" resultType="com.kongkong.reservation.vo.ReservationVO">
+SELECT book_no
+       , (select comm_nm from comm_code where comm_cd = book_cd) as book_cd_nm
+       , book_pay_method
+       , book_merchant_uid
+       , book_name
+       , book_amount
+       , book_buyer_email
+       , book_buyer_name
+       , book_buyer_tel
+       , book_buyer_addr
+       , book_buyer_postcode
+       , TO_CHAR(book_receive, 'YYYY-MM-DD') as book_receive
+       , TO_CHAR(book_return, 'YYYY-MM-DD') as book_return
+       , book_id
+       , (select comm_nm from comm_code where comm_cd = book_receive_way) as book_receive_way_nm
+       , (select comm_nm from comm_code where comm_cd = book_return_way) as book_return_way_nm
+       , book_pickup_yn
+       , book_return_yn
+       , book_shipping_yn
+       , (select comm_nm from comm_code where comm_cd = book_pickup_air) as book_pickup_air_nm
+       , (select comm_nm from comm_code where comm_cd = book_return_air) as book_return_air_nm
+       , book_date
+	  FROM reservation
+	 WHERE book_merchant_uid = #{bookMerchantUid}
+</select>
+<select id="getReserveEditPage" parameterType="String" resultType="com.kongkong.reservation.vo.ReservationVO">
+	SELECT book_no
+       , (select comm_nm from comm_code where comm_cd = book_cd) as book_cd_nm
+       , book_pay_method
+       , book_merchant_uid
+       , book_name
+       , book_amount
+       , book_buyer_email
+       , book_buyer_name
+       , book_buyer_tel
+       , book_buyer_addr
+       , book_buyer_postcode
+       , TO_CHAR(book_receive, 'YYYY-MM-DD') as book_receive
+       , TO_CHAR(book_return, 'YYYY-MM-DD') as book_return
+       , book_id
+       , book_receive_way
+       , book_return_way
+       , book_pickup_yn
+       , book_return_yn
+       , book_shipping_yn
+       , book_pickup_air
+       , book_return_air
+       , book_date
+	  FROM reservation
+	 WHERE book_merchant_uid = #{bookMerchantUid}
+</select>
+
+
+
+<insert id="insertReserve">
+INSERT INTO reservation (
+      book_no
+    , book_cd
+    , book_pay_method
+    , book_merchant_uid
+    , book_name
+    , book_amount
+    , book_buyer_email
+    , book_buyer_name
+    , book_buyer_tel
+    , book_buyer_addr
+    , book_buyer_postcode
+    , book_receive
+    , book_return
+    , book_del
+    , book_id
+    , book_receive_way
+    , book_return_way
+    , book_pickup_yn
+    , book_return_yn
+    , book_shipping_yn
+    , book_pickup_air
+    , book_return_air
+    , book_date
+	) VALUES (
+	<![CDATA[
+      SEQ_RESERVATION.nextval
+    , #{bookCd}
+    , #{bookPayMethod}
+    , #{bookMerchantUid}
+    , #{bookName}
+    , #{bookAmount}
+    , #{bookBuyerEmail}
+    , #{bookBuyerName}
+    , #{bookBuyerTel}
+    , #{bookBuyerAddr}
+    , #{bookBuyerPostcode}
+    , #{bookReceive}
+    , #{bookReturn}
+    , 'N'
+    , #{bookId}
+    , #{bookReceiveWay}
+    , #{bookReturnWay}
+    , 'N'
+    , 'N'
+    , 'N'
+    , #{bookPickupAir}
+    , #{bookReturnAir}
+    , SYSDATE
+	)]]> 
+	
+	
+	
+</insert>
+
+<update id="updateReserve" parameterType="com.kongkong.reservation.vo.ReservationVO">
+	UPDATE reservation
+       SET book_buyer_email = #{bookBuyerEmail}
+         , book_buyer_name = #{bookBuyerName}
+         , book_buyer_tel = #{bookBuyerTel}
+         , book_buyer_addr = #{bookBuyerAddr}
+         , book_buyer_postcode = #{bookBuyerPostcode}
+    WHERE book_merchant_uid = #{bookMerchantUid}
+</update>
+
+<delete id="deleteReserve">
+
+</delete>
+
+<select id="getReserveCount" parameterType="String" resultType="int">
+	SELECT COUNT(*) as tot
+	  FROM RESERVATION
+	<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(userId)">
+	 WHERE book_del = 'N' and book_id = #{userId}
+	 </if>
+	 <if test="@org.apache.commons.lang3.StringUtils@isBlank(userId)">
+	 WHERE book_del = 'N'
+	 </if>
+	 ORDER BY book_no DESC
+</select>
+
+</mapper>

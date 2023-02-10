@@ -1,0 +1,356 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/jquery/jquery.autocomplete.css" />
+</head>
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+<!-- banner part start-->
+<section class="banner_part">
+	<div class="container">
+		<div class="row align-items-center justify-content-center">
+			<div class="col-lg-10">
+				<div class="banner_text text-center">
+					<div class="banner_text_iner">
+						<h1>Kong Kong</h1>
+						<p>Let’s start your journey with us, your dream will come true</p>
+						<a href="<%=request.getContextPath()%>/reservation/hotel.wow" class="btn_1">Discover Now</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!--top place start-->
+<section class="top_place section_padding">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-xl-6">
+				<div class="section_tittle text-center">
+					<h2>Top Places to visit</h2>
+					<p></p>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-6 col-md-6">
+				<div class="single_place">
+					<img src="/resources/img/single_place_1.png" alt="">
+					<div
+						class="hover_Text d-flex align-items-end justify-content-between">
+						<div class="hover_text_iner">
+							<a href="https://www.lonelyplanet.com/usa/san-francisco/attractions/golden-gate-bridge/a/poi-sig/383417/361858" class="place_btn">travel</a>
+							<h3>Golden Gate Bridge</h3>
+							<p>	San Francisco, California </p>
+							<div class="place_review">
+								<a href="#"><i class="fas fa-star"></i></a> <a href="#"><i
+									class="fas fa-star"></i></a> <a href="#"><i class="fas fa-star"></i></a>
+								<a href="#"><i class="fas fa-star"></i></a> <a href="#"><i
+									class="fas fa-star"></i></a> <span>(210 review)</span>
+							</div>
+						</div>
+						<div class="details_icon text-right">
+							<i class="ti-share"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6 col-md-6">
+				<div class="single_place">
+					<img src="/resources/img/single_place_2.png" alt="">
+					<div
+						class="hover_Text d-flex align-items-end justify-content-between">
+						<div class="hover_text_iner">
+							<a href="#" class="place_btn">travel</a>
+							<h3>Saintmartine Iceland</h3>
+							<p>Technaf, Bangladesh</p>
+							<div class="place_review">
+								<a href="#"><i class="fas fa-star"></i></a> <a href="#"><i
+									class="fas fa-star"></i></a> <a href="#"><i class="fas fa-star"></i></a>
+								<a href="#"><i class="fas fa-star"></i></a> <a href="#"><i
+									class="fas fa-star"></i></a> <span>(210 review)</span>
+							</div>
+						</div>
+						<div class="details_icon text-right">
+							<i class="ti-share"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6 col-md-6">
+				<div class="single_place">
+					<img src="/resources/img/single_place_3.png" alt="">
+					<div
+						class="hover_Text d-flex align-items-end justify-content-between">
+						<div class="hover_text_iner">
+							<a href="https://www.lonelyplanet.com/thailand/andaman-coast/ao-phang-nga-marine-national-park" class="place_btn">travel</a>
+							<h3>Ao Phang Nga National Park</h3>
+							<p>	Phang Nga Province, Thailand</p>
+							<div class="place_review">
+								<a href="#"><i class="fas fa-star"></i></a> <a href="#"><i
+									class="fas fa-star"></i></a> <a href="#"><i class="fas fa-star"></i></a>
+								<a href="#"><i class="fas fa-star"></i></a> <a href="#"><i
+									class="fas fa-star"></i></a> <span>(210 review)</span>
+							</div>
+						</div>
+						<div class="details_icon text-right">
+							<i class="ti-share"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6 col-md-6">
+				<div class="single_place">
+					<img src="/resources/img/single_place_4.png" alt="">
+					<div
+						class="hover_Text d-flex align-items-end justify-content-between">
+						<div class="hover_text_iner">
+							<a href="https://www.lonelyplanet.com/maldives" class="place_btn">travel</a>
+							<h3>Maldives</h3>
+							<div class="place_review">
+								<a href="#"><i class="fas fa-star"></i></a> <a href="#"><i
+									class="fas fa-star"></i></a> <a href="#"><i class="fas fa-star"></i></a>
+								<a href="#"><i class="fas fa-star"></i></a> <a href="#"><i
+									class="fas fa-star"></i></a> <span>(210 review)</span>
+							</div>
+						</div>
+						<div class="details_icon text-right">
+							<i class="ti-share"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+			<a href="#" class="btn_1 text-cnter">Discover more</a>
+		</div>
+	</div>
+</section>
+<!--top place end-->
+
+<!--news api-->
+<section class="event_part section_padding">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="event_slider owl-carousel">
+					<div class="single_event_slider">
+						<div class="row justify-content-end">
+							<div class="col-lg-6 col-md-6">
+								<div class="event_slider_content">
+									<h2>최근 뉴스</h2>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!--news api end-->
+
+<!--::industries start::-->
+<section class="hotel_list section_padding">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-xl-6">
+				<div class="section_tittle text-center">
+					<h2>Top Hotel & Restaurants</h2>
+					<p> Places that will make your travel better</p>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-4 col-sm-6">
+				<div class="single_ihotel_list">
+					<img src="/resources/img/ind/industries_1.png" alt="">
+					<div class="hover_text">
+						<div class="hotel_social_icon">
+							<ul>
+								<li><a href="#"><i class="ti-facebook"></i></a></li>
+								<li><a href="http://www.booking.com/Share-Na181K"><i class="ti-twitter-alt"></i></a></li>
+								<li><a href="https://www.booking.com/hotel/pl/poloniakrakow.ko.html?activeTab=main"><i class="ti-linkedin"></i></a></li>
+							</ul>
+						</div>
+						<div class="share_icon">
+							<i class="ti-share"></i>
+						</div>
+					</div>
+					<div class="hotel_text_iner">
+						<h3>
+							<a href="https://www.booking.com/hotel/pl/poloniakrakow.ko.html?activeTab=main"> Hotel Polonia</a>
+						</h3>
+						<div class="place_review">
+							<a href="#"><i class="fas fa-star"></i></a> <a href="#"><i
+								class="fas fa-star"></i></a> <a href="#"><i class="fas fa-star"></i></a>
+							<a href="#"><i class="fas fa-star"></i></a> <a href="#"><i
+								class="fas fa-star"></i></a> <span>(210 review)</span>
+						</div>
+						<p>	Warsaw, Poland</p>
+						<h5>
+							From <span>$68</span>
+						</h5>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-4 col-sm-6">
+				<div class="single_ihotel_list">
+					<img src="/resources/img/ind/industries_2.png" alt="">
+					<div class="hover_text">
+						<div class="hotel_social_icon">
+							<ul>
+								<li><a href="#"><i class="ti-facebook"></i></a></li>
+								<li><a href="#"><i class="ti-twitter-alt"></i></a></li>
+								<li><a href="https://www.google.com/travel/hotels/s/NbYrA"><i class="ti-linkedin"></i></a></li>
+							</ul>
+						</div>
+						<div class="share_icon">
+							<i class="ti-share"></i>
+						</div>
+					</div>
+					<div class="hotel_text_iner">
+						<h3>
+							<a href="https://www.google.com/travel/hotels/s/NbYrA"> Marriott's Ko Olina Beach Club</a>
+						</h3>
+						<div class="place_review">
+							<a href="#"><i class="fas fa-star"></i></a> <a href="#"><i
+								class="fas fa-star"></i></a> <a href="#"><i class="fas fa-star"></i></a>
+							<a href="#"><i class="fas fa-star"></i></a> <a href="#"><i
+								class="fas fa-star"></i></a> <span>(210 review)</span>
+						</div>
+						<p>Kapolei, Hawaii</p>
+						<h5>
+							From <span>$700</span>
+						</h5>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-4 col-sm-6">
+				<div class="single_ihotel_list">
+					<img src="/resources/img/ind/industries_3.png" alt="" style="height: 260px;">
+					<div class="hover_text">
+						<div class="hover_text">
+							<div class="hotel_social_icon">
+								<ul>
+									<li><a href="#"><i class="ti-facebook"></i></a></li>
+									<li><a href="#"><i class="ti-twitter-alt"></i></a></li>
+									<li><a href="https://www.google.com/travel/hotels/s/t5ByL"><i class="ti-linkedin"></i></a></li>
+								</ul>
+							</div>
+							<div class="share_icon">
+								<i class="ti-share"></i>
+							</div>
+						</div>
+					</div>
+					<div class="hotel_text_iner">
+						<h3>
+							<a href="https://www.google.com/travel/hotels/s/t5ByL"> One&Only Mandarina</a>
+						</h3>
+						<div class="place_review">
+							<a href="#"><i class="fas fa-star"></i></a> <a href="#"><i
+								class="fas fa-star"></i></a> <a href="#"><i class="fas fa-star"></i></a>
+							<a href="#"><i class="fas fa-star"></i></a> <a href="#"><i
+								class="fas fa-star"></i></a> <span>(210 review)</span>
+						</div>
+						<p>Nayarit, Mexico</p>
+						<h5>
+							From <span>$1600</span>
+						</h5>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!--::industries end::-->
+
+
+<!--::industries start::-->
+<section class="best_services section_padding">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-xl-6">
+				<div class="section_tittle text-center">
+					<h2>We offer best services</h2>
+					<p></p>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-3 col-sm-6">
+				<div class="single_ihotel_list">
+					<img src="/resources/img/services_1.png" alt=""style="height: 189px">
+					<h3>
+						 <a href="<%=request.getContextPath()%>/reservation/flightReservation">Flight</a>
+					</h3>
+					<p>Flight for your trip </p>
+				</div>
+			</div>
+			<div class="col-lg-3 col-sm-6">
+				<div class="single_ihotel_list">
+					<img src="/resources/image/hotel.jpeg" alt="" style="height: 189px">
+					<h3>
+						<a href="<%=request.getContextPath()%>/reservation/hotel.wow"> Hotel</a>
+					</h3>
+					<p>Perfect places to rest</p>
+				</div>
+			</div>
+			<div class="col-lg-3 col-sm-6">
+				<div class="single_ihotel_list">
+					<img src="/resources/image/pocketWifi.jpg" alt="" style="height: 189px">
+					<h3>
+						<a href="<%=request.getContextPath()%>/reservation/product/wifi"> Pocket Wifi</a>
+					</h3>
+					<p>pocket wifi for tourists</p>
+				</div>
+			</div>
+			<div class="col-lg-3 col-sm-6">
+				<div class="single_ihotel_list">
+					<img src="/resources/image/usim.png" alt="" style="height: 189px">
+					<h3>
+						<a href="<%=request.getContextPath()%>/reservation/product/usim"> Usim</a>
+					</h3>
+					<p>Don't forget! You will need this!</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!--::industries end::-->
+
+
+<script>
+	//뉴스api
+$(document).ready(function() {	
+	$.ajax({
+		url : "<c:url value='/news/news'/>"
+		, dataType : "json"
+		, success : function (data) {
+			var $news = $('.single_event_slider').find('.event_slider_content');
+			var tb = $("<ul/>");
+			window.apidata=data;
+			$.each(data.items, function(i,el){
+				
+				var href_title = '<a href="' + el.link + '"style = "color : black ; font-size : 15pt;"' +'target="_blank">' + el.title + '</a>';
+				var row = $("<li/><br>").append(href_title);				
+				tb.append(row);
+			});
+			
+			$news.append(tb);
+			
+		},error : function () {
+			
+		}
+			
+		
+	});//ajax끝
+});	
+	
+</script>
+<%@ include file="/WEB-INF/inc/footer.jsp"%>
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/jquery/lib/jquery.js"></script>
+
+</body>
+</html>

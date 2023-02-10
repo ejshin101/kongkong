@@ -1,0 +1,62 @@
+package com.kongkong.reservation.service;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kongkong.reservation.dao.IReservationDao;
+import com.kongkong.reservation.vo.ReservationVO;
+
+@Service
+public class ReservationServiceImpl implements IReservationService{
+	
+	private static ReservationServiceImpl instance = getInstance();
+	
+	private ReservationServiceImpl() {
+	}
+	
+	private static ReservationServiceImpl getInstance() {
+		if (instance == null)
+			instance = new ReservationServiceImpl();
+		return instance;
+	}
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	private IReservationDao reservationDao;
+	
+	@Override
+	public List<ReservationVO> getReserveList(ReservationVO reserve) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ReservationVO getReserve(int bookNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int insertAttach(ReservationVO reserve) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int updateReserve(int bookNo) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int deleteReserve(int bookNo) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

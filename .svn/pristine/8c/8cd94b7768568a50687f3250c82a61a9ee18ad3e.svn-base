@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kongkong.free.dao.IFreeBoardDao">
+
+	<select id="getBoardList" resultType="com.kongkong.free.vo.FreeBoardVO">
+		SELECT bo_no	
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+		  FROM free_board	
+	</select>
+	<select id="getBoard" resultType="com.kongkong.free.vo.FreeBoardVO">
+		SELECT bo_no	
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+		  FROM free_board
+		 WHERE bo_no = #{gracePark}
+	</select>
+</mapper>

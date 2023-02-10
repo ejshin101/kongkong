@@ -1,0 +1,51 @@
+package com.kongkong.signup.web;
+
+import javax.inject.Inject;
+import javax.validation.groups.Default;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kongkong.common.valid.ValidGroup;
+import com.kongkong.member.vo.MemberVO;
+import com.kongkong.signup.service.ISignUpService;
+
+
+@Controller
+public class SignUpController {
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Inject
+	private ISignUpService signupService;
+	
+	@RequestMapping("/signup/signup.wow")
+	public String signup(@ModelAttribute("member") MemberVO member) {
+		return "signup/signup";
+	}
+	
+	
+	@RequestMapping("/signup/signupUser.wow")
+	public String signupUser( @Validated({ Default.class, ValidGroup.InsertType.class }) @ModelAttribute("member") MemberVO member
+												, BindingResult errors, Model model) {
+		logger.debug("member={}" , member );
+		
+		if (errors.hasErrors()) {
+			logger.error(errors.toString());
+			return "signup/signup";
+		}
+		
+		model.addAttribute("member", member);
+		
+		signupService.signupUser(member);
+		
+		return "redirect:/";
+	}
+
+}

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.kongkong.favorite.dao.IFavoriteDao">
+ 
+ <select id="getFavoriteList" resultType="com.kongkong.favorite.vo.FavoriteVO">
+ SELECT fa_no
+       , fa_bo_no
+       , fa_mem_id
+       , fa_category
+       , fa_date
+    FROM favorite
+   WHERE fa_mem_id = #{memId}
+ </select>
+ 
+ <select id="getFavorite" resultType="com.kongkong.favorite.vo.FavoriteVO">
+ SELECT fa_no
+       , fa_bo_no
+       , fa_mem_id
+       , fa_category
+       , fa_date
+    FROM favorite
+   WHERE fa_bo_no = #{faBoNo}
+     AND fa_category = #{faCategory}
+     AND fa_mem_id = #{faMemId}
+ </select>
+ 
+ 
+ <insert id="insertFavorite">
+ INSERT INTO favorite (
+    fa_no
+    , fa_bo_no
+    , fa_mem_id
+    , fa_category
+    , fa_date
+) VALUES (
+	seq_favorite.nextval
+    , #{faBoNo}
+    , #{faMemId}
+    , #{faCategory}
+    , SYSDATE
+)
+ </insert>
+
+<delete id="deleteFavorite">
+DELETE FROM favorite
+ WHERE fa_bo_no = #{faBoNo}
+   AND fa_category = #{faCategory}
+   AND fa_mem_id = #{faMemId}
+</delete>
+
+ </mapper>

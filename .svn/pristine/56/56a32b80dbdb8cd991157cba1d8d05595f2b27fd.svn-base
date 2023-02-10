@@ -1,0 +1,36 @@
+package com.kongkong.favorite.vo;
+
+public class FavoriteVO {
+	private int faNo;                  /* 즐겨찾기 번호 */
+	private int faBoNo;                /* 게시판 번호 */
+	private String faMemId;            /* 즐겨찾기 아이디 */
+	private String faBoTitle;          /* 게시판 글 제목 */
+	
+	
+	public int getFaNo() {
+		return faNo;
+	}
+	public void setFaNo(int faNo) {
+		this.faNo = faNo;
+	}
+	public int getFaBoNo() {
+		return faBoNo;
+	}
+	public void setFaBoNo(int faBoNo) {
+		this.faBoNo = faBoNo;
+	}
+	public String getFaMemId() {
+		return faMemId;
+	}
+	public void setFaMemId(String faMemId) {
+		this.faMemId = faMemId;
+	}
+	public String getFaBoTitle() {
+		return faBoTitle;
+	}
+	public void setFaBoTitle(String faBoTitle) {
+		this.faBoTitle = faBoTitle;
+	}
+	
+	
+}

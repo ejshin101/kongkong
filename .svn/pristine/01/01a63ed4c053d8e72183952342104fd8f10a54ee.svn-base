@@ -1,0 +1,90 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>자유게시판 - 글 수정</title>
+</head>
+<body>
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+<div class="container border" style="border-radius: 20px;">
+  <div class="page-header">
+  	<div style="margin: 20px;"></div>
+    <h3 align="center">게시판 수정</h3>
+  </div>
+  
+	<form:form action="freeModify.wow" modelAttribute="board" method="post">
+	
+	<input type="hidden" name="boWriter" value="${board.boWriter}">
+	<input type="hidden" name="boNo" value="${board.boNo}">
+	
+	<table class="table table-hover">
+		<colgroup>
+			<col width="20%" />
+			<col/>
+		</colgroup>
+		<tr>
+	      <th>글번호</th>
+	      <td>${board.boNo}</td>
+    	</tr>
+		<tr>
+			<th>제목</th>
+			<td>
+				<form:input path="boTitle" cssClass="form-control input-sm"/>
+				<form:errors path="boTitle" />
+			</td>
+		</tr>
+		<tr>
+			<th>작성자</th>
+			<td>
+			${board.boWriter}
+			</td>
+		</tr>
+		<tr>
+			<th>분류</th>
+			<td>
+				<form:select path="boCategory" cssClass="form-control input-sm" >
+					<option value="FREE"  <c:if test="${board.boCategory == 'FREE'}"> selected </c:if>>자유게시판</option>
+					<option value="TIP"   <c:if test="${board.boCategory == 'TIP'}"> selected </c:if>>Tip</option>
+					<c:if test='${sessionScope.USER_INFO.userRole eq "admin"}'>
+					<option value="NOTICE"   <c:if test="${board.boCategory == 'NOTICE'}"> selected </c:if>>공지사항</option>
+					</c:if>
+				</form:select>
+			</td>
+		</tr>
+		<tr>
+			<th>내용</th>
+			<td>
+				<form:textarea rows="10" path="boContent" cssClass="form-control input-sm" />
+			</td>
+		</tr>
+    <tr>
+      <th>조회수</th>
+      <td>${board.boHit}</td>
+    </tr>
+    <tr>
+      <th>등록일자</th>
+      <td>${board.boRegDate}</td>
+    </tr>   		
+		<tr class="">
+			<td colspan="2">
+			<div class="row">
+				<div class="col-md-4">
+	              <a href="boardHome.wow" class="btn btn-dark">목록</a>
+	              <button type="submit" class="btn btn-primary">저장</button>
+	              </div>
+	              <div class="col-md-4" style="text-align: center;">
+	              </div>
+	              <div class="col-md-4" style="text-align: right;">
+	              <button type="submit" id="submit" formaction="freeDelete.wow" class="btn btn-danger">삭제</button>
+	              </div>
+              </div>
+			</td>
+		</tr>
+	</table>
+	</form:form>
+</div><!-- container -->
+</body>
+</html>
+
+

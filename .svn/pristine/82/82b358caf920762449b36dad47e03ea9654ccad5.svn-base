@@ -1,0 +1,18 @@
+package com.kongkong.flight.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.kongkong.flight.dao.IFlightDao;
+import com.kongkong.flight.vo.FlightVO;
+@Service
+public class FlightServiceImpl implements IFlightService{
+
+	IFlightDao flightDao;
+	@Override
+	public List<FlightVO> getkName(FlightVO flight) {
+		return flightDao.getkName(flight);
+	}
+
+}

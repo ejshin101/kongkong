@@ -1,0 +1,30 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<div class="container">
+	<table border="1">
+			<thead>
+				<tr>
+					<td>글번호</td>
+					<td>제목</td>
+					<td>글쓴이</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>${boards.boNo}</td>
+					<td>${boards.boTitle}</td>
+					<td>${boards.boWriter}</td>
+				</tr>
+			</tbody>
+		</table>
+</div>
+</body>
+</html>

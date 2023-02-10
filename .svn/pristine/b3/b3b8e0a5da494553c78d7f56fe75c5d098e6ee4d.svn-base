@@ -1,0 +1,11 @@
+package com.kongkong.admin.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface IAdminDao {
+	public List<Map<String, Object>> getChatList();
+}

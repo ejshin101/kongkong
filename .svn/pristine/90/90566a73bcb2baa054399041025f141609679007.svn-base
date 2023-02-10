@@ -1,0 +1,183 @@
+package com.kongkong.mypage.web;
+
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+import javax.validation.groups.Default;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kongkong.code.service.ICodeService;
+import com.kongkong.code.vo.CodeVO;
+import com.kongkong.common.valid.ValidGroup;
+import com.kongkong.favorite.vo.FavoriteVO;
+import com.kongkong.free.vo.FreeBoardVO;
+import com.kongkong.login.service.IloginService;
+import com.kongkong.login.vo.UserVO;
+import com.kongkong.member.service.IMemberService;
+import com.kongkong.member.vo.MemberVO;
+import com.kongkong.mypage.service.IMyPageService;
+import com.kongkong.reservation.vo.ReservationVO;
+
+@Controller
+public class MyPageController {
+
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	public IMyPageService mypageService;
+	
+	@Autowired
+	public IMemberService memberService;
+	
+	@Autowired
+	public IloginService loginService;
+	
+	@Inject
+	private ICodeService codeService;
+	
+	@ModelAttribute("categories")
+	public List<CodeVO> category() {
+		logger.debug("대륙 공통코드를 처리합니다.");
+		List<CodeVO> categories =  codeService.getCodeListByParent("CO00");
+		return categories;
+	}
+	
+	@RequestMapping("/myPage/myPageHome.wow")
+	public String myPageHome( HttpSession session, @ModelAttribute("UserId") String UserId, Model model) {
+		
+		// 내가 쓴 글 조회
+		UserVO user = (UserVO)session.getAttribute("USER_INFO");
+		UserId = user.getUserId();
+		System.out.println(UserId);
+		
+		List<FreeBoardVO> myBoardList = mypageService.getBoardList(UserId, session);
+		model.addAttribute("myBoardList", myBoardList);
+		
+		// 예약 현황 조회
+		List<ReservationVO> myReservationList = mypageService.getReserBoardList(UserId, session);
+		model.addAttribute("myReservationList",myReservationList);
+		
+		// 즐겨찾기 조회
+		List<FavoriteVO> myFavoriteList = mypageService.getFavList(UserId, session);
+		model.addAttribute("myFavoriteList", myFavoriteList);
+		
+		return "myPage/myPageHome";
+	}
+	
+	@RequestMapping("/myPage/myPrivacy.wow")
+	public void myPrivacy( Model model , HttpSession session) {
+		UserVO vo = (UserVO)session.getAttribute("USER_INFO");
+		MemberVO member = memberService.getMember(vo.getUserId());
+		model.addAttribute("member", member);
+		//mypageService.infoSelect(member);
+	}
+	
+	
+	@PostMapping("/myPage/changeModify.wow")
+	public String changeModify(@Validated({ Default.class, ValidGroup.ModifyType.class }) @ModelAttribute("member") MemberVO member
+											,BindingResult errors
+											,Model model, HttpSession session) {
+	
+		if (errors.hasErrors()) {
+			return "myPage/myPrivacy";
+		}
+		model.addAttribute("member", member);
+		
+		mypageService.infoModify(member);
+		
+		
+		// 전의 세션내용을 지우지 않아도 잘 저장되는지?
+		// session.setAttribute("USER_INFO", member);
+		
+
+		
+		return "redirect:/login/logout.wow";
+	}
+	
+	
+	
+	//비밀번호 변경
+	
+	@RequestMapping("/myPage/passWordChange.wow")
+	public void passWordChange(@ModelAttribute("member") MemberVO member) {
+		
+	}
+	
+	@RequestMapping("/myPage/passWordUpdate.wow")
+	public String passWordUpdate(@Validated(ValidGroup.PasswordCheckType.class )  @ModelAttribute("member") MemberVO member,BindingResult errors, HttpSession session, Model model) {
+		UserVO user = (UserVO) session.getAttribute("USER_INFO");
+		MemberVO vo = memberService.getMember(user.getUserId());
+		 
+		if(errors.hasErrors()) {
+			return "myPage/passWordChange";
+		}
+
+		 if( member.getMemPass().equals(vo.getMemPass()) ) {
+			 member.setMemId(user.getUserId());
+			 mypageService.infoUpdate(member);
+			 session.removeAttribute("USER_INFO");
+			 return "redirect:/login/login.wow";
+		 } else { 
+			 errors.reject("errors.notMatched", "패스워드가 올바르지 않습니다.");
+			 return "myPage/passWordChange";
+		 }
+	}
+	
+	
+	//회원 탈퇴
+	
+	@RequestMapping("/myPage/withDrawal.wow")
+	public void Withdrawal(@ModelAttribute("member") MemberVO member) {
+		
+	}
+	
+	@RequestMapping("/myPage/infoDelete.wow")
+	public String infoDelete(@ModelAttribute("member") MemberVO member, HttpSession session) {
+		UserVO user = (UserVO) session.getAttribute("USER_INFO");
+		MemberVO vo = memberService.getMember(user.getUserId());
+	
+		String memId = member.getMemId(); // 입력한 id
+		String mempw = member.getMemPass(); // 입력한 pass
+		
+		 if(vo.getMemId().equals(memId) && vo.getMemPass().equals(mempw)) {
+			 mypageService.infoDelete(member);
+			 session.removeAttribute("USER_INFO");
+		 } else { 
+			 return "myPage/withDrawal";
+		 }
+		 return "home";
+	}
+
+	
+	//나의 예약 조회
+	
+//	@Autowired
+//	public IReservationService reservationService;
+//	
+//	@ModelAttribute("reservations")
+//	public List<ReservationVO> Reservation() {
+//		//List<ReservationVO> reservation = reservationService.get;
+//		return reservations;
+//	}
+//}
+	
+//	@RequestMapping("/myPage/myReservation.wow")
+//	public void myReservation() {
+//
+//	}
+
+	
+
+}

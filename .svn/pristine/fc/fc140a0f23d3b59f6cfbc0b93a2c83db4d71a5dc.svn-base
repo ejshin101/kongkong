@@ -1,0 +1,513 @@
+package com.kongkong.free.web;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.groups.Default;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpRequest;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kongkong.code.service.ICodeService;
+import com.kongkong.code.vo.CodeVO;
+import com.kongkong.common.valid.ValidGroup;
+import com.kongkong.favorite.service.IFavoriteService;
+import com.kongkong.free.service.IFreeBoardService;
+import com.kongkong.free.vo.BoardScopeVO;
+import com.kongkong.free.vo.FreeBoardSearchVO;
+import com.kongkong.free.vo.FreeBoardVO;
+import com.kongkong.login.vo.UserVO;
+import com.kongkong.util.CookieUtils;
+
+
+@Controller
+public class FreeBoardController {
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Inject // 앞으론 Inject
+	private IFreeBoardService freeBoardService;
+	
+	@Inject
+	private ICodeService codeService;
+	
+	@Inject
+	IFavoriteService favoriteService;
+	
+	@ModelAttribute("categories")
+	public List<CodeVO> category() {
+		logger.debug("보드 공통코드를 처리합니다.");
+		List<CodeVO> categories =  codeService.getCodeListByParent("BO00");
+		return categories;
+	}
+
+	@RequestMapping("/free/boardHome.wow")
+	public String freeList(FreeBoardVO board, @ModelAttribute("searchVO") FreeBoardSearchVO searchVO, Model model)  {
+		
+		searchVO.setTotalRowCount(freeBoardService.getBoardCount(searchVO));
+		searchVO.setting(); 
+		
+		List<FreeBoardVO> freeBoardList = freeBoardService.getBoardList(searchVO);
+		model.addAttribute("freeBoardList", freeBoardList);
+		
+		List<FreeBoardVO> NoticeList = freeBoardService.onlyNotice();
+		model.addAttribute("NoticeList", NoticeList);
+		
+		List<FreeBoardVO> onlyFreeBest = freeBoardService.onlyFreeBest();
+		model.addAttribute("onlyFreeBest", onlyFreeBest);
+
+		return "free/boardHome";
+	}
+	
+	@RequestMapping("/free/boardTip.wow")
+	public String boardTip(@ModelAttribute("searchVO") FreeBoardSearchVO searchVO, Model model, HttpSession session, String Code) {
+		
+		searchVO.setTotalRowCount(freeBoardService.getTipBoardCount(searchVO));
+		UserVO user = (UserVO)session.getAttribute("USER_INFO");
+		searchVO.setting(); 
+		
+		if(user != null) {
+			Code = user.getUserLike();
+		}
+		
+		List<FreeBoardVO> onlyTip = freeBoardService.onlyTip(Code);
+		model.addAttribute("onlyTip", onlyTip);
+		
+		List<FreeBoardVO> onlyTipBest = freeBoardService.onlyTipBest();
+		model.addAttribute("onlyTipBest", onlyTipBest);
+		
+		List<FreeBoardVO> NoticeList = freeBoardService.onlyNotice();
+		model.addAttribute("NoticeList", NoticeList);
+
+		List<FreeBoardVO> TipList = freeBoardService.getBoardTip(searchVO);
+		model.addAttribute("TipList", TipList);
+		
+		return "free/boardTip";
+	}
+	
+	@RequestMapping("/free/boardNotice.wow")
+	public String boardNotice(@ModelAttribute("searchVO") FreeBoardSearchVO searchVO, Model model) {
+		
+		searchVO.setTotalRowCount(freeBoardService.getNoticeBoardCount(searchVO));
+		searchVO.setting(); 
+		
+		List<FreeBoardVO> NoticeLists = freeBoardService.getBoardNoticeList(searchVO);
+		model.addAttribute("NoticeLists", NoticeLists);
+		
+		List<FreeBoardVO> NoticeList = freeBoardService.onlyNotice();
+		model.addAttribute("NoticeList", NoticeList);
+
+		return "free/boardNotice";
+	}
+	
+	@RequestMapping("/free/boardQna.wow")
+	public String boardQna(@ModelAttribute("searchVO") FreeBoardSearchVO searchVO, Model model) {
+		
+		searchVO.setTotalRowCount(freeBoardService.getQnaBoardCount(searchVO));
+		searchVO.setting(); 
+		
+		List<FreeBoardVO> NoticeList = freeBoardService.onlyNotice();
+		model.addAttribute("NoticeList", NoticeList);
+
+		List<FreeBoardVO> QnaList = freeBoardService.getBoardQnaList(searchVO);
+		model.addAttribute("QnaList", QnaList);
+
+		return "free/boardQna";
+	}
+
+	
+	
+	
+	@RequestMapping("/free/freeView.wow")
+	public String freeView(int boNo, HttpServletResponse resp, HttpServletRequest req,HttpSession session) throws Exception {
+		
+		UserVO user = (UserVO) session.getAttribute("USER_INFO");
+		
+		FreeBoardVO boards = freeBoardService.getBoard(boNo);
+		CookieUtils utils = new CookieUtils(req);
+		
+		if(boards == null) {
+			return "kongkongError";
+		}
+		
+		// 조회수
+		if(boards != null) {
+			if(!utils.existsHit("FREE",boards.getBoNo())){
+				freeBoardService.increaseHit(boNo);	
+				Cookie cook = utils.saveHit("FREE", boards.getBoNo());
+				resp.addCookie(cook);
+			}
+		}
+		
+		// 회원일 경우
+		if(user != null) {
+			// 블락된 글
+			if(boards.getBoBlock().equals("Y")) {
+				if(user.getUserRole().equals("admin")) {
+					
+					req.setAttribute("boards", boards);
+					return "free/freeView";
+				}
+				return "kongkongError";
+			}
+			// 삭제된 글
+			if(boards.getBoDelYn().equals("Y")) {
+				if(user.getUserRole().equals("admin")) {
+					
+					req.setAttribute("boards", boards);
+					return "free/freeView";
+				}
+				return "kongkongError";
+			}
+			
+			req.setAttribute("boards", boards);
+			return "free/freeView";
+			
+		}
+		
+		if(user == null) {
+			if(boards.getBoBlock().equals("Y")) {
+				return "kongkongError";
+			}
+			
+			if(boards.getBoDelYn().equals("Y")) {
+				return "kongkongError";
+			}
+			
+			req.setAttribute("boards", boards);
+			return "free/freeView";
+		}
+		return "";
+		
+//		// 즐겨찾기 조회 시작
+//		UserVO user = (UserVO) session.getAttribute("USER_INFO");
+//		if(user != null) {
+//			FavoriteVO favorite = new FavoriteVO();
+//			favorite.setFaBoNo(boNo);
+//			favorite.setFaCategory("FREE");
+//			favorite.setFaMemId(user.getUserId());
+//			req.setAttribute("favorite", favoriteService.getFavorite(favorite));
+//		}
+//		// 즐겨찾기 조회 끝
+		
+	}
+	
+	@RequestMapping("/free/tipView.wow")
+	public String tipView(int boNo, HttpServletResponse resp, HttpServletRequest req, HttpSession session, Model model) throws Exception {
+		UserVO user = (UserVO) session.getAttribute("USER_INFO");
+		
+		FreeBoardVO boards = freeBoardService.getBoard(boNo);
+		BoardScopeVO boardScope = freeBoardService.boardScope(boNo);
+		
+		BoardScopeVO ScopeVal1 = freeBoardService.boardScopeVal1(boNo);
+		BoardScopeVO ScopeVal2 = freeBoardService.boardScopeVal2(boNo);
+		BoardScopeVO ScopeVal3 = freeBoardService.boardScopeVal3(boNo);
+		BoardScopeVO ScopeVal4 = freeBoardService.boardScopeVal4(boNo);
+		BoardScopeVO ScopeVal5 = freeBoardService.boardScopeVal5(boNo);
+		
+		req.setAttribute("ScopeVal1", ScopeVal1);
+		req.setAttribute("ScopeVal2", ScopeVal2);
+		req.setAttribute("ScopeVal3", ScopeVal3);
+		req.setAttribute("ScopeVal4", ScopeVal4);
+		req.setAttribute("ScopeVal5", ScopeVal5);
+		
+		
+		CookieUtils utils = new CookieUtils(req);
+		
+		req.setAttribute("boardScope", boardScope);
+		
+		
+		if(boards == null) {
+			return "kongkongError";
+		}
+		
+		if(! boards.getBoCategory().equals("TIP")) {
+			return "kongkongError";
+		}
+		
+		if(!utils.existsHit("FREE",boards.getBoNo())){
+			freeBoardService.increaseHit(boNo);	
+			Cookie cook = utils.saveHit("FREE", boards.getBoNo());
+			resp.addCookie(cook);
+		}
+		
+		// 회원일 경우
+				if(user != null) {
+					
+					// 블락된 글
+					if(boards.getBoBlock().equals("Y")) {
+						if(user.getUserRole().equals("admin")) {
+							
+							req.setAttribute("boards", boards);
+							return "free/tipView";
+						}
+						return "kongkongError";
+					}
+					
+					// 삭제된 글
+					if(boards.getBoDelYn().equals("Y")) {
+						if(user.getUserRole().equals("admin")) {
+							
+							req.setAttribute("boards", boards);
+							return "free/tipView";
+						}
+						return "kongkongError";
+					}
+					
+					req.setAttribute("boards", boards);
+					return "free/tipView";
+					
+				}
+				
+				if(user == null) {
+					if(boards.getBoBlock().equals("Y")) {
+						return "kongkongError";
+					}
+					
+					if(boards.getBoDelYn().equals("Y")) {
+						return "kongkongError";
+					}
+					
+					req.setAttribute("boards", boards);
+					return "free/tipView";
+				}
+				return "";
+	}
+	
+	@RequestMapping("/free/qnaView.wow")
+	public String qnaView(int boNo, HttpServletResponse resp, HttpServletRequest req, HttpSession session) throws Exception {
+		UserVO user = (UserVO) session.getAttribute("USER_INFO");
+		
+		FreeBoardVO boards = freeBoardService.getQnaBoard(boNo);
+		CookieUtils utils = new CookieUtils(req);
+		
+		if(boards == null) {
+			return "kongkongError";
+		}
+		
+		if(! boards.getBoCategory().equals("QNA")) {
+			return "kongkongError";
+		}
+		
+		if(!utils.existsHit("FREE",boards.getBoNo())){
+			freeBoardService.increaseHit(boNo);	
+			Cookie cook = utils.saveHit("FREE", boards.getBoNo());
+			resp.addCookie(cook);
+		}
+		
+		
+		// 회원일 경우
+		if(user != null) {
+			
+			// 블락된 글
+			if(boards.getBoBlock().equals("Y")) {
+				if(user.getUserRole().equals("admin")) {
+					
+					req.setAttribute("boards", boards);
+					return "free/qnaView";
+				}
+				return "kongkongError";
+			}
+			
+			// 삭제된 글
+			if(boards.getBoDelYn().equals("Y")) {
+				if(user.getUserRole().equals("admin")) {
+					
+					req.setAttribute("boards", boards);
+					return "free/qnaView";
+				}
+				return "kongkongError";
+			}
+			
+			req.setAttribute("boards", boards);
+			return "free/qnaView";
+			
+		}
+		
+		if(user == null) {
+			if(boards.getBoBlock().equals("Y")) {
+				return "kongkongError";
+			}
+			
+			if(boards.getBoDelYn().equals("Y")) {
+				return "kongkongError";
+			}
+			
+			req.setAttribute("boards", boards);
+			return "free/qnaView";
+		}
+		return "";
+	}
+	
+	@GetMapping("/free/freeRegist.wow")
+	public String freeForm(@ModelAttribute("board") FreeBoardVO board) {
+		
+		return "free/freeForm";
+	}
+	
+	@PostMapping("/free/freeRegist.wow")
+	public String freeRegist(@Validated({Default.class, ValidGroup.RegistType.class}) @ModelAttribute("board") FreeBoardVO board
+							 , BindingResult errors, HttpSession session) {
+		if (errors.hasErrors()) {
+			return "free/freeForm";
+		}
+		
+		freeBoardService.registBoard(board);
+		System.out.println(board.getBoNo()+ " Controller");
+		
+		if(board.getBoCategory().equals("QNA")) {
+			return "redirect:/free/qnaView.wow?boNo="+board.getBoNo();
+		} else if(board.getBoCategory().equals("FREE")) {
+			return "redirect:/free/freeView.wow?boNo="+board.getBoNo();
+		} else if(board.getBoCategory().equals("TIP")) {
+			return "redirect:/free/tipView.wow?boNo="+board.getBoNo();
+		} else if(board.getBoCategory().equals("NOTICE")) {
+			return "redirect:/free/freeView.wow?boNo="+board.getBoNo();
+		} else {
+			return "kongkong";
+		}
+		
+	}
+	
+	@GetMapping("/free/qnaRegist.wow")
+	public String qnaRegist(@ModelAttribute("board") FreeBoardVO board) {
+		
+		return "free/qnaForm";
+	}
+	
+	@PostMapping("/free/qnaRegist.wow")
+	public String qnaRegist(@Validated({Default.class, ValidGroup.RegistType.class}) @ModelAttribute("board") FreeBoardVO board
+							 , BindingResult errors, HttpSession session) {
+		if (errors.hasErrors()) {
+			return "free/qnaForm";
+		}
+		
+		freeBoardService.registBoard(board);
+		System.out.println(board.getBoNo()+ " Controller");
+		
+		if(board.getBoCategory().equals("QNA")) {
+			return "redirect:/free/qnaView.wow?boNo="+board.getBoNo();
+		}
+		return "kongkong";
+		
+	}
+	
+	
+	@GetMapping("/free/freeModify.wow")
+	public String freeModify(int boNo, Model model) {
+		
+		FreeBoardVO board = freeBoardService.getBoard(boNo);
+		model.addAttribute("board", board);
+		
+		return "free/freeEdit";
+	}
+	
+	@PostMapping("/free/freeModify.wow")
+	public String freeModify(@Validated({Default.class, ValidGroup.ModifyType.class}) @ModelAttribute("board") FreeBoardVO board
+						     , BindingResult errors) throws Exception {
+		
+		if (errors.hasErrors()) {
+			return "free/freeEdit";
+		}
+		
+		freeBoardService.modifyBoard(board);
+
+		if(board.getBoCategory().equals("QNA")) {
+			return "redirect:/free/qnaView.wow?boNo="+board.getBoNo();
+		} else if(board.getBoCategory().equals("FREE")) {
+			return "redirect:/free/freeView.wow?boNo="+board.getBoNo();
+		} else if(board.getBoCategory().equals("TIP")) {
+			return "redirect:/free/tipView.wow?boNo="+board.getBoNo();
+		} else {
+			return "boardHome";
+		}
+	}
+	
+	@PostMapping("/free/qnaModify.wow")
+	public String qnaModify(@ModelAttribute("boards") FreeBoardVO board) {
+		
+		freeBoardService.modifyQna(board);
+
+		if(board.getBoCategory().equals("QNA")) {
+			return "redirect:/free/qnaView.wow?boNo="+board.getBoNo();
+		} else {
+			return "redirect:/free/freeView.wow?boNo="+board.getBoNo();
+		}
+	}
+	
+
+	@RequestMapping("/free/freeDelete.wow")
+	public String freeDelete(@ModelAttribute("board") FreeBoardVO board) throws Exception {
+		
+		if(board.getBoNo()<1){
+			return "redirect:/free/boardHome.wow";
+		}
+
+		freeBoardService.removeBoard(board);
+
+		return "kongkong";
+	}
+	
+	@RequestMapping("/free/starPoint.wow")
+	public String starScope(int starinput, @ModelAttribute("board") FreeBoardVO board, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		CookieUtils utils = new CookieUtils(req);
+		
+		if( ! utils.existsHit("StarPoint",board.getBoNo())){
+			board.setBoScope(starinput);
+			freeBoardService.starScope(board);
+			
+			Cookie cook = utils.saveHit("StarPoint", board.getBoNo());
+			resp.addCookie(cook);
+			
+			return "starPointAlert";
+		}
+		
+		return "starPointAlertError";
+	}
+	
+	//신고하기
+	@RequestMapping("/free/boardSingo.wow")
+	public String freeSingo(FreeBoardVO board) {
+		
+		if(board.getBoNo()<1){
+			return "redirect:/free/boardHome.wow";
+		}
+		
+		freeBoardService.singoBoard(board);
+		
+		return "kongkong";
+		
+	}
+	
+	// 신고 취소하기
+	@RequestMapping("/admin/singoNope.wow")
+	public String freeSingoNope(FreeBoardVO board) {
+		freeBoardService.singoNopeBoard(board);
+		
+		return "admin/singo";
+	}
+	
+	@RequestMapping("/free/mileageShop.wow")
+	public String mileageShop() {
+		return "free/mileageShop";
+	}
+	
+	@RequestMapping("/free/mileageShopView.wow")
+	public String mileageShopView() {
+		return "free/mileageShopView";
+	}
+}

@@ -1,0 +1,69 @@
+package com.kongkong.mypage.web;
+
+import javax.servlet.http.HttpSession;
+import javax.validation.groups.Default;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kongkong.common.valid.ValidGroup;
+import com.kongkong.login.service.IloginService;
+import com.kongkong.login.vo.UserVO;
+import com.kongkong.member.service.IMemberService;
+import com.kongkong.member.vo.MemberVO;
+import com.kongkong.mypage.service.IMyPageService;
+
+@Controller
+public class myPageController {
+
+	@Autowired
+	public IMyPageService mypageService;
+	
+	@Autowired
+	public IMemberService memberService;
+	
+	@Autowired
+	public IloginService loginService;
+	
+	@RequestMapping("/myPage/myPageHome.wow")
+	public void myPageHome( HttpSession session) {
+		
+	}
+	
+	@RequestMapping("/myPage/myPrivacy.wow")
+	public void myPrivacy( Model model , HttpSession session) {
+		UserVO vo = (UserVO)session.getAttribute("USER_INFO");
+		MemberVO member = memberService.getMember(vo.getUserId());
+		model.addAttribute("member", member);
+		//mypageService.infoSelect(member);
+	}
+	
+	
+	@PostMapping("/myPage/changeModify.wow")
+	public String changeModify(@Validated({ Default.class, ValidGroup.ModifyType.class }) @ModelAttribute("member") MemberVO member
+											,BindingResult errors
+											,Model model, HttpSession session) {
+	
+		if (errors.hasErrors()) {
+			return "myPage/myPrivacy";
+		}
+		model.addAttribute("member", member);
+		
+		mypageService.infoModify(member);
+		
+		
+		// 전의 세션내용을 지우지 않아도 잘 저장되는지?
+		//session.setAttribute("USER_INFO", member);
+		
+
+		
+		return "myPage/myPageHome";
+	}
+
+}

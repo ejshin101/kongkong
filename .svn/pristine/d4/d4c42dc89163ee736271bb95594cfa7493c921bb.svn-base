@@ -1,0 +1,24 @@
+package com.kongkong.admin.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.kongkong.admin.vo.AdminVO;
+import com.kongkong.free.vo.FreeBoardVO;
+
+@Mapper
+public interface IAdminDao {
+	public List<Map<String, Object>> getChatYearList(AdminVO adminVO);
+	public List<Map<String, Object>> getChatMonthList(AdminVO adminVO);
+	public List<Map<String, Object>> getChat10YearList(AdminVO adminVO);
+	
+	public List<FreeBoardVO> getFreeSelect(FreeBoardVO free);
+
+	public List<FreeBoardVO> getFreeBlockSelect(FreeBoardVO free);
+	
+	public int FreeBlockUpdate(FreeBoardVO free);
+	
+}
+

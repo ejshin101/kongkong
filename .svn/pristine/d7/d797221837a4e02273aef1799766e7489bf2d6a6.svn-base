@@ -1,0 +1,108 @@
+package com.kongkong.login.web;
+
+import java.io.IOException;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.kongkong.exception.BizNotFoundException;
+import com.kongkong.exception.BizPasswordNotMatchedException;
+import com.kongkong.login.service.IloginService;
+import com.kongkong.login.vo.UserVO;
+import com.kongkong.member.vo.MemberVO;
+import com.kongkong.util.CookieUtils;
+
+@Controller
+public class LoginController {
+	
+	@Autowired
+	private IloginService loginService;
+
+	@RequestMapping("/login/login.wow")
+	public String loginGet(@ModelAttribute("user") UserVO vo,HttpServletRequest req, Model model) {
+		
+		try {
+			CookieUtils cookieUtils = new CookieUtils(req);
+			if ( cookieUtils.getValue("ID_REMEMBER") != null ) {
+				model.addAttribute("rememberId",cookieUtils.getValue("ID_REMEMBER"));
+				model.addAttribute("rememberChecked","checked=\"checked\"");
+			}
+		}catch (IOException e) {
+			
+		}
+		return "login/login";
+	}
+	
+	@PostMapping("/login/login.wow")
+	public String loginPost(@ModelAttribute("user") UserVO vo
+								 , BindingResult error
+								 , MemberVO member
+								 , @RequestParam(name = "idRemember", required = false) String remember 
+								 , HttpSession session
+								 , HttpServletResponse resp
+								 , HttpServletRequest req
+								 , ModelMap model) {
+		
+		try {
+			vo.setUserIp(req.getRemoteAddr());  
+			vo.setUserMileage(member.getMemMileage());
+			UserVO user = loginService.loginCheck(vo);
+			
+			if (user != null && user.getUserId() != null && !user.getUserId().equals("")) {
+				session.setAttribute("USER_INFO", user); 
+				
+				 EgovHttpSessionBindingListener listener = new EgovHttpSessionBindingListener();
+				 req.getSession().setAttribute(user.getUserId(), listener);
+				  
+				 return "redirect:/";
+			} 
+			
+			try {
+				//쿠키의  "아아디 기억하기" 가 Y 유무에따라
+				Cookie rememberCookie = null;		
+				if("Y".equals(remember)) {
+				// 하루 보관
+				rememberCookie = CookieUtils.createCookie("ID_REMEMBER", user.getUserId(),"/", 60*60*24);
+				}else {
+				//삭제 (maxage = 0)
+				rememberCookie = CookieUtils.createCookie("ID_REMEMBER", "","/", 0);
+				}
+				resp.addCookie(rememberCookie);
+				} catch (IOException e) {
+			}
+			
+			return "redirect:/";
+			
+		} catch (BizNotFoundException e) {
+			error.reject("notfound","조회실패" + e.getMessage());
+			return "login/login";
+		} catch (BizPasswordNotMatchedException e) {
+			error.reject("notfound","패스워드가 일치하지 않습니다.");
+			return "login/login";
+		}
+	} //
+
+	@RequestMapping("/login/logout.wow")
+	public String logout(HttpSession session, HttpServletRequest req, UserVO vo) {
+		UserVO user = (UserVO)session.getAttribute("USER_INFO");
+		user.setUserIp(req.getRemoteAddr());  
+		loginService.logOutCheck(user);
+		
+		session.invalidate();
+		return "login/login";
+	}
+	
+	
+}

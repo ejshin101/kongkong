@@ -1,0 +1,15 @@
+package com.kongkong.login.service;
+
+import com.kongkong.exception.BizNotFoundException;
+import com.kongkong.exception.BizPasswordNotMatchedException;
+import com.kongkong.login.vo.UserVO;
+
+
+public interface IloginService {
+	
+	public UserVO loginCheck(UserVO user) 
+			throws BizNotFoundException, BizPasswordNotMatchedException;
+	
+	public void logOutCheck(UserVO user);
+	
+}

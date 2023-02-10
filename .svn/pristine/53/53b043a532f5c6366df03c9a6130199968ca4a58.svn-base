@@ -1,0 +1,71 @@
+package com.kongkong.main;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.kongkong.exception.BizNotFoundException;
+import com.kongkong.exception.BizPasswordNotMatchedException;
+import com.kongkong.login.service.IloginService;
+import com.kongkong.login.vo.UserVO;
+import com.kongkong.member.service.IMemberService;
+import com.kongkong.member.vo.MemberVO;
+import com.kongkong.util.CookieUtils;
+
+/**
+ * Handles requests for the application home page.
+ */
+@Controller
+public class EtcPageController {
+	@RequestMapping("/etc/introduce")
+	public String introduce() {
+		return "etc/introduce";
+	}
+	@RequestMapping("/etc/business")
+	public String business() {
+		return "etc/business";
+	}
+	@RequestMapping("/etc/partnership")
+	public String partnership() {
+		return "etc/partnership";
+	}
+	@RequestMapping("/etc/recruitment")
+	public String recruitment() {
+		return "etc/recruitment";
+	}
+	@RequestMapping("/etc/conditions")
+	public String conditions() {
+		return "etc/conditions";
+	}
+	@RequestMapping("/etc/policy")
+	public String policy() {
+		return "etc/policy";
+	}
+	@RequestMapping("/etc/adolescentProtection")
+	public String adolescentProtection() {
+		return "etc/adolescentProtection";
+	}
+	@RequestMapping("/etc/personalInformation")
+	public String personalInformation() {
+		return "etc/personalInformation";
+	}
+	@RequestMapping("/etc/customerService")
+	public String customerService() {
+		return "etc/customerService";
+	}
+	
+	
+	
+}

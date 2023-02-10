@@ -1,0 +1,118 @@
+package com.kongkong.free.web;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kongkong.exception.BizNotFoundException;
+import com.kongkong.exception.BizPasswordNotMatchedException;
+import com.kongkong.free.dao.IFreeBoardDao;
+import com.kongkong.free.service.IFreeBoardService;
+import com.kongkong.free.vo.FreeBoardSearchVO;
+import com.kongkong.free.vo.FreeBoardVO;
+
+@Controller
+public class FreeBoardController {
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired // 앞으론 Inject
+	IFreeBoardService freeBoardService;
+
+	// 공지사항
+	@RequestMapping("/free/notice.wow")
+	public String notice(Model model, FreeBoardSearchVO searchVO) {
+//		searchVO.setTotalRowCount(freeBoardService.getBoardCount(searchVO));
+//		searchVO.setting(); 
+		List<FreeBoardVO> NoticeList = freeBoardService.getBoardNoticeList(searchVO);
+		model.addAttribute("NoticeList", NoticeList);
+		
+		return "free/notice";
+	}
+
+	// Q&A
+	@RequestMapping("/free/qna.wow")
+	public String qna(Model model, FreeBoardSearchVO searchVO) {
+//		searchVO.setTotalRowCount(freeBoardService.getBoardCount(searchVO));
+//		searchVO.setting(); 
+		List<FreeBoardVO> QnaList = freeBoardService.getBoardQnaList(searchVO);
+		model.addAttribute("QnaList", QnaList);
+		
+		return "free/qna";
+	}
+	// free
+	@RequestMapping("/free/freeList.wow")
+	public String free(Model model, FreeBoardSearchVO searchVO) {
+		searchVO.setTotalRowCount(freeBoardService.getBoardCount(searchVO));
+		searchVO.setting(); 
+		List<FreeBoardVO> freeBoardList = freeBoardService.getBoardList(searchVO);
+		
+		model.addAttribute("freeBoardList", freeBoardList);
+		
+		return "free/freeList";
+	}
+	
+
+	@RequestMapping("/free/boardHome.wow")
+	public String freeList(@ModelAttribute("searchVO") FreeBoardSearchVO searchVO, Model model) {
+		
+		List<FreeBoardVO> NoticeList = freeBoardService.getBoardNoticeList(searchVO);
+		model.addAttribute("NoticeList", NoticeList);
+
+		List<FreeBoardVO> PopularList = freeBoardService.getBoardPopularList(searchVO);
+		model.addAttribute("PopularList", PopularList);
+
+		return "free/boardHome";
+	}
+
+	@RequestMapping("/free/freeView.wow")
+	public String freeView(int boNo, Model model) {
+		FreeBoardVO boards = freeBoardService.getBoard(boNo);
+		model.addAttribute("boards", boards);
+		
+		return "free/freeView";
+	}
+	
+	@RequestMapping("/free/freeRegist.wow")
+	public String freeForm(@ModelAttribute("board") FreeBoardVO board) {
+		
+		return "free/freeForm";
+	}
+	
+	@PostMapping("/free/freeRegist.wow")
+	public String freeRegist(@ModelAttribute("board") FreeBoardVO board, Model model, int boNo) {
+		
+		model.addAttribute("board", board);
+		freeBoardService.registBoard(board);
+		
+		return "free/boardHome";
+	}
+	
+	@GetMapping("/free/freeModify")
+	public String freeModify(@ModelAttribute("board") FreeBoardVO board, int boNo, Model model) {
+		
+		FreeBoardVO boards = freeBoardService.getBoard(boNo);
+		model.addAttribute("boards", boards);
+		
+		return "free/freeEdit";
+	}
+	
+	@PostMapping("/free/freeModify")
+	
+	public String freeUpdate(@ModelAttribute("board") FreeBoardVO board)throws Exception {
+		freeBoardService.modifyBoard(board);
+		
+		return "free/boardHome";
+	}
+	
+}

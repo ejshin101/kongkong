@@ -1,0 +1,24 @@
+package com.kongkong.mypage.service;
+
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import com.kongkong.favorite.vo.FavoriteVO;
+import com.kongkong.free.vo.FreeBoardVO;
+import com.kongkong.member.vo.MemberVO;
+import com.kongkong.reservation.vo.ReservationVO;
+
+public interface IMyPageService {
+	
+	public void infoModify(MemberVO member);
+	public void infoSelect(MemberVO member);
+	public void infoDelete(MemberVO member);
+	public void infoUpdate(MemberVO member);
+	
+	public List<FreeBoardVO> getBoardList(String UserId, HttpSession session);
+	public List<ReservationVO> getReserBoardList(String UserId, HttpSession session);
+	public List<FavoriteVO> getFavList(String UserId, HttpSession session);
+	
+
+}

@@ -1,0 +1,8 @@
+package com.kongkong.reservation.vo;
+
+import com.kongkong.common.vo.PagingVO;
+
+@SuppressWarnings("serial")
+public class ReservationSearchVO extends PagingVO{
+
+}

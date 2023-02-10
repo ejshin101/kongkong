@@ -1,0 +1,84 @@
+package com.kongkong.free.web;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kongkong.free.service.IFreeBoardService;
+import com.kongkong.free.vo.FreeBoardSearchVO;
+import com.kongkong.free.vo.FreeBoardVO;
+
+@Controller
+public class FreeBoardController {
+
+	@Autowired // 앞으론 Inject
+	IFreeBoardService freeBoardService;
+
+	// 공지사항
+	@RequestMapping("/free/notice.wow")
+	public String notice(Model model, FreeBoardSearchVO searchVO) {
+//		searchVO.setTotalRowCount(freeBoardService.getBoardCount(searchVO));
+//		searchVO.setting(); 
+		List<FreeBoardVO> NoticeList = freeBoardService.getBoardNoticeList(searchVO);
+		model.addAttribute("NoticeList", NoticeList);
+		
+		return "free/notice";
+	}
+
+	// 팁
+//	@RequestMapping("/free/tip.wow")
+//	public String tip(Model model, FreeBoardSearchVO searchVO) {
+//		
+//		List<FreeBoardVO> NoticeList = freeBoardService.getBoardNoticeList(searchVO);
+//		model.addAttribute("NoticeList", NoticeList);
+//		
+//		return "free/tip";
+//	}
+
+	// Q&A
+	@RequestMapping("/free/qna.wow")
+	public String qna(Model model, FreeBoardSearchVO searchVO) {
+//		searchVO.setTotalRowCount(freeBoardService.getBoardCount(searchVO));
+//		searchVO.setting(); 
+		List<FreeBoardVO> QnaList = freeBoardService.getBoardQnaList(searchVO);
+		model.addAttribute("QnaList", QnaList);
+		
+		return "free/qna";
+	}
+	// free
+	@RequestMapping("/free/freeList.wow")
+	public String free(Model model, FreeBoardSearchVO searchVO) {
+		searchVO.setTotalRowCount(freeBoardService.getBoardCount(searchVO));
+		searchVO.setting(); 
+		List<FreeBoardVO> freeBoardList = freeBoardService.getBoardList(searchVO);
+		
+		model.addAttribute("freeBoardList", freeBoardList);
+		
+		return "free/freeList";
+	}
+	
+
+	@RequestMapping("/free/boardHome.wow")
+	public String freeList(@ModelAttribute("searchVO") FreeBoardSearchVO searchVO, Model model) {
+		
+		List<FreeBoardVO> NoticeList = freeBoardService.getBoardNoticeList(searchVO);
+		model.addAttribute("NoticeList", NoticeList);
+
+		List<FreeBoardVO> PopularList = freeBoardService.getBoardPopularList(searchVO);
+		model.addAttribute("PopularList", PopularList);
+
+		return "free/boardHome";
+	}
+
+	@RequestMapping("/free/freeView.wow")
+	public String freeView(int boNo, Model model) {
+		FreeBoardVO boards = freeBoardService.getBoard(boNo);
+		model.addAttribute("boards", boards);
+		return "free/freeView";
+
+	}
+}

@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kongkong.free.dao.IFreeBoardDao">
+
+	<sql id="searchWhereClause">
+ 		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchWord)">
+ 		AND NOT bo_block = 'Y'  
+ 			<choose>
+ 				<when test='searchType == "T"'>
+ 					AND bo_title   LIKE '%' || #{searchWord} || '%'
+ 				</when>
+ 				<when test='searchType == "W"'>
+ 					AND bo_writer  LIKE '%' || #{searchWord} || '%'
+ 				</when>
+ 				<when test='searchType == "C"'>
+ 					AND bo_content LIKE '%' || #{searchWord} || '%'
+ 				</when>
+ 				<when test='searchType == "I"'>
+ 					AND bo_id LIKE '%' || #{searchWord} || '%'
+ 				</when>
+ 				<otherwise>
+ 					AND bo_title   LIKE '%' || #{searchWord} || '%'
+ 				</otherwise>
+ 			</choose>
+ 		</if>
+ 		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchCategory)">
+ 			AND bo_category = #{searchCategory}
+ 		</if>
+ 	</sql>
+ 	
+ 	<sql id="searchWhereClauseQna">
+ 	
+ 		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchWord)">
+ 		AND NOT bo_qnacategory = '비밀글' 
+ 			<choose>
+ 				<when test='searchType == "T"'>
+ 					AND bo_title   LIKE '%' || #{searchWord} || '%'
+ 				</when>
+ 				<when test='searchType == "W"'>
+ 					AND bo_writer  LIKE '%' || #{searchWord} || '%'
+ 				</when>
+ 				<when test='searchType == "C"'>
+ 					AND bo_content LIKE '%' || #{searchWord} || '%'
+ 				</when>
+ 				<when test='searchType == "I"'>
+ 					AND bo_id LIKE '%' || #{searchWord} || '%'
+ 				</when>
+ 				<otherwise>
+ 					AND bo_title   LIKE '%' || #{searchWord} || '%'
+ 				</otherwise>
+ 			</choose>
+ 		</if>
+ 		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchCategory)">
+ 			AND bo_category = #{searchCategory}
+ 		</if>
+ 	</sql>
+
+	<select id="getBoardCount" resultType="int">
+ 		SELECT COUNT( * ) AS tot
+  		  FROM free_board       
+ 		 WHERE bo_del_yn = 'N'  
+ 		   AND bo_category = 'FREE'	
+ 		 <include refid="searchWhereClause"/>
+ 	</select>
+ 	
+ 	<select id="getNoticeBoardCount" resultType="int">
+ 		SELECT COUNT( * ) AS tot
+  		  FROM free_board       
+ 		 WHERE bo_del_yn = 'N'  
+ 		   AND bo_category = 'NOTICE'
+ 		 <include refid="searchWhereClause"/>
+ 	</select>
+ 	
+ 	<select id="getTipBoardCount" resultType="int">
+ 		SELECT COUNT( * ) AS tot
+  		  FROM free_board       
+ 		 WHERE bo_del_yn = 'N'  
+ 		   AND bo_category = 'TIP'
+ 		 <include refid="searchWhereClause"/>
+ 	</select>
+ 	
+ 	<select id="getQnaBoardCount" resultType="int">
+ 		SELECT COUNT( * ) AS tot
+  		  FROM free_board       
+ 		 WHERE bo_del_yn = 'N'  
+ 		   AND bo_category = 'QNA'
+ 		 <include refid="searchWhereClause"/>
+ 	</select>
+ 	
+ 	<select id="onlyNotice" resultType="com.kongkong.free.vo.FreeBoardVO">
+ 		SELECT bo_no
+ 		 	 , bo_block
+			 , bo_id
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , TO_CHAR(bo_reg_date, 'YYYY-MM-DD') AS bo_reg_date
+             , TO_CHAR(bo_mod_date, 'YYYY-MM-DD') AS bo_mod_date
+	         , bo_del_yn 	
+	         , (select count(*) from reply where re_parent_no = bo_no) as bo_reply_cnt
+ 		  FROM free_board	
+ 		 WHERE bo_category = 'NOTICE'	
+ 		   AND bo_del_yn = 'N'	
+ 	  ORDER BY bo_no DESC	
+ 	</select>
+ 	
+ 	<select id="onlyTip" resultType="com.kongkong.free.vo.FreeBoardVO">
+		SELECT bo_no
+		 	 , bo_block
+			 , bo_reply
+			 , bo_id	
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , TO_CHAR(bo_reg_date, 'YYYY-MM-DD') AS bo_reg_date
+             , TO_CHAR(bo_mod_date, 'YYYY-MM-DD') AS bo_mod_date
+	         , bo_del_yn	
+	         , (select count(*) from reply where re_parent_no = bo_no) as bo_reply_cnt
+		  FROM free_board
+		 WHERE bo_category = 'TIP'
+		   AND bo_del_yn = 'N'	
+		   AND bo_title   LIKE '%' || #{Code} || '%' 
+	  ORDER BY bo_hit DESC	 
+	</select>
+	
+	<select id="onlyTipBest" resultType="com.kongkong.free.vo.FreeBoardVO">
+		SELECT bo_no
+			 , bo_block
+			 , bo_reply
+			 , bo_id	
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , TO_CHAR(bo_reg_date, 'YYYY-MM-DD') AS bo_reg_date
+             , TO_CHAR(bo_mod_date, 'YYYY-MM-DD') AS bo_mod_date
+	         , bo_del_yn	
+	         , (select count(*) from reply where re_parent_no = bo_no) as bo_reply_cnt
+		  FROM free_board
+		 WHERE bo_category = 'TIP'
+		   AND bo_del_yn = 'N'	
+	  ORDER BY bo_hit DESC	 
+	</select>
+	
+	<select id="onlyFreeBest" resultType="com.kongkong.free.vo.FreeBoardVO">
+		SELECT bo_no
+		 	 , bo_block
+			 , bo_reply
+			 , bo_id	
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , TO_CHAR(bo_reg_date, 'YYYY-MM-DD') AS bo_reg_date
+             , TO_CHAR(bo_mod_date, 'YYYY-MM-DD') AS bo_mod_date
+	         , bo_del_yn	
+	         , (select count(*) from reply where re_parent_no = bo_no) as bo_reply_cnt
+		  FROM free_board
+		 WHERE bo_category = 'FREE'
+		   AND bo_del_yn = 'N'	
+	  ORDER BY bo_hit DESC	 
+	</select>
+ 	
+	<select id="getBoard" resultType="com.kongkong.free.vo.FreeBoardVO">
+		SELECT bo_no
+			 , bo_block
+			 , bo_id	
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , TO_CHAR(bo_reg_date, 'YYYY-MM-DD') AS bo_reg_date
+             , TO_CHAR(bo_mod_date, 'YYYY-MM-DD') AS bo_mod_date
+	         , bo_del_yn	
+		  FROM free_board
+		 WHERE bo_no = #{gracePark}	
+		   AND bo_del_yn = 'N'	
+	</select>
+	
+	<select id="getQnaBoard" resultType="com.kongkong.free.vo.FreeBoardVO">
+		SELECT bo_no
+			 , bo_block
+			 , bo_qnacategory
+			 , bo_reply
+			 , bo_id	
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , TO_CHAR(bo_reg_date, 'YYYY-MM-DD') AS bo_reg_date
+             , TO_CHAR(bo_mod_date, 'YYYY-MM-DD') AS bo_mod_date
+	         , bo_del_yn	
+	         , (select count(*) from reply where re_parent_no = bo_no) as bo_reply_cnt
+		  FROM free_board
+		 WHERE bo_no = #{gracePark}	
+		   AND bo_del_yn = 'N'	
+	</select>
+	
+	<select id="getBoardList"
+	resultType="com.kongkong.free.vo.FreeBoardVO">
+	<include refid="common.BEFORE_PAGING_QRY" />
+		SELECT bo_no	
+		     , bo_block
+			 , bo_id
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , TO_CHAR(bo_reg_date, 'YYYY-MM-DD') AS bo_reg_date
+             , TO_CHAR(bo_mod_date, 'YYYY-MM-DD') AS bo_mod_date
+	         , bo_del_yn
+	         , (select count(*) from reply where re_parent_no = bo_no) as bo_reply_cnt
+		  FROM free_board
+		 WHERE bo_del_yn = 'N'	
+		   AND bo_category = 'FREE'	
+	<include refid="searchWhereClause"/>
+	   ORDER BY bo_no DESC
+	<include refid="common.AFTER_PAGING_QRY" />	
+	</select>
+	
+	
+	<select id="getBoardQnaList" resultType="com.kongkong.free.vo.FreeBoardVO">
+	<include refid="common.BEFORE_PAGING_QRY" />
+		SELECT bo_no	
+			 , bo_block
+			 , bo_qnacategory
+			 , bo_reply	
+			 , bo_id
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , TO_CHAR(bo_reg_date, 'YYYY-MM-DD') AS bo_reg_date
+             , TO_CHAR(bo_mod_date, 'YYYY-MM-DD') AS bo_mod_date
+	         , bo_del_yn	
+	         , (select count(*) from reply where re_parent_no = bo_no) as bo_reply_cnt
+		  FROM free_board	
+		 WHERE bo_category = 'QNA'	
+		   AND bo_del_yn = 'N'	
+	<include refid="searchWhereClauseQna"/>
+	  ORDER BY bo_no DESC	
+	<include refid="common.AFTER_PAGING_QRY" />	
+	</select>
+	
+	<select id="getBoardNoticeList" resultType="com.kongkong.free.vo.FreeBoardVO">
+	<include refid="common.BEFORE_PAGING_QRY" />
+		SELECT bo_no	
+		     , bo_block
+			 , bo_id
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , TO_CHAR(bo_reg_date, 'YYYY-MM-DD') AS bo_reg_date
+             , TO_CHAR(bo_mod_date, 'YYYY-MM-DD') AS bo_mod_date
+	         , bo_del_yn	
+	         , (select count(*) from reply where re_parent_no = bo_no) as bo_reply_cnt
+		  FROM free_board	
+		 WHERE bo_category = 'NOTICE'	
+		   AND bo_del_yn = 'N'	
+	<include refid="searchWhereClause"/>
+	  ORDER BY bo_no DESC	
+	<include refid="common.AFTER_PAGING_QRY" />	
+	</select>
+	
+	<select id="getBoardTip" resultType="com.kongkong.free.vo.FreeBoardVO">
+	<include refid="common.BEFORE_PAGING_QRY" />
+		SELECT bo_no
+		     , bo_block 	
+		 	 , bo_id
+			 , bo_title	
+			 , bo_writer  	
+			 , bo_category 	
+	         , bo_content
+	         , bo_ip
+	         , bo_hit
+	         , TO_CHAR(bo_reg_date, 'YYYY-MM-DD') AS bo_reg_date
+             , TO_CHAR(bo_mod_date, 'YYYY-MM-DD') AS bo_mod_date
+	         , bo_del_yn	
+	         , (select count(*) from reply where re_parent_no = bo_no) as bo_reply_cnt 
+		  FROM free_board	
+		 WHERE bo_category = 'TIP'	
+		   AND bo_del_yn = 'N'	
+	<include refid="searchWhereClause"/>
+	  ORDER BY bo_no DESC	
+	<include refid="common.AFTER_PAGING_QRY" />			
+	</select>
+	
+	<insert id="insertBoard" parameterType="com.kongkong.free.vo.FreeBoardVO">
+		<selectKey resultType="int" keyProperty="boNo" order="BEFORE">
+ 			SELECT seq_free_board.nextval FROM dual
+ 		</selectKey>
+		INSERT INTO free_board (
+				    bo_no
+				    , bo_qnacategory
+				    , bo_id
+				    , bo_title
+				    , bo_category
+				    , bo_writer	
+				    , bo_content
+				    , bo_hit
+				    , bo_reg_date
+				    , bo_del_yn
+				) VALUES (
+				      #{boNo}
+				    , #{boQnaCategory}
+				    , #{boId}
+				    , #{boTitle}
+				    , #{boCategory}
+				    , #{boWriter}
+				    , #{boContent}
+				    , 0		
+				    , SYSDATE
+				    , 'N'
+				)
+	</insert>
+	
+	<update id="modifyBoard" parameterType="com.kongkong.free.vo.FreeBoardVO">
+ 		UPDATE free_board             
+           SET bo_title     =  #{boTitle}         
+              , bo_category =  #{boCategory}      
+              , bo_writer   =  #{boWriter}        
+              , bo_content  =  #{boContent}       
+              , bo_ip       =  #{boIp}            
+              , bo_mod_date =  SYSDATE            
+          WHERE bo_no       =  #{boNo} 
+	</update>
+	
+	<update id="modifyQna" parameterType="com.kongkong.free.vo.FreeBoardVO">
+ 		UPDATE free_board             
+           SET bo_reply     =  #{boReply}       
+         WHERE bo_no        =  #{boNo} 
+	</update>
+	
+	<update id="deleteBoard" parameterType="com.kongkong.free.vo.FreeBoardVO">
+ 		UPDATE free_board             
+           SET bo_del_yn = 'Y'	        
+         WHERE bo_no     =  #{boNo} 
+	</update>
+	
+	<update id="increaseHit">
+	 	UPDATE free_board               
+		   SET bo_hit    =  bo_hit + 1  
+	     WHERE bo_no    =  #{boHit}  
+ 	</update>
+ 
+	<update id="singoBoard">
+	 	UPDATE free_board               
+		   SET bo_singo    =  'Y' , bo_singo_date = sysdate 
+	     WHERE bo_no =  #{boNo} 
+ 	</update>
+ 	
+ 	<update id="singoNopeBoard">
+ 		UPDATE free_board
+ 		SET bo_singo = 'N' , bo_singo_date = ''
+ 		WHERE bo_no =  #{boNo}
+ 	</update>	
+ 	
+ 	
+</mapper>

@@ -1,0 +1,26 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<div style="height:100px; width: 100%; margin-top: 50px; border-top: solid;">
+	<div class="d-flex justify-content-start">
+    <div>
+    <a class="navbar-brand" href="<%=request.getContextPath()%>/"> 
+    <img src="<%=request.getContextPath()%>/resources/image/logo.jpg " alt=""
+	     width="100" height="100"></a>
+    </div>
+    <div>
+    
+    <a href="<%=request.getContextPath()%>/etc/introduce" class="link-secondary">회사소개</a>·
+    <a href="<%=request.getContextPath()%>/etc/business"class="link-secondary">비지니스</a>· 
+    <a href="<%=request.getContextPath()%>/etc/partnership"class="link-secondary">제휴문의</a>· 
+    <a href="<%=request.getContextPath()%>/etc/recruitment"class="link-secondary">인재채용</a>
+    <br>
+    <a href="<%=request.getContextPath()%>/etc/conditions"class="link-secondary">이용약관</a>· 
+    <a href="<%=request.getContextPath()%>/etc/policy"class="link-secondary">운영정책</a>· 
+    <a href="<%=request.getContextPath()%>/etc/adolescentProtection"class="link-secondary">청소년보호정책</a>· 
+    <a href="<%=request.getContextPath()%>/etc/personalInformation"class="link-secondary">개인정보처리방침</a>· 
+    <a href="<%=request.getContextPath()%>/etc/customerService"class="link-secondary">고객센터</a>
+    <br><br>
+    Copyright © KongKong Corp. All rights reserved.
+    </div>
+</div>
+</div>

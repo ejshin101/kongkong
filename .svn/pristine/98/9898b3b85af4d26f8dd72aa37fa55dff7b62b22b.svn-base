@@ -1,0 +1,77 @@
+package com.kongkong.reservation.service;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kongkong.exception.BizAccessFailException;
+import com.kongkong.exception.BizNotFoundException;
+import com.kongkong.reservation.dao.IReservationDao;
+import com.kongkong.reservation.vo.ReservationSearchVO;
+import com.kongkong.reservation.vo.ReservationVO;
+
+@Service
+public class ReservationServiceImpl implements IReservationService{
+	
+	private static ReservationServiceImpl instance = getInstance();
+	
+	private ReservationServiceImpl() {
+	}
+	
+	private static ReservationServiceImpl getInstance() {
+		if (instance == null)
+			instance = new ReservationServiceImpl();
+		return instance;
+	}
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	private IReservationDao reservationDao;
+
+	@Override
+	public List<ReservationVO> getReserveListParent(ReservationSearchVO reserveVO) {
+		logger.debug("reserveVO={}" , reserveVO);
+		List<ReservationVO> list = reservationDao.getReserveList(reserveVO);
+		return list;
+	}
+	
+	@Override
+	public ReservationVO getReserve(int bookNo) {
+		logger.debug("bookNo={}" , bookNo);
+		ReservationVO list = reservationDao.getReserve(bookNo);
+		return list;
+	}
+
+	@Override
+	public void registReserve(ReservationVO reserve) {
+		logger.debug("reserve={}" , reserve);
+		reservationDao.insertReserve(reserve);
+		
+	}
+
+	@Override
+	public void modifyReserve(ReservationVO reserve) throws BizNotFoundException, BizAccessFailException {
+		logger.debug("reserve={}" , reserve);
+		ReservationVO vo = reservationDao.getReserve(reserve.getBookNo());
+		
+		if(vo == null) {
+			throw new BizNotFoundException(reserve.getBookNo()+"가 존재하지 않습니다.");
+		}
+		reservationDao.updateReserve(reserve);
+	}
+
+	@Override
+	public void removeReserve(ReservationVO reserve) throws BizNotFoundException, BizAccessFailException {
+		logger.debug("reserve={}" , reserve);
+		ReservationVO vo = reservationDao.getReserve(reserve.getBookNo());
+		if(vo == null) {
+			throw new BizNotFoundException();
+		}
+		reservationDao.deleteReserve(reserve);
+	}
+
+}

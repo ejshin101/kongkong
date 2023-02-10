@@ -1,0 +1,266 @@
+package com.kongkong.reservation.vo;
+
+
+import java.io.Serializable;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+/**
+ * @author pc33
+ *
+ */
+@SuppressWarnings("serial")
+public class ReservationVO implements Serializable{
+	private String reMerchantUid;      /* 결제코드 */
+	private String reTop;              /* 상위항목 */
+	private String reLow;              /* 하위항목 */
+	private String reLowNm;              
+	private String[] reLows;
+	private int rePrice;               /* 가격 */
+	private int reCnt;                 /* 갯수 */
+	private int bookNo;                /* 순번 */
+	private String bookCd;             /* 예약항목 */
+	private String bookCdNm;             /* 예약항목 */
+	private String bookPayMethod;      /* 결제방법 */
+	private String bookMerchantUid;    /* 결제코드 */
+	private String bookName;           /* 구매품명 */
+	private int bookAmount;            /* 가격 */
+	private String bookBuyerEmail;     /* 구매자 이메일 */
+	private String bookBuyerName;      /* 구매자명 */
+	private String bookBuyerTel;       /* 구매자 연락처 */
+	private String bookBuyerAddr;      /* 구매자 주소 */
+	private String bookBuyerPostcode;  /* 구매자 우편번호 */
+	private String bookReceive;        /* 수령일 */
+	private String bookReturn;         /* 반납일 */
+	private String bookDel;            /* 구매취소여부 */
+	private String bookId;             /* 구매자아이디 */
+	private String bookReceiveWay;     /* 수령방법 */
+	private String bookReceiveWayNm;     /* 수령방법 */
+	private String bookReturnWay;      /* 반납방법 */
+	private String bookReturnWayNm;      /* 반납방법 */
+	private String bookPickupYn;       /* 수령여부 */
+	private String bookReturnYn;       /* 반납여부 */
+	private String bookShippingYn;     /* 택배발송여부 */
+	private String bookPickupAir;      
+	private String bookPickupAirNm;      
+	private String bookReturnAir;
+	private String bookReturnAirNm;
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this,ToStringStyle.MULTI_LINE_STYLE);
+	}
+	
+	public String getReTop() {
+		return reTop;
+	}
+	public void setReTop(String reTop) {
+		this.reTop = reTop;
+	}
+	public String getReLow() {
+		return reLow;
+	}
+	public void setReLow(String reLow) {
+		this.reLow = reLow;
+	}
+	public int getRePrice() {
+		return rePrice;
+	}
+	public void setRePrice(int rePrice) {
+		this.rePrice = rePrice;
+	}
+	public int getReCnt() {
+		return reCnt;
+	}
+	public void setReCnt(int reCnt) {
+		this.reCnt = reCnt;
+	}
+	public int getBookNo() {
+		return bookNo;
+	}
+	public void setBookNo(int bookNo) {
+		this.bookNo = bookNo;
+	}
+	public String getBookCd() {
+		return bookCd;
+	}
+	public void setBookCd(String bookCd) {
+		this.bookCd = bookCd;
+	}
+	public String getBookPayMethod() {
+		return bookPayMethod;
+	}
+	public void setBookPayMethod(String bookPayMethod) {
+		this.bookPayMethod = bookPayMethod;
+	}
+	public String getBookMerchantUid() {
+		return bookMerchantUid;
+	}
+	public void setBookMerchantUid(String bookMerchantUid) {
+		this.bookMerchantUid = bookMerchantUid;
+	}
+	public String getBookName() {
+		return bookName;
+	}
+	public void setBookName(String bookName) {
+		this.bookName = bookName;
+	}
+	public int getBookAmount() {
+		return bookAmount;
+	}
+	public void setBookAmount(int bookAmount) {
+		this.bookAmount = bookAmount;
+	}
+	public String getBookBuyerEmail() {
+		return bookBuyerEmail;
+	}
+	public void setBookBuyerEmail(String bookBuyerEmail) {
+		this.bookBuyerEmail = bookBuyerEmail;
+	}
+	public String getBookBuyerName() {
+		return bookBuyerName;
+	}
+	public void setBookBuyerName(String bookBuyerName) {
+		this.bookBuyerName = bookBuyerName;
+	}
+	public String getBookBuyerTel() {
+		return bookBuyerTel;
+	}
+	public void setBookBuyerTel(String bookBuyerTel) {
+		this.bookBuyerTel = bookBuyerTel;
+	}
+	public String getBookBuyerAddr() {
+		return bookBuyerAddr;
+	}
+	public void setBookBuyerAddr(String bookBuyerAddr) {
+		this.bookBuyerAddr = bookBuyerAddr;
+	}
+	public String getBookBuyerPostcode() {
+		return bookBuyerPostcode;
+	}
+	public void setBookBuyerPostcode(String bookBuyerPostcode) {
+		this.bookBuyerPostcode = bookBuyerPostcode;
+	}
+	public String getBookReceive() {
+		return bookReceive;
+	}
+	public void setBookReceive(String bookReceive) {
+		this.bookReceive = bookReceive;
+	}
+	public String getBookReturn() {
+		return bookReturn;
+	}
+	public void setBookReturn(String bookReturn) {
+		this.bookReturn = bookReturn;
+	}
+	public String getBookDel() {
+		return bookDel;
+	}
+	public void setBookDel(String bookDel) {
+		this.bookDel = bookDel;
+	}
+	public String getBookId() {
+		return bookId;
+	}
+	public void setBookId(String bookId) {
+		this.bookId = bookId;
+	}
+	public String getBookReceiveWay() {
+		return bookReceiveWay;
+	}
+	public void setBookReceiveWay(String bookReceiveWay) {
+		this.bookReceiveWay = bookReceiveWay;
+	}
+	public String getBookReturnWay() {
+		return bookReturnWay;
+	}
+	public void setBookReturnWay(String bookReturnWay) {
+		this.bookReturnWay = bookReturnWay;
+	}
+	public String getBookPickupYn() {
+		return bookPickupYn;
+	}
+	public void setBookPickupYn(String bookPickupYn) {
+		this.bookPickupYn = bookPickupYn;
+	}
+	public String getBookReturnYn() {
+		return bookReturnYn;
+	}
+	public void setBookReturnYn(String bookReturnYn) {
+		this.bookReturnYn = bookReturnYn;
+	}
+	public String getBookShippingYn() {
+		return bookShippingYn;
+	}
+	public void setBookShippingYn(String bookShippingYn) {
+		this.bookShippingYn = bookShippingYn;
+	}
+	public String getBookPickupAir() {
+		return bookPickupAir;
+	}
+	public void setBookPickupAir(String bookPickupAir) {
+		this.bookPickupAir = bookPickupAir;
+	}
+	public String getBookReturnAir() {
+		return bookReturnAir;
+	}
+	public void setBookReturnAir(String bookReturnAir) {
+		this.bookReturnAir = bookReturnAir;
+	}
+	public String[] getReLows() {
+		return reLows;
+	}
+	public void setReLows(String[] reLows) {
+		this.reLows = reLows;
+	}
+	public String getReMerchantUid() {
+		return reMerchantUid;
+	}
+	public void setReMerchantUid(String reMerchantUid) {
+		this.reMerchantUid = reMerchantUid;
+	}
+	public String getReLowNm() {
+		return reLowNm;
+	}
+	public void setReLowNm(String reLowNm) {
+		this.reLowNm = reLowNm;
+	}
+	public String getBookReceiveWayNm() {
+		return bookReceiveWayNm;
+	}
+	public void setBookReceiveWayNm(String bookReceiveWayNm) {
+		this.bookReceiveWayNm = bookReceiveWayNm;
+	}
+	public String getBookReturnWayNm() {
+		return bookReturnWayNm;
+	}
+	public void setBookReturnWayNm(String bookReturnWayNm) {
+		this.bookReturnWayNm = bookReturnWayNm;
+	}
+	public String getBookPickupAirNm() {
+		return bookPickupAirNm;
+	}
+	public void setBookPickupAirNm(String bookPickupAirNm) {
+		this.bookPickupAirNm = bookPickupAirNm;
+	}
+	public String getBookReturnAirNm() {
+		return bookReturnAirNm;
+	}
+	public void setBookReturnAirNm(String bookReturnAirNm) {
+		this.bookReturnAirNm = bookReturnAirNm;
+	}
+
+	public String getBookCdNm() {
+		return bookCdNm;
+	}
+
+	public void setBookCdNm(String bookCdNm) {
+		this.bookCdNm = bookCdNm;
+	}
+      
+	
+	
+	
+	
+}

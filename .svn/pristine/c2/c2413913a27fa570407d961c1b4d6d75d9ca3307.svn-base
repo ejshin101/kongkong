@@ -1,0 +1,356 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+    <%
+    request.setCharacterEncoding("UTF-8");
+    %>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<style>
+       #sideBar {
+        	border-style: solid;
+            position: absolute;
+            top: 200px;
+            width: 150px;
+        }
+        #ad {
+        	border-style: solid;
+            position: absolute;
+            top: 550px;
+            height: 150px;
+            width: 150px;
+            background-color: aqua;
+        }
+    </style>
+<meta charset="UTF-8">
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+<!-- 아래 제이쿼리는 1.0이상이면 원하는 버전을 사용하셔도 무방합니다. -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+
+<title>Insert title here</title>
+</head>
+<body>
+<%@include file="/WEB-INF/inc/top.jsp"%>
+<div style="height: 120px"></div>
+<div class="container">
+	<div class="page-header">
+		<h3>예약 게시판</h3>
+	</div>
+	<form:errors path="reservation.*" />
+	<form:form name="pay" action="/reservation/reservationRegist.wow" modelAttribute="reserve">
+	<input type="hidden" value="${ORDER_CODE }" name="bookMerchantUid">
+	<input type="hidden" value="${ORDER_CODE }" name="reMerchantUid">
+	<input type="hidden" value="${gubun}" name="bookName"> 
+	<input type="hidden" value="" class="code" name="bookCd"> 
+	<input type="hidden" value="" class="code" name="reTop"> 
+	<input type="hidden" value="${reserve.bookId }" name="bookId">
+	<input type="hidden" value="${reserve.bookDate}" name="bookDate">
+
+	<%-- <pre>${reserve }</pre> --%>
+	<div class="row wifi" >
+            <div class="col-md-4">예약일자</div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-4">수령일<input type="date" id="startDate" class="form-control" name="bookReceive" value="${reserve.bookReceive}"></div>
+            <div class="col-md-4 wifi">반납일<input type="date" id="endDate" class="form-control" name="bookReturn" value="${reserve.bookReturn}"></div>
+            <div class="col-md-3 wifi">이용기간
+         <input type="text" class="form-control" readonly="readonly" value="" id="daysOfTravel"></div>
+        </div>
+        <div class="row" >
+            <div class="col-md-4">수령/반납방법</div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-5">수령방법
+	            <c:set var="bookReceiveWay" value="${reserve.bookReceiveWay}"/>
+	            <form:select path="bookReceiveWay" id="pickupway" cssClass="form-control input-sm" onchange="fn_shipping()">
+	            	<form:option value="">-------------</form:option>
+	            <form:options items="${pickup}" itemValue="commCd" itemLabel="commNm"/>
+            	</form:select>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-5 wifi">반납방법
+				<c:set var="bookReturnWay" value="${reserve.bookReturnWay}"/>
+	            <form:select path="bookReturnWay" id="returnway" cssClass="form-control input-sm" onchange="fn_shipping()">
+	            	<form:option value="">-------------</form:option>
+	            <form:options items="${pickup}" itemValue="commCd" itemLabel="commNm"/>
+	            </form:select>
+			</div>
+        </div>
+        <div class="row" >
+            <div class="col-md-4">수령/반납공항</div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-5">수령공항
+				<c:set var="bookPickupAir" value="${reserve.bookPickupAir}"/>
+	            <form:select path="bookPickupAir" id="pickupair" cssClass="form-control input-sm">
+	            	<form:option value="">-------------</form:option>
+	            <form:options items="${airport}" itemValue="commCd" itemLabel="commNm"/>
+	            </form:select>
+			</div>
+            <div class="col-md-1"></div>
+            <div class="col-md-5 wifi">반납공항
+				<c:set var="bookReturnAir" value="${reserve.bookReturnAir}"/>
+	            <form:select path="bookReturnAir" id="returnair" cssClass="form-control input-sm">
+	            	<form:option value="">-------------</form:option>
+	            <form:options items="${airport}" itemValue="commCd" itemLabel="commNm"/>
+	            </form:select>
+
+			</div>
+        </div>
+        <div class="row usim">
+            <div class="col-md-4">World USIM</div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+        </div>
+        <div class="row usim">
+            <div class="col-md-1"></div>
+            <div class="col-md-5">
+                유심선택
+                <c:set var="reLows" value="${reserve.reLows}"/>
+	            <form:select path="reLows" id="usim" cssClass="form-control input-sm" onchange="fn_calcS()">
+	            	<form:option value="">-------------</form:option>
+	            <form:options items="${usoption}" itemValue="commCd" itemLabel="commNm"/>
+	            </form:select>
+                 <div class="col-md-1"></div>
+            </div>
+        </div>
+        <div class="row">
+        	<div class="col-md-4">예약자 성함</div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+        </div>
+        <div class="row">
+	        <div class="col-md-1"></div>
+	        <div class="col-md-11"><form:input path="bookBuyerName" id="name" cssClass="form-control" /></div>
+        </div>
+        <div class="row">
+        	<div class="col-md-4">예약자 이메일</div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+        </div>
+        <div class="row">
+	        <div class="col-md-1"></div>
+	        <div class="col-md-11"><form:input path="bookBuyerEmail" id="mail" cssClass="form-control" /></div>
+        </div>
+        <div class="row">
+        	<div class="col-md-4">예약자 연락처 </div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+        </div>
+        <div class="row">
+	        <div class="col-md-1"></div>
+	        <div class="col-md-11"><form:input path="bookBuyerTel" id="hp" cssClass="form-control"/></div>
+        </div>
+        
+        <div class="row">
+        	<div class="col-md-4">예약자 주소 </div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+        </div>
+        <div class="row">
+	        <div class="col-md-1"></div>
+	        <div class="col-md-11"><form:input path="bookBuyerAddr" cssClass="form-control" /></div>
+        </div>
+        
+        <div class="row">
+        	<div class="col-md-4">예약자 우편번호 </div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+        </div>
+        <div class="row">
+	        <div class="col-md-1"></div>
+	        <div class="col-md-11"><form:input id="zip" path="bookBuyerPostcode" cssClass="form-control" /></div>
+        </div>
+        <div class="row">
+        	<div class="col-md-6">수량</div>
+        </div>
+        <div class="row">
+	        <div class="col-md-1"></div>
+	        <div class="col-md-5"><form:input path="reCnt" type="number" id="count" onchange="fn_sum()" cssClass="form-control" value="1"/></div>
+	        <div class="col-md-1"></div>
+	        <div class="col-md-5 wifi"><label for="insurance">와이파이 보험 선택 여부<form:checkbox path="reLows" id="insurance" value ='PK04' onclick="fn_calc(this)"/></label>
+	        </div>
+        </div>
+        
+
+        <div class="row wifi">
+            <div class="col-md-4">옵션</div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+        </div>
+        <div class="row wifi">
+            각각을 대여하시면 보증금 1000원을 지불하셔야 하며, 와이파이 반납 시 보증금이 환불됩니다.
+        </div>
+        <div class="row wifi">
+            <div class="col-md-4">
+                <p><label><form:checkbox path="reLows" class="battery" value ='PK01' onclick="fn_calc(this)"/>보조배터리</label></p>
+                <img src="<%=request.getContextPath()%>/resources/image/battery.png">
+                <p>포켓와이파이 2회 충전가능</p>
+            </div>
+            <div class="col-md-4">
+                <p><label><form:checkbox path="reLows" class="multi" value ='PK03' onclick="fn_calc(this)"/> USB 멀티 충전기</label></p>
+                <img src="<%=request.getContextPath()%>/resources/image/mplug.png">
+                <p>전원 플러그 1개로 최대 5대를 고속 충전할 수 있는 멀티 충전기</p>
+            </div>
+            <div class="col-md-4">
+                <p><label><form:checkbox path="reLows" class="usb" value ='PK02' onclick="fn_calc(this)"/> 5핀 USB 케이블</label></p>
+                <img src="<%=request.getContextPath()%>/resources/image/5pin.png">
+                <p>포켓 와이파이 충전과 데이터 전송에 사용할 수 있는 USB 케이블</p>
+            </div>
+        </div>
+	<div class="row">
+		<div class="col-md-4">
+				지불하실 금액 (원)<form:input path="bookAmount" cssClass="form-control" id="sumtext" readonly="true"/>
+				</div> 
+			<div class="col-md-4">
+			</div>
+			<div class="col-md-4">
+			</div>
+	</div>
+</form:form>
+	<div class="row">
+		<button class="btn btn-primary" onclick="iamport()">결제하기</button>
+	</div>
+</div> <!-- end .container -->
+<script>
+// 1. 전역변수 선언 
+
+// 2. 일반함수 선언 
+	function iamport(){
+		//가맹점 식별코드
+		IMP.init('imp85907964');
+		IMP.request_pay({
+		    pg : 'kcp',
+		    pay_method : 'card',
+		    merchant_uid : '${ORDER_CODE}',
+		    name : '${gubun}' , //결제창에서 보여질 이름
+		    amount : 100, //실제 결제되는 가격 $("#sumtext").val()
+		    buyer_email : $('#mail').val(),
+		    buyer_name : $('#name').val(),
+		    buyer_tel : $('#hp').val(),
+		    buyer_addr: $('#addr').val(),
+		    buyer_postcode : $('#zip').val(),
+		}, function(rsp) {
+			console.log(rsp);
+			// 결제검증
+			$.ajax({
+	        	type : "POST",
+	        	url : "/reservation/verify/" + rsp.imp_uid, 
+	        }).done(function(data) {  
+	        	
+	        	console.log(data);
+	        	
+	        	// 위의 rsp.paid_amount 와 data.response.amount를 비교한후 로직 실행 (import 서버검증)
+	        	if(rsp.paid_amount == data.response.amount){
+		        	alert("결제 및 결제검증완료");
+		        	//저장하는 ajax를 만들기
+		        	$('form[name=pay]').submit();
+	        	} else {
+	        		alert("결제 실패");
+	        	}
+	        });
+		});
+	}
+	
+	
+	// 3. 이벤트 함수 선언 
+	
+	$("#endDate").change(function(){
+	    $("#daysOfTravel").val(betweenDay($("#endDate").val(),$("#startDate").val()));
+	});
+	function betweenDay(firstDate, secondDate){
+	     var firstDateObj = new Date(firstDate.substring(0, 4), firstDate.substring(5, 7) - 1, firstDate.substring(8, 10));
+	     var secondDateObj = new Date(secondDate.substring(0, 4), secondDate.substring(5, 7) - 1, secondDate.substring(8, 10));
+	    
+	     if(secondDateObj>firstDateObj){
+	         alert("도착날짜는 출발날짜보다 이후이어야 합니다");
+	         return ;
+	     }
+	    
+	     var betweenTime = Math.abs(secondDateObj.getTime() - firstDateObj.getTime());
+	     return Math.floor(betweenTime / (1000 * 60 * 60 * 24))+'일';
+	} // end betweenDay
+	
+window.onload = function fn_showPage(){
+		if("${gubun}" == "wifi"){
+			$(".usim").hide();
+			$("#sumtext").val("100"),
+			$(".code").val("RE04")
+		}else if("${gubun}" == "usim"){
+			$(".wifi").hide(),
+			$(".code").val("RE03");
+		}
+			
+	}
+	
+	var ea = 100;
+	var pickupway = 0;
+	var returnway = 0;
+	function fn_sum(){
+	var count = document.getElementById('count').value;
+	sum = (ea * count) + pickupway + returnway;
+		if(count<1){
+			alert("수량은 0개 이하일수 없습니다")
+			return;
+		}	
+	document.getElementById('sumtext').value = sum;
+	}
+	
+	function fn_calc(obj){
+		if(obj.checked){
+			ea += 100;
+		}else{
+			ea -= 100;
+		}
+		fn_sum();
+	}
+	
+	function fn_calcS(){     //유심계산
+		      if($("#usim").val() == "US01"){
+			ea = 100;                   
+		}else if($("#usim").val() == "US02"){
+			ea = 200;                   
+		}else if($("#usim").val() == "US03"){
+			ea = 300;                   
+		}else if($("#usim").val() == "US04"){
+			ea = 400;                   
+		}else if($("#usim").val() == "US05"){
+			ea = 500;                   
+		}else if($("#usim").val() == "US06"){
+			ea = 600;
+		}
+		fn_sum();
+	}
+	
+	function fn_shipping() { //택배계산
+		if($("#pickupway").val() === "PI01"){ //택배일 때
+			pickupway = 2500;
+			$("#pickupair").attr("disabled", true);
+		}if($("#returnway").val() === "PI01"){ //택배일 때
+			returnway = 2500;
+			$("#returnair").attr("disabled", true);
+		}if($("#pickupway").val() === "PI02"){ //공항일 때
+			pickupway = 0;
+			$("#pickupair").attr("disabled", false);
+		}if($("#returnway").val() === "PI02"){ //공항일 때
+			returnway = 0;
+			$("#returnair").attr("disabled", false);
+		}
+		fn_sum();
+	}
+	
+	// 4. 초기화 
+</script>
+</body>
+</html>

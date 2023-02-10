@@ -1,0 +1,97 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+<title>Home</title>
+</head>
+<body>
+<div style="height: 112px"></div>
+<%@ include file="/WEB-INF/inc/changingImage.jsp"%>
+	<div class="container" style="margin-top: 50px">
+		<div class="row">
+			<div class="row justify-content-evenly">
+				<div class="col-5" style="height: 230px;">
+				<!-- 공지사항 -->
+								<div class="col-12" style="height: 200px;" >
+									<table class="table table-bordered table-hover text-center fifth-gray">
+									<colgroup>
+										<col width="30%" />
+										<col />
+									</colgroup>
+									<thead>
+										<tr>
+											<th>작성자</th>
+											<th>공지사항</th>
+										</tr>
+									</thead>	
+									<tbody>
+									<c:forEach items="${NoticeList}" var="NoticeList" begin="0" end="3">
+										<tr class="text-center">
+											<td>${NoticeList.boWriter}</td>
+											<td><a href="/free/freeView.wow?boNo=${NoticeList.boNo}">${NoticeList.boTitle}</a></td>
+										</tr>
+										</c:forEach>
+									</tbody>
+									</table>
+								</div>
+				<!-- 공지사항 -->	
+				</div>
+				<!-- 팁자유게시판 -->
+				<div class="col-5" style="height: 230px;">
+								<div class="col-12" style="height: 200px;" >
+									<table class="table table-bordered table-hover text-center fifth-gray" style="width: 100%">
+									<colgroup>
+										<col width="30%" />
+										<col />
+									</colgroup>
+									<thead>
+										<tr>
+											<th>작성자</th>
+											<th>QNA 게시판(팁자유게시판)</th>
+										</tr>
+									</thead>	
+									<tbody>
+									<c:forEach items="${QnaList}" var="QnaList" begin="0" end="3">
+										<tr class="text-center">
+											<td>${QnaList.boWriter}</td>
+											<td><a href="/free/freeView.wow?boNo=${QnaList.boNo}">${QnaList.boTitle}</a></td>
+										</tr>
+										</c:forEach>
+									</tbody>
+									</table>
+								</div>
+				<!-- 팁자유게시판 -->
+				</div>
+			</div>
+		</div>
+	</div><br>
+	<div class="container" style="margin-top: 50px">
+		<div class="row">
+			<div class="row justify-content-evenly">
+				<div class="col-5" style="height: 400px; background-color: blue;">
+					<br><br>
+					<div style="height: 150px; background-color: red;">여긴 포켓와이파이</div>
+					<div style="height: 150px;margin-top: 30px">
+						<a href="<%=request.getContextPath()%>/reservation/usim"> <img
+							src="<%=request.getContextPath()%>/resources/image/SIM.jpg "
+							alt="" style="width: 150px; height: 200px; padding-bottom: 50px">
+						</a>
+					</div>
+
+
+				</div>
+				<div class="col-5" style="height: 400px;">
+					<%@ include file="googleMap.jsp"%></div>
+			</div>
+		</div>
+	</div>
+<%@ include file="/WEB-INF/inc/footer.jsp"%>
+
+
+
+	<br>
+</body>
+</html>

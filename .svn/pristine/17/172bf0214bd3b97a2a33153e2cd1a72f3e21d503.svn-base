@@ -1,0 +1,15 @@
+package com.kongkong.free.service;
+
+import java.util.List;
+
+import com.kongkong.free.vo.FreeBoardVO;
+
+
+public interface IFreeBoardService {
+	
+	public List<FreeBoardVO> getBoardList();
+	public List<FreeBoardVO> getBoardQnaList();
+	public List<FreeBoardVO> getBoardNoticeList();
+	public List<FreeBoardVO> getBoardPopularList();
+	public FreeBoardVO getBoard(int boNo);
+}

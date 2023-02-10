@@ -1,0 +1,85 @@
+package com.kongkong.favorite.vo;
+
+import java.io.Serializable;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+@SuppressWarnings("serial")
+public class FavoriteVO implements Serializable{
+	// favorite 테이블 기반 
+	private int faNo;                  /* 즐겨찾기 번호 */
+	private int faBoNo;                /* 게시판 번호 */
+	private String faCategory;         
+	private String faDate;             
+	private String faMemId;            /* 즐겨찾기 아이디 */
+	
+	// join 또는 화면 입력 정보
+	private String faBoTitle;          /* 게시판 글 제목 */
+	private String faMemName;            /* 즐겨찾기 아이디 */
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this,ToStringStyle.MULTI_LINE_STYLE);
+	}
+
+	public int getFaNo() {
+		return faNo;
+	}
+
+	public void setFaNo(int faNo) {
+		this.faNo = faNo;
+	}
+
+	public int getFaBoNo() {
+		return faBoNo;
+	}
+
+	public void setFaBoNo(int faBoNo) {
+		this.faBoNo = faBoNo;
+	}
+
+	public String getFaCategory() {
+		return faCategory;
+	}
+
+	public void setFaCategory(String faCategory) {
+		this.faCategory = faCategory;
+	}
+
+	public String getFaDate() {
+		return faDate;
+	}
+
+	public void setFaDate(String faDate) {
+		this.faDate = faDate;
+	}
+
+	public String getFaMemId() {
+		return faMemId;
+	}
+
+	public void setFaMemId(String faMemId) {
+		this.faMemId = faMemId;
+	}
+
+	public String getFaBoTitle() {
+		return faBoTitle;
+	}
+
+	public void setFaBoTitle(String faBoTitle) {
+		this.faBoTitle = faBoTitle;
+	}
+
+	public String getFaMemName() {
+		return faMemName;
+	}
+
+	public void setFaMemName(String faMemName) {
+		this.faMemName = faMemName;
+	}
+	
+	
+	
+	
+}

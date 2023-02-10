@@ -1,0 +1,316 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+<div class="container">
+	<table class="table">
+			<tbody>
+				<tr>
+					<td>
+					<div class="row">
+					<div class="col-md-8">
+					<h2>${boards.boTitle}</h2>
+					</div>
+					<div class="col-md-4" style="text-align: right; font-size: medium;">${boards.boWriter} / ${boards.boCategory} / ${boards.boRegDate}</div>
+					</div>
+					</td>
+				</tr>
+				<tr>
+					<td><pre style="background-color: white; padding:10px; overflow: auto; white-space: pre-wrap; font-size: medium;">${boards.boContent}</pre></td>
+				</tr>
+			</tbody>
+		</table>
+		<hr>
+		<div class="row">
+			<div class="col-md-6" style="text-align: left;">
+			
+			<c:if test="${boards.boCategory eq 'FREE' }">
+              <a href="boardHome.wow" class="btn btn-primary">
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                목록
+              </a>
+              <a href="boardSingo.wow" class="btn btn-danger">
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                신고
+              </a>
+              
+			</c:if>
+			
+			<c:if test="${boards.boCategory eq 'NOTICE' }">
+              <a href="boardNotice.wow" class="btn btn-primary">
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                목록
+              </a>
+			</c:if>
+			
+			<c:if test="${boards.boCategory eq 'TIP' }">
+              <a href="boardTip.wow" class="btn btn-primary">
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                목록
+              </a>
+			</c:if>
+			
+            </div>
+            <c:if test="${boards.boId eq sessionScope.USER_INFO.userId}">
+            <div class="col-md-6" style="text-align: right;">
+              <a href="freeModify.wow?boNo=${boards.boNo}" class="btn btn-primary"> 
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                수정
+              </a>
+            </div>
+            </c:if>
+           </div>
+          <hr>
+</div>
+<!-- START : 댓글 관련 영역 -->
+<div class="container">
+	<!-- START : 댓글 입력 영역 -->
+	<table class="table" id="reply">
+		<tbody>
+			<tr>
+			<td>
+				<form name="frm_reply" action="<c:url value='/reply/replyRegist' />" method="post" onclick="return false;">
+					<input type="hidden" name="reParentNo" value="${boards.boNo}">
+					<input type="hidden" name="reCategory" value="FREE">
+					<div class="row">
+						<label class="col-md-1">댓글</label>
+					</div>	
+					<br>
+					<div class="row form-group">
+						<div class="col-md-11">
+							<textarea rows="3" name="reContent" class="form-control"></textarea>
+						</div>
+						<div class="col-md-1">
+							<button id="btn_reply_regist" type="button" class="btn_1 d-none d-lg-block" style="height:100%; border: 0;">등록</button>
+						</div>
+					</div>
+				</form>		
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<!-- END : 댓글 입력 영역 -->
+	<!-- START : 댓글 목록 영역 -->
+		<div id="id_reply_list_area">
+		</div>
+		<!-- END : 댓글 목록 영역 -->
+		<!-- START : 더보기 버튼 영역 -->
+		<div class="row text-center justify-content-center" id="id_reply_list_more">
+			<button id="btn_reply_list_more" class="btn btn-primary">
+				<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+				             더보기            
+			</button>
+		</div>
+		<!-- END : 더보기 버튼 영역 -->
+		<!-- START : 댓글 수정용 Modal -->
+		<div class="modal fade" id="id_reply_edit_modal" role="dialog">
+			<div class="modal-dialog">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<form name="frm_reply_edit"
+						action="<c:url value='/reply/replyModify' />" method="post"
+						onclick="return false;">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">×</button>
+							<h4 class="modal-title">댓글수정</h4>
+						</div>
+						<div class="modal-body">
+							<input type="hidden" name="reNo" value="">
+							<textarea rows="3" name="reContent" class="form-control"></textarea>
+						</div>
+						<div class="modal-footer">
+							<button id="btn_reply_modify" type="button"
+								class="btn btn-sm btn-info">저장</button>
+							<button type="button" class="btn btn-default btn-sm"
+								data-dismiss="modal">닫기</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!-- END : 댓글 수정용 Modal-->
+</div>
+<!-- END : 댓글 관련 영역 -->
+<!-- jquery plugins here-->
+<script src="/resources/js/jquery-1.12.1.min.js"></script>
+<!-- bootstrap js -->
+    <script src="/resources/js/bootstrap.min.js"></script>
+</body>
+<!-- START : 댓글 처리 스크립트-->
+<script type="text/javascript">
+	//1. 전역변수 선언
+	var sendParam = {"curPage":1, "rowSizePerPage": 10, "reCategory":"FREE","reParentNo":${boards.boNo}};
+	var $reply_list_area = $('#id_reply_list_area');
+	window.onload = function fn_reply_load(){
+		if("${boards.boCategory}" == "NOTICE"){
+			$('#reply').hide();
+		}
+	}
+	//2. 일반함수 선언
+	// 댓글목록을 구하는 함수
+	function fn_reply_list() {
+		$.ajax({
+			url : "<c:url value='/reply/replyList' />",	// 요청 페이지 URL정보
+			dataType : 'json', // 서버로부터 전달받을 데이터 유형 (html, xml, json, script)
+			data : sendParam,	// 서버에 전송할 파라미터 정보
+			success : function (data) {
+				console.log('data.result',data.result);
+				console.log('data.count',data.count);
+				console.log('data.data',data.data);
+				
+				$.each(data.data,function(i,el){
+					console.log(i,el);
+					var str = '<div class="row" >';
+				        str += '<div class="col-sm-2 text-right" >'+el.reMemName+'</div>';
+				        str += '<div class="col-sm-5"><pre>'+el.reContent+'</pre></div>';
+				        if(el.reModDate != null){
+				        str += '<div class="col-sm-1" >'+'<수정>'+'</div>';
+				        str += '<div class="col-sm-2" >'+el.reModDate+'</div>';
+				        }
+				        if(el.reModDate == null){
+				        str += '<div class="col-sm-1" >'+''+'</div>';
+				        str += '<div class="col-sm-2" >'+el.reRegDate+'</div>';
+				        }
+				        
+				        str += '<div class="col-sm-2">';
+				        //로그인 사용자 = 댓글등록자 면 보이고, 아니면 안보임
+				        if('${sessionScope.USER_INFO.userId}' == el.reMemId){
+				        str += '<button name="btn_reply_edit" type="button" class=" btn btn-sm btn-info" data-re-no="'+el.reNo+'">수정</button>';
+				        str += ' <button name="btn_reply_delete" type="button" class="btn btn-sm btn-danger" data-re-no="'+el.reNo+'">삭제</button>';
+				        }
+				        str += '</div>';
+				        str += '</div>';
+				        $reply_list_area.append(str);//append
+				});//each
+				
+				if(data.count < sendParam.rowSizePerPage){
+					$('#id_reply_list_more').hide();
+				}
+				
+			}, // 요청에 성공한 경우 호출되는 함수 (data, status, xhr )
+			error : function(xhr, status, error) {
+				console.log('xhr',xhr);
+				console.log('status',status);
+				console.log('error',error);
+			}	// 요청에 실패한 경우 호출되는 함수 (xhr, status, error)
+		}); // ajax
+	} // fn_reply_list
+	
+//--- 3.이벤트함수 선언
+	
+	$(document).ready( function() {
+				// 수정버튼 클릭
+				$('#id_reply_list_area').on('click', 'button[name=btn_reply_edit]', function(e) {
+					$('#id_reply_edit_modal').modal('show');
+					// 현재 댓글의 정보를 모달 창에 전달하고, 모달 창 띄우기
+					
+					$btn = $(this);
+					$('form[name=frm_reply_edit]').find('input[name=reNo]').val($btn.data('re-no'));
+					$('form[name=frm_reply_edit]').find('textarea[name=reContent]').val( $btn.closest('div.row').find('pre').text() );
+					
+					}); // btn_reply_edit.click
+						
+						
+				// 모달창의 (수정)저장버튼 btn_reply_modify 클릭
+				$("#btn_reply_modify").click(function(e) {
+					var params = $('form[name=frm_reply_edit]').serialize();
+					$.ajax({
+						type :"POST",
+						url : "<c:url value='/reply/replyModify' />", //컨트롤러 매핑되어있는 경로
+						dataType : 'json', // 서버로부터 전달받을 데이터 유형 (html, xml, json, script)
+						data : params,
+						// 서버에 전송할 파라미터 정보
+						success : function (data) {		// 컨트롤러의 모든 예외 처리는 error로 가지않고 success로 들어옴
+								if(data.result){
+									// 성공했으면 모달창을 띄운애를 찾아서 그 ㄱ곳에 변경된 값을 넣어야함
+									reNo = $('form[name=frm_reply_edit]').find('input[name=reNo]').val();
+									reContent = $('form[name=frm_reply_edit]').find('textarea[name=reContent]').val();
+									$('button[data-re-no ='+ reNo + ']').closest('div.row').find('pre').text(reContent);
+									location.reload();
+								}else{
+									alert(data.msg);
+								}	
+								$('#id_reply_edit_modal').modal('hide');
+						}, // 요청에 성공한 경우 호출되는 함수 (data, status, xhr )
+						
+						error : function (xhr, status, error) {
+							console.log('xhr',xhr);
+							console.log('status',status);
+							console.log('error',error);
+						}
+						// 요청에 실패한 경우 호출되는 함수 (xhr, status, error)
+						}); // ajax
+					}); // btn_reply_modify.click
+				
+				
+				// 삭제버튼 클릭
+				$('#id_reply_list_area').on('click','button[name=btn_reply_delete]', function(e) {
+					res = confirm("정말로 삭제하시겠습니까?");
+					$btn = $(this);
+					var params = {"reNo":$btn.data('re-no')};
+					
+					if(res){
+						$.ajax({
+							type :"POST", // 전송 방식 설정 (Defaut : GET)
+							url : "<c:url value='/reply/replyRemove' />",	// 요청 페이지 URL정보
+							dataType : 'json', // 서버로부터 전달받을 데이터 유형 (html, xml, json, script)
+							data : params,	// 서버에 전송할 파라미터 정보
+							success : function (data) {//리턴한 map데이터가 날라옴
+								if(data.result){
+									location.reload();
+								}else{
+									alert(data.msg);
+								}
+							}, // 요청에 성공한 경우 호출되는 함수 (data, status, xhr )
+							error : function(xhr, status, error) {
+								console.log('xhr',xhr);
+								console.log('status',status);
+								console.log('error',error);
+							}	// 요청에 실패한 경우 호출되는 함수 (xhr, status, error)
+							});
+					}
+				}); // btn_reply_delete.click
+				
+				
+				// 더보기 버튼 클릭
+				$('#btn_reply_list_more').click(function(e) {
+					sendParam.curPage = sendParam.curPage + 1;
+					fn_reply_list();
+				}); // #btn_reply_list_more.click
+				
+				
+				// 등록버튼 클릭
+				$("#btn_reply_regist").click(function(e) {
+					var params = $('form[name=frm_reply]').serialize(); //파라미터를 날려줌					
+					$.ajax({
+						type :"POST", // 전송 방식 설정 (Defaut : GET)
+						url : "<c:url value='/reply/replyRegist' />",	// 요청 페이지 URL정보
+						dataType : 'json', // 서버로부터 전달받을 데이터 유형 (html, xml, json, script)
+						data : params,	// 서버에 전송할 파라미터 정보
+						success : function (data) {
+							location.reload();
+						}, // 요청에 성공한 경우 호출되는 함수 (data, status, xhr )
+						error : function(xhr, status, error) {
+							if(xhr.status == 401){
+								//리다이렉트 login으로
+								alert('로그인 하세요');
+								window.location.href = "<c:url value='/login/login.wow'/>";
+							}
+						}	// 요청에 실패한 경우 호출되는 함수 (xhr, status, error)
+						}); // ajax
+				}); // #btn_reply_regist.click
+				
+				
+				// 4. 초기화 함수 호출
+				fn_reply_list();
+			}); // ready
+</script>
+<!-- END : 댓글 처리 스크립트 -->
+</html>

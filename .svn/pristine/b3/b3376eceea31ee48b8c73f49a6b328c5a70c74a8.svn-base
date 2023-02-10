@@ -1,0 +1,17 @@
+package com.kongkong.free.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.kongkong.free.vo.FreeBoardVO;
+
+@Mapper
+public interface IFreeBoardDao {
+	
+	public List<FreeBoardVO> getBoardList();
+	public List<FreeBoardVO> getBoardQnaList();
+	public List<FreeBoardVO> getBoardNoticeList();
+	public List<FreeBoardVO> getBoardPopularList();
+	public FreeBoardVO getBoard(int boNo);
+}

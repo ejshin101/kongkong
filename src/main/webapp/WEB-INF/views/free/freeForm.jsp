@@ -1,0 +1,102 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<!DOCTYPE html>
+<html lang="ko">
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet"> 
+	
+   <%@ include file="/WEB-INF/inc/top.jsp"%>
+   
+	<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+	<script src=" https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/lang/summernote-ko-KR.min.js"></script>
+<body>
+<div class="container border" style="border-radius: 20px;">
+	<div class="page-header">
+		<h3 align="center" style="margin:20px;">글 등록</h3>
+	</div>
+	<form:form action="freeRegist.wow" id="freeForm" name="freeForm" modelAttribute="board" method="POST">
+	<table class="table">
+		<colgroup>
+			<col width="20%" />
+			<col/>
+		</colgroup>
+		<form:hidden path="boId" cssClass="" value="${sessionScope.USER_INFO.userId}"/>
+		<tr>
+			<th>제목</th>
+			<td>
+				<form:input path="boTitle" cssClass="form-control input-sm"/>
+				<form:errors path="boTitle"/>
+			</td>
+		</tr>
+		<tr>
+			<th>작성자</th>
+			<td>
+			<form:hidden path="boWriter" value="${sessionScope.USER_INFO.userName}"/>
+			${sessionScope.USER_INFO.userName}
+			</td>
+		</tr>
+		<tr>
+			<th>분류</th>
+			<td>
+				<form:select path="boCategory" id="boCategorys" cssClass="form-control input-sm">
+					<option value="FREE">카테고리를 선택해주세요</option>
+					<option value="FREE">자유게시판</option>
+					<option value="TIP">Tip</option>
+					<c:if test='${sessionScope.USER_INFO.userRole eq "admin"}'>
+					<option value="NOTICE">공지사항</option>
+					</c:if>
+				</form:select>
+					<div class="text-center">
+						<b id="target">카테고리를 골라주세요</b>
+					</div>
+			</td>
+		</tr>
+		<tr>
+			<th>내용</th>
+				<style>
+					.note-toolbar {
+						background-color: #eaefff;
+					}
+				</style>
+			<td><textarea rows="10" name="boContent" class="form-control summernote" style="background-color: #eaefff"></textarea></td>
+		</tr>
+	</table>
+		<div class="text-center" style="margin-bottom: 30px;">
+	       <a href="boardHome.wow" class="kongkongsDark">목록</a>
+	       <button type="submit" class="kongkongs">저장</button>
+	    </div> 
+	</form:form>	
+</div><!-- container -->
+	<script>
+	$('.summernote').summernote({
+		  height: 500,
+		  lang: "ko-KR"
+		});
+	</script>
+	<script type="text/javascript">
+		(function(){ 
+		  $("#boCategorys").change(function(){
+				  if($('#boCategorys').val() == 'FREE' ) {
+					  
+			          $("#target").text("특정한 주제 없이 자유롭게 글을 쓸 수 있는 게시판 입니다.");
+			          
+				  } else if($('#boCategorys').val() == 'NOTICE' ) {
+					  
+					  $("#target").text("게시판 상단에 노출되는 공지사항을 쓸 수 있는 게시판 입니다.");
+					  
+				  } else if($('#boCategorys').val() == 'TIP' ) {
+					  
+					  $("#target").text("여행을 하면서 느꼈던점 또는 자기만의 노하우, 팁 을 쓸 수 있는 게시판 입니다.");
+				  } else if($('#boCategorys').val() == 'NULL' ) {
+					  
+					  $("#target").text("카테고리를 골라주세요");
+					  
+				  };
+	      	});
+		})();
+	</script>
+</body>
+</html>
+
+

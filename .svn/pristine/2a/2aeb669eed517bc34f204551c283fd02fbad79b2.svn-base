@@ -1,0 +1,32 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+<title>Login</title>
+</head>
+<body>
+<%@ include file="/WEB-INF/inc/changingImage.jsp"%>
+<div class="container">
+
+	<div class="login-form" align="center" > 
+		<form action="login.wow" method="post">
+			<h2>로그인</h2>
+			<form:errors path="userError.*" /><!-- loginController의 loginPost에 있는 @ModelAttribute의 userError -->
+			
+				<input type="text" name="UserId" placeholder="아이디" required="required">
+				<input type="password" name="UserPass" placeholder="비밀번호" required="required">
+				<input type="submit" value="확인" name="log_button" class="btn btn-sm">
+		</form>
+		<p class="text-center text-muted small"> 아직 회원이 아니십니까? <a href="#">회원가입</a>
+			</p>
+	</div>
+
+</div>
+</body><!-- end.container -->
+</html>

@@ -1,0 +1,33 @@
+package com.kongkong.member.web;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kongkong.member.service.IMemberService;
+import com.kongkong.member.vo.MemberVO;
+
+@Controller
+public class MemberController {
+
+	@Autowired
+	IMemberService memberService;
+	
+	@RequestMapping("/member/memberList.wow")
+	public String memberList(Model model) {
+		List<MemberVO> memberList = memberService.getMemberList();
+		model.addAttribute("memberList", memberList);
+		
+		return "member/memberList";
+	}
+	
+	@RequestMapping("/member/memberView.wow")
+	private String memberView(Model model, String memId) {
+		MemberVO member = memberService.getMember(memId);
+		model.addAttribute("member", member);
+		return "member/memberView";
+	}
+}

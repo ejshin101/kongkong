@@ -1,0 +1,235 @@
+package com.kongkong.free.vo;
+
+
+import java.io.Serializable;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import com.kongkong.common.valid.ValidGroup;
+
+
+
+@SuppressWarnings("serial")
+public class FreeBoardVO implements Serializable{
+	
+	@Min(value = 1, message = "글번호는 1 이상이어야 합니다."
+			, groups = ValidGroup.ModifyType.class )
+	private int boNo;                       /* 글 번호 */
+	
+	@NotBlank(message = "제목은 필수입니다.")
+	@Size(min = 2, message = "2글자 이상 필요합니다.")
+	private String boTitle;                 /* 글 제목 */
+	private String boCategory;              /* 글 분류 코드 */
+	private String boWriter;                /* 작성자명 */
+	
+	private String boContent;               
+	
+	
+	private String boIp;                    
+	private int boHit;                      
+	private String boRegDate;               
+	private String boModDate;               
+	private String boDelYn;     
+	
+	private String boId;
+	
+	private String boReply;
+	private String boReplyCnt;
+	
+	private String boQnaCategory;
+	
+	private String boSingo;
+	
+	private String boBlock;
+	
+	private String boSingoDate;
+	
+	private String boBlockDate;
+	
+	private int boScope;
+	
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
+	
+	
+
+
+	public int getBoScope() {
+		return boScope;
+	}
+
+
+	public void setBoScope(int boScope) {
+		this.boScope = boScope;
+	}
+
+
+	public String getBoReplyCnt() {
+		return boReplyCnt;
+	}
+
+
+	public void setBoReplyCnt(String boReplyCnt) {
+		this.boReplyCnt = boReplyCnt;
+	}
+
+
+	public String getBoQnaCategory() {
+		return boQnaCategory;
+	}
+
+
+	public void setBoQnaCategory(String boQnaCategory) {
+		this.boQnaCategory = boQnaCategory;
+	}
+
+	public String getBoReply() {
+		return boReply;
+	}
+
+	public void setBoReply(String boReply) {
+		this.boReply = boReply;
+	}
+
+	public int getBoNo() {
+		return boNo;
+	}
+
+	public void setBoNo(int boNo) {
+		this.boNo = boNo;
+	}
+
+	public String getBoTitle() {
+		return boTitle;
+	}
+
+	public void setBoTitle(String boTitle) {
+		this.boTitle = boTitle;
+	}
+
+	public String getBoCategory() {
+		return boCategory;
+	}
+
+	public void setBoCategory(String boCategory) {
+		this.boCategory = boCategory;
+	}
+
+	public String getBoWriter() {
+		return boWriter;
+	}
+
+	public void setBoWriter(String boWriter) {
+		this.boWriter = boWriter;
+	}
+
+	public String getBoContent() {
+		return boContent;
+	}
+
+	public void setBoContent(String boContent) {
+		this.boContent = boContent;
+	}
+
+	public String getBoIp() {
+		return boIp;
+	}
+
+	public void setBoIp(String boIp) {
+		this.boIp = boIp;
+	}
+
+	public int getBoHit() {
+		return boHit;
+	}
+
+	public void setBoHit(int boHit) {
+		this.boHit = boHit;
+	}
+
+	public String getBoRegDate() {
+		return boRegDate;
+	}
+
+	public void setBoRegDate(String boRegDate) {
+		this.boRegDate = boRegDate;
+	}
+
+	public String getBoModDate() {
+		return boModDate;
+	}
+
+	public void setBoModDate(String boModDate) {
+		this.boModDate = boModDate;
+	}
+
+	public String getBoDelYn() {
+		return boDelYn;
+	}
+
+	public void setBoDelYn(String boDelYn) {
+		this.boDelYn = boDelYn;
+	}
+
+	public String getBoId() {
+		return boId;
+	}
+
+	public void setBoId(String boId) {
+		this.boId = boId;
+	}
+
+
+	public String getBoSingo() {
+		return boSingo;
+	}
+
+
+	public void setBoSingo(String boSingo) {
+		this.boSingo = boSingo;
+	}
+
+
+	public String getBoSingoDate() {
+		return boSingoDate;
+	}
+
+
+	public void setBoSingoDate(String boSingoDate) {
+		this.boSingoDate = boSingoDate;
+	}
+
+
+	public String getBoBlockDate() {
+		return boBlockDate;
+	}
+
+
+	public void setBoBlockDate(String boBlockDate) {
+		this.boBlockDate = boBlockDate;
+	}
+
+
+
+	public String getBoBlock() {
+		return boBlock;
+	}
+
+
+
+	public void setBoBlock(String boBlock) {
+		this.boBlock = boBlock;
+	}
+	
+	
+
+}

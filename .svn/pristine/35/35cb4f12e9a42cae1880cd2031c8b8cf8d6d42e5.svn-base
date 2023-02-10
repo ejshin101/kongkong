@@ -1,0 +1,107 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<html>
+<head>
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+<style>
+       #sideBar {
+        	border-style: solid;
+            position: absolute;
+            top: 200px;
+            width: 150px;
+        }
+        #ad {
+        	border-style: solid;
+            position: absolute;
+            top: 550px;
+            height: 150px;
+            width: 150px;
+            background-color: aqua;
+        }
+    </style>
+	<title>Home</title>
+</head>
+<body>
+<%@ include file="/WEB-INF/inc/ReservationSidebar.jsp"%>
+
+<div class="row">
+	<div class="col-2">
+	</div>
+	 <div class="row col-8"> <!-- 예약 틀 -->
+	 <form name="reservation">
+      <div class="row"> <!-- 여행날짜틀 -->
+        <div class="col-5">
+         <label for="inputDate" class="form-label">출발 날짜</label>
+         <input type="date" class="form-control" id="startDate">
+         <script>document.getElementById('startDate').value = new Date().toISOString().substring(0, 10);;</script>
+       </div>
+       <div class="col-5">
+         <label for="inputDate" class="form-label">도착 날짜</label>
+         <input type="date" class="form-control" id="endDate">
+       </div>
+        <div class="col-2">
+         <label for="inputDate" class="form-label">여행 일수</label>
+         <input type="text" class="form-control" readonly="readonly" value="" id="daysOfTravel">
+       </div>
+      </div><!-- 여행날짜틀 -->
+       <div><br>
+          <label  class="form-label">예약자 성함</label>
+          <input type="text" class="form-control" id="ResvervationName">
+        </div>
+        <div><br>
+          <label class="form-label">전화번호</label>
+          <input type="text" class="form-control" id="ResvervationNumber">
+        </div>
+        
+      	<div><br>
+          <label for="inputService" class="form-label">서비스 선택</label><br>
+          <input type="checkbox" name="service1" value="1번"> 서비스1<br>
+          <input type="checkbox" name="service2" value="2번"> 서비스2<br><br>
+        </div>
+          <label for="inputPeople" class="form-label">인원수:</label><br>
+         <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+          <input type="radio" class="btn-check btn-sm" name="people" id="btnra1" value="1명" autocomplete="off">
+          <label class="btn btn-outline-primary" name="people" for="btnra1">1</label>
+
+          <input type="radio" class="btn-check btn-sm" name="people" id="btnra2" value="2명" autocomplete="off">
+          <label class="btn btn-outline-primary" name="people" for="btnra2">2 </label>
+
+          <input type="radio" class="btn-check btn-sm" name="people" id="btnra3" value="3명" autocomplete="off">
+          <label class="btn btn-outline-primary" name="people" for="btnra3">3 </label>
+          <input type="radio" class="btn-check btn-sm" name="people" id="btnra4" value="4명" autocomplete="off">
+          <label class="btn btn-outline-primary" name="people" for="btnra4">4 </label>
+        </div>
+        <div><br>
+          <label for="inputReq" class="form-label">추가요청사항</label>
+          <input type="text" class="form-control" id="requested">
+        </div>
+         <div class="col-12"><br>
+          <button type="button" class="btn btn-primary" onclick="" id="msg1">예약하기</button>
+          <button type="button" class="btn btn-primary" onclick="reservation.reset()">초기화</button>
+        </div>
+   		</form>
+   </div><!-- 예약 틀 -->
+</div><!-- 예약 틀 -->
+
+<div id="bottom" style="height: 200px"></div>
+<%@ include file="/WEB-INF/inc/footer.jsp"%>
+</body>
+<script>
+$("#endDate").change(function(){
+    $("#daysOfTravel").val(betweenDay($("#endDate").val(),$("#startDate").val()));
+});
+function betweenDay(firstDate, secondDate){
+            var firstDateObj = new Date(firstDate.substring(0, 4), firstDate.substring(5, 7) - 1, firstDate.substring(8, 10));
+            var secondDateObj = new Date(secondDate.substring(0, 4), secondDate.substring(5, 7) - 1, secondDate.substring(8, 10));
+           
+            if(secondDateObj>firstDateObj){
+                alert("도착날짜는 출발날짜보다 이후이어야 합니다");
+                return ;
+            }
+           
+            var betweenTime = Math.abs(secondDateObj.getTime() - firstDateObj.getTime());
+            return Math.floor(betweenTime / (1000 * 60 * 60 * 24))+'일';
+        }
+</script>
+</html>

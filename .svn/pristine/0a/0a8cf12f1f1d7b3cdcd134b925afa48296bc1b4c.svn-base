@@ -1,0 +1,140 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%
+	request.setCharacterEncoding("utf-8");
+%>
+<!DOCTYPE html>
+<html lang="ko">
+<style>
+#image{ margin:50px 50px;z-index:10;}
+#n_id{position:absolute;left:286px;top:200px;z-index:20;}
+#prize{display: inline-block;
+ 	   position: absolute;
+  	   margin-top: 20px;
+  	   font-size: xx-large;
+  	   }
+</style>
+</head>
+<body>
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="<%=request.getContextPath() %>/resources/roulette/jQueryRotateCompressed.js"></script>
+<div style="margin-top: 100px">
+<div style="display: inline-block">
+<img src="<%=request.getContextPath() %>/resources/roulette/roulette.png" id="image">
+<img src="<%=request.getContextPath() %>/resources/roulette/niddle.png" id="n_id">
+</div>
+<div id="prize">
+1: 유럽여행권 <br>
+2: 미국여행권  <br>
+3: 남미여행권 <br>
+꽝: 꽝  <br>
+5: 제주도여행권  <br>
+6: 호텔 숙박권  <br>
+7: 영화 2매 예매권  <br>
+8: 커피교환권  <br>
+9: 액션캠  <br>
+0: 1000 마일리지  <br>
+</div>
+</div>
+
+
+
+
+<script>
+window.onload = function(){
+	var pArr = ["0","1","2","3","4:꽝","5","6","7","8","9"];
+	var roll=0;
+	$('#image').click(function(){
+		if(roll==0){
+		rotation();
+		roll=1;
+		}
+	});
+
+	function rotation(){
+		$("#image").rotate({
+		  angle:0, 
+		  animateTo:360 * 5 + random(), 
+		  center: ["50%", "50%"],
+		  easing: $.easing.easeInOutElastic,
+		  callback: function(){ 
+						var n = $(this).getRotateAngle();
+						endAnimate(n);
+					},
+		  duration:2000
+	   });
+	}
+
+	function endAnimate($n){
+		var n = $n;
+		var mileage = 0;
+		var real_angle = n%360 +18;
+		var part = Math.floor(real_angle/36);
+		
+		if(part == 1){
+			$('#prize').html("<p>당첨내역:<br><br>유럽여행권!!</p>");
+			return;
+		}else if(part == 2){
+			$('#prize').html("<p>당첨내역:<br><br>미국여행권!!</p>");
+			return;
+		}else if(part == 3){
+			$('#prize').html("<p>당첨내역:<br><br>남미여행권!!</p>");
+			return;
+		}else if(part == 4){
+			$('#prize').html("<p>꽝~!</p>");
+			return;
+		}else if(part == 5){
+			$('#prize').html("<p>당첨내역:<br><br>제주도여행권!!</p>");
+			return;
+		}else if(part == 6){
+			$('#prize').html("<p>당첨내역:<br><br>호텔 숙박권!!</p>");
+			return;
+		}else if(part == 7){
+			$('#prize').html("<p>당첨내역:<br><br>영화 2매 예매권!!</p>");
+			return;
+		}else if(part == 8){
+			$('#prize').html("<p>당첨내역:<br><br>커피교환권!!</p>");
+			return;
+		}else if(part == 9){
+			$('#prize').html("<p>당첨내역:<br><br>액션캠!!</p>");
+			return;
+		}else if(part == 0){
+			$('#prize').html("<p>당첨내역:<br><br>1000 마일리지!!</p>");
+			return;
+		}
+		
+		
+	}
+
+	function random(){
+		var a= Math.floor(Math.random()*1000);
+		if(a==1000){
+			return 36*1;
+		}else if(a==999) {
+		return 36*2;
+		}else if(a==998) {
+		return 36*3;
+		}else if(a<=250) {
+		return 36*10;
+		}else if(a>501 && a<=550) {
+		return 36*5;
+		}else if(a>601 && a<=650) {
+		return 36*6;
+		}else if(a>701 && a<=750) {
+		return 36*7;
+		}else if(a>801 && a<=850) {
+		return 36*8;
+		}else if(a>901 && a<=950) {
+		return 36*9;
+		}else{
+		return 36*4;
+		}
+	}//random
+};
+</script>
+<%@ include file="/WEB-INF/inc/footer.jsp"%>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page session="false" %>
+<%
+	request.setCharacterEncoding("utf-8");
+%>
+<html>
+<head>
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+	<title>Home</title>
+</head>
+<body>
+
+<button onclick="fn_ladder()" class="btn btn-primary">사다리타기</button>
+<button onclick="fn_roulette()"class="btn btn-primary" >룰렛</button>
+<button onclick="fn_roulette2()" class="btn btn-danger">사기룰렛</button>
+<div> </div>
+
+<div style="height: 2000px">
+<iframe id="gameBot" width="1000px" height="550px" src="roulette2.wow"  scrolling="no"></iframe>
+<script>
+function fn_ladder() {
+	var game = document.getElementById("gameBot");
+	game.src ='ladder.wow'
+}
+function fn_roulette() {
+	var game = document.getElementById("gameBot");
+	game.src ='roulette.wow'
+}
+function fn_roulette2() {
+	var game = document.getElementById("gameBot");
+	game.src ='roulette2.wow'
+}
+
+</script>
+</div>
+</body>
+</html>

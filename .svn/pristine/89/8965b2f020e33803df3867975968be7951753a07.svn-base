@@ -1,0 +1,28 @@
+package com.kongkong.mypage.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.kongkong.free.vo.FreeBoardVO;
+import com.kongkong.member.vo.MemberVO;
+import com.kongkong.reservation.vo.ReservationVO;
+
+@Mapper
+public interface IMyPageDao {
+	
+	public int updateInfo(MemberVO member);
+
+	public void selectInfo(MemberVO member);
+
+	public void deleteInfo(MemberVO member);
+	
+	public int update2Info(MemberVO member);
+	
+	public List<FreeBoardVO> getBoardList(String UserId);
+	
+	public List<ReservationVO> getReserBoardList(String UserId);
+	
+
+}

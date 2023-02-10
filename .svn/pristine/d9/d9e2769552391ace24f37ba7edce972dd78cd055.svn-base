@@ -1,0 +1,7 @@
+package com.kongkong.common.valid;
+
+public class ValidGruop {
+
+	public interface InsertType{}
+
+}

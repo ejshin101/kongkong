@@ -1,0 +1,128 @@
+package com.kongkong.reservation.vo;
+
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+public class ReservationVO{
+	private int bookNo;                /* 순번 */
+	private String bookCd;             /* 예약항목 */
+	private String bookPayMethod;      /* 결제방법 */
+	private String bookMerchantUid;    /* 결제코드 */
+	private String bookName;           /* 구매품명 */
+	private int bookAmount;            /* 가격 */
+	private String bookBuyerEmail;     /* 구매자 이메일 */
+	private String bookBuyerName;      /* 구매자명 */
+	private String bookBuyerTel;       /* 구매자 연락처 */
+	private String bookBuyerAddr;      /* 구매자 주소 */
+	private String bookBuyerPostcode;  /* 구매자 우편번호 */
+	private String bookStrDate;        /* 시작일 */
+	private String bookEndDate;        /* 종료일 */
+	private String bookReceive;        /* 수령일 */
+	private String bookReturn;         /* 반납일 */
+	private String bookOption;         /* 구매옵션 */
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this,ToStringStyle.MULTI_LINE_STYLE);
+	}
+	
+	public int getBookNo() {
+		return bookNo;
+	}
+	public void setBookNo(int bookNo) {
+		this.bookNo = bookNo;
+	}
+	public String getBookCd() {
+		return bookCd;
+	}
+	public void setBookCd(String bookCd) {
+		this.bookCd = bookCd;
+	}
+	public String getBookPayMethod() {
+		return bookPayMethod;
+	}
+	public void setBookPayMethod(String bookPayMethod) {
+		this.bookPayMethod = bookPayMethod;
+	}
+	public String getBookMerchantUid() {
+		return bookMerchantUid;
+	}
+	public void setBookMerchantUid(String bookMerchantUid) {
+		this.bookMerchantUid = bookMerchantUid;
+	}
+	public String getBookName() {
+		return bookName;
+	}
+	public void setBookName(String bookName) {
+		this.bookName = bookName;
+	}
+	public int getBookAmount() {
+		return bookAmount;
+	}
+	public void setBookAmount(int bookAmount) {
+		this.bookAmount = bookAmount;
+	}
+	public String getBookBuyerEmail() {
+		return bookBuyerEmail;
+	}
+	public void setBookBuyerEmail(String bookBuyerEmail) {
+		this.bookBuyerEmail = bookBuyerEmail;
+	}
+	public String getBookBuyerName() {
+		return bookBuyerName;
+	}
+	public void setBookBuyerName(String bookBuyerName) {
+		this.bookBuyerName = bookBuyerName;
+	}
+	public String getBookBuyerTel() {
+		return bookBuyerTel;
+	}
+	public void setBookBuyerTel(String bookBuyerTel) {
+		this.bookBuyerTel = bookBuyerTel;
+	}
+	public String getBookBuyerAddr() {
+		return bookBuyerAddr;
+	}
+	public void setBookBuyerAddr(String bookBuyerAddr) {
+		this.bookBuyerAddr = bookBuyerAddr;
+	}
+	public String getBookBuyerPostcode() {
+		return bookBuyerPostcode;
+	}
+	public void setBookBuyerPostcode(String bookBuyerPostcode) {
+		this.bookBuyerPostcode = bookBuyerPostcode;
+	}
+	public String getBookStrDate() {
+		return bookStrDate;
+	}
+	public void setBookStrDate(String bookStrDate) {
+		this.bookStrDate = bookStrDate;
+	}
+	public String getBookEndDate() {
+		return bookEndDate;
+	}
+	public void setBookEndDate(String bookEndDate) {
+		this.bookEndDate = bookEndDate;
+	}
+	public String getBookReceive() {
+		return bookReceive;
+	}
+	public void setBookReceive(String bookReceive) {
+		this.bookReceive = bookReceive;
+	}
+	public String getBookReturn() {
+		return bookReturn;
+	}
+	public void setBookReturn(String bookReturn) {
+		this.bookReturn = bookReturn;
+	}
+	public String getBookOption() {
+		return bookOption;
+	}
+	public void setBookOption(String bookOption) {
+		this.bookOption = bookOption;
+	}
+	
+	
+}

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.kongkong.reply.dao.IReplyDao">
+ 
+<select id="getReplyCountByParent" resultType="int">
+	SELECT COUNT(1) as cnt
+      FROM reply
+     WHERE re_category = #{reCategory}
+       AND re_parent_no = #{reParentNo}		
+</select>
+
+<select id="getReplyListByParent" resultType="com.kongkong.reply.vo.ReplyVO">
+	<include refid="common.BEFORE_PAGING_QRY"/>
+	SELECT re_no
+         , re_category
+         , re_parent_no
+         , re_mem_id
+         , (select mem_name from member where mem_id = re_mem_id ) as re_mem_name
+         , re_content
+         , re_ip
+         , TO_CHAR(re_reg_date, 'YYYY.MM.DD') as re_reg_date
+      FROM reply
+     WHERE re_category = #{reCategory}
+       AND re_parent_no = #{reParentNo}
+  ORDER BY re_no asc
+  <include refid="common.AFTER_PAGING_QRY"></include>
+</select>
+
+<select id="getReply" resultType="com.kongkong.reply.vo.ReplyVO">
+	SELECT re_no
+         , re_category
+         , re_parent_no
+         , re_mem_id
+         , (select mem_name from member where mem_id = re_mem_id ) as re_mem_name
+         , re_content
+         , re_ip
+         , TO_CHAR(re_reg_date, 'YYYY.MM.DD') as re_reg_date
+      FROM reply
+     WHERE re_no = #{reNo}
+</select>
+
+
+ <!-- 댓글 최신순, 처음순 order by re_no asc, desc -->
+ 
+<insert id="insertReply">
+	INSERT INTO reply (
+    re_no
+    , re_category
+    , re_parent_no
+    , re_mem_id
+    , re_content
+    , re_ip
+    , re_reg_date
+    , re_mod_date
+) VALUES (
+    seq_reply.nextval
+    ,#{reCategory}
+    ,#{reParentNo}
+    ,#{reMemId}
+    ,#{reContent}
+    ,#{reIp}
+    ,#{reRegDate}
+    ,#{reModDate}
+)
+	
+</insert>
+
+<update id="updateReply" parameterType="int">
+	UPDATE reply
+       SET re_content = #{reContent}
+         , re_mod_date = SYSDATE
+     WHERE re_no = #{reNo}
+</update>
+
+<delete id="deleteReply">
+	DELETE FROM reply
+	 WHERE re_no = #{reNo}
+</delete>
+
+ </mapper>

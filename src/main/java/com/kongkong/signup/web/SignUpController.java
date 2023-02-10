@@ -1,0 +1,92 @@
+package com.kongkong.signup.web;
+
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.validation.groups.Default;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.kongkong.common.valid.ValidGroup;
+import com.kongkong.member.service.IMemberService;
+import com.kongkong.member.vo.MemberVO;
+import com.kongkong.signup.service.ISignUpService;
+import com.kongkong.code.service.ICodeService;
+import com.kongkong.code.vo.CodeVO;
+
+
+@Controller
+public class SignUpController {
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Inject
+	private IMemberService memberService;
+	
+	@Inject
+	private ISignUpService signupService;
+	
+	@Inject
+	private ICodeService codeService;
+	
+	@RequestMapping("/signup/signup.wow")
+	public String signup(@ModelAttribute("member") MemberVO member) {
+		return "signup/signup";
+	}
+	
+	@ModelAttribute("categories")
+	public List<CodeVO> category() {
+		logger.debug("대륙 공통코드를 처리합니다.");
+		List<CodeVO> categories =  codeService.getCodeListByParent("CO00");
+		return categories;
+	}
+
+	@RequestMapping("/signup/signupUser.wow")
+	public String signupUser( @Validated({ Default.class, ValidGroup.InsertType.class, ValidGroup.mailChk.class }) @ModelAttribute("member") MemberVO member
+												, BindingResult errors, Model model) {
+		logger.debug("member={}" , member );
+		String mailtrue = member.getEmailNumKeyChecked();
+		if (errors.hasErrors()) {
+			logger.error(errors.toString());
+			return "signup/signup";
+//			return "redirect:/signup/signup.wow";
+		}
+		
+		if(!mailtrue.equals("true")) {
+			return "signup/signup";
+		}
+		
+		model.addAttribute("member", member);
+		
+		signupService.signupUser(member);
+		
+		return "redirect:/";
+	}
+	
+	
+	//아이디 중복확인 ajax
+	@PostMapping("/signup/findUser.wow")
+	@ResponseBody
+	public String checkId(@ModelAttribute("member") MemberVO member) {
+		String memberId = member.getMemId();
+		member =  memberService.getMember(memberId);
+		if(member == null) {
+			return "null";
+		}else {
+			return member.getMemId();
+		}
+		
+	}
+	
+
+}

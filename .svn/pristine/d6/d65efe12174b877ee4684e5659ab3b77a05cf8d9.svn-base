@@ -1,0 +1,115 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<html>
+<head>
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+	<title>MyPage</title>
+</head>
+<%@ include file="/WEB-INF/inc/topMypageHome.jsp"%>
+<body>
+<div style="margin: 50px">
+<div class="container" style=" border: 1px solid lightgray;">
+<div class="container" >
+		<div>
+			<div class="col-md-auto border rounded-3" style="border: solid white 2px; margin: 20px ; background-color: #FFFFFF"> <h4 class="offcanvas-title" align="center" style="margin: 10px">
+			개인정보관리</h4><br>
+			<div align="center">
+				<ul style="list-style: none; padding: 5px 0px 5px 5px; margin-bottom: 20px; margin-top: -20px ">
+					<li><a href="<%=request.getContextPath()%>/myPage/myPrivacy.wow"  style="color: black; text-decoration:none; border-bottom: 1px solid #efefef; ">프로필 변경</a></li>
+					<li><a href="<%=request.getContextPath()%>/myPage/passWordChange.wow"  style="color: black; text-decoration:none; ">비밀번호 변경</a></li>
+					<li><a href="<%=request.getContextPath()%>/myPage/withDrawal.wow"  style="color: black; text-decoration:none; ">회원 탈퇴</a></li>
+				</ul>
+			</div>
+			</div>
+			<div class="col-md-auto border rounded-3" style="border: solid black 2px; margin: 20px;  background-color: #FFFFFF"> <h4 align="center" style="margin: 10px">즐겨찾기
+			<a style="color: black; " href="<%=request.getContextPath()%>/favorite/favoriteList"><i class="fas fa-search"></i></a></h4><br><br>
+				<div align="center" style="margin-left:15px ; margin-right:15px; margin-top: 5px ">
+		
+			<table class="table table-bordered table-hover text-center" style="margin-top: -40px">
+				<thead class="table table-dark">
+					<tr>
+						<th>제목</th>
+						<th>즐겨찾기 추가일</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach items="${myFavoriteList}" var="myFavoriteList" begin="0" end="4">
+						<tr class="text-center">
+							<td class="text-left"><a href="<%=request.getContextPath()%>/free/${myFavoriteList.faCategorys}View.wow?boNo=${myFavoriteList.faBoNo}">
+									${myFavoriteList.faTitle} </a></td>
+							<td>${myFavoriteList.faDate}</td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+			</div>
+			
+			
+			</div>
+		</div>
+</div>
+<!-- <button type="button" style="border: 0px; outline: 0px; background-color: white; " > -->
+
+<div class="container">
+		<div class="col-md-auto border rounded-3" style="border: solid black 2px; margin: 20px; background-color: #FFFFFF"><h4 align="center" style="margin: 10px">내가 쓴 글
+		<a style="color: black; " href="<%=request.getContextPath()%>/free/boardHome.wow?searchType=I&searchWord=${sessionScope.USER_INFO.userId}"><i class="fas fa-search"></i></a></h4><br><br>
+			<div align="center" style="margin-left:15px ; margin-right:15px; margin-top: 5px ">
+		
+			<table class="table table-bordered table-hover text-center" style="margin-top: -40px">
+				<thead class="table table-dark">
+					<tr>
+						<th>제목</th>
+						<th>게시일자</th>
+						<th>조회수</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach items="${myBoardList}" var="myBoardList" begin="0" end="4">
+						<tr class="text-center">
+							<td class="text-left"><a
+								href="<%=request.getContextPath()%>/free/freeView.wow?boNo=${myBoardList.boNo}">
+									${myBoardList.boTitle} </a></td>
+							<td>${myBoardList.boRegDate}</td>
+							<td>${myBoardList.boHit}</td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+			</div>
+		</div>
+		<div class="col-md-auto border rounded-3" style="border: solid black 2px; margin: 20px; background-color: #FFFFFF"><h4 align="center" style="margin: 10px">예약현황
+		<a style="color: black; " href="<%=request.getContextPath()%>/reservation/reservationList"><i class="fas fa-search"></i></a></h4><br><br>
+		
+		<div align="center" style="margin-left: 15px; margin-right: 15px; margin-top: 5px">
+		<table class="table table-bordered table-hover text-center" style="margin-top: -40px">
+				<thead class="table table-dark">
+					<tr>
+						<th>주문 번호</th>
+						<th>품목</th>
+						<th>금액</th>
+						<th>결제 시간</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach items="${myReservationList}" var="myReservationList" begin="0" end="4">
+						<tr class="text-center">
+							<td>${myReservationList.bookMerchantUid}</td>
+							<td class="text-left"><a
+								href="<%=request.getContextPath()%>/reservation/reservationView.wow?bookMerchantUid=${myReservationList.bookMerchantUid}">
+									${myReservationList.bookCdNm} </a></td>
+							<td>${myReservationList.bookAmount} 원</td>
+							<td>${myReservationList.bookDate}</td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+			</div>
+		</div>
+</div>
+</div>
+</div>
+<br>
+<%@ include file="/WEB-INF/inc/footer.jsp"%>
+</body>
+</html>

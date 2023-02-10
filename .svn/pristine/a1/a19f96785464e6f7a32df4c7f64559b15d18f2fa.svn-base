@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kongkong.reservation.dao.IReservationDao">
+
+<select id="getReserveCountByParent" parameterType="com.kongkong.reservation.vo.ReservationVO" resultType="int">
+	SELECT COUNT(*) as tot
+	  FROM reservation
+	 WHERE book_del = 'N',
+	 	   book_name = #{bookBuyerName}
+</select>
+
+<select id="getReserveList" parameterType="com.kongkong.reservation.vo.ReservationVO" resultType="com.kongkong.reservation.vo.ReservationVO">
+	SELECT book_no
+         , book_cd
+         , book_pay_method
+         , book_merchant_uid
+         , book_name
+         , book_amount
+         , book_buyer_email
+         , book_buyer_name
+         , book_buyer_tel
+         , book_buyer_addr
+         , book_buyer_postcode
+         , book_str_date
+         , book_end_date
+         , book_receive
+         , book_return
+         , book_option
+         , book_del
+	  FROM reservation
+	 WHERE book_del = 'N'
+	 ORDER BY book_no DESC
+</select>
+
+<select id="getReserve">
+
+</select>
+<insert id="insertReserve">
+	INSERT INTO reservation (
+	    book_no
+	    , book_cd
+	    , book_pay_method
+	    , book_merchant_uid
+	    , book_name
+	    , book_amount
+	    , book_buyer_email
+	    , book_buyer_name
+	    , book_buyer_tel
+	    , book_buyer_addr
+	    , book_buyer_postcode
+	    , book_str_date
+	    , book_end_date
+	    , book_receive
+	    , book_return
+	    , book_option
+	    , book_del
+	) VALUES (
+	<![CDATA[ 
+	    :v0
+	    , :v1
+	    , :v2
+	    , :v3
+	    , :v4
+	    , :v5
+	    , :v6
+	    , :v7
+	    , :v8
+	    , :v9
+	    , :v10
+	    , :v11
+	    , :v12
+	    , :v13
+	    , :v14
+	    , :v15
+	    , 'N'
+	)	]]> 
+</insert>
+
+<update id="updateReserve">
+
+</update>
+
+<delete id="deleteReserve">
+
+</delete>
+
+
+</mapper>

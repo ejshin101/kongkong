@@ -1,0 +1,247 @@
+package com.kongkong.reservation.web;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.groups.Default;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+
+import com.kongkong.common.valid.ValidGroup;
+import com.kongkong.code.service.ICodeService;
+import com.kongkong.code.vo.CodeVO;
+import com.kongkong.common.valid.ValidGroup;
+import com.kongkong.common.vo.ResultMessageVO;
+import com.kongkong.exception.BizAccessFailException;
+import com.kongkong.exception.BizNotFoundException;
+import com.kongkong.reservation.service.IReservationService;
+import com.kongkong.reservation.vo.ReservationSearchVO;
+import com.kongkong.reservation.vo.ReservationVO;
+import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.response.IamportResponse;
+import com.siot.IamportRestClient.response.Payment;
+import com.kongkong.exception.BizPasswordNotMatchedException;
+import com.kongkong.login.vo.UserVO;
+import com.kongkong.member.service.IMemberService;
+import com.kongkong.member.service.MemberServiceImpl;
+import com.kongkong.member.vo.MemberVO;
+
+
+@Controller
+public class ReservationController {
+	
+	private IamportClient api;
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	private ICodeService codeService;
+	
+	public ReservationController() {
+    	// REST API 키와 REST API secret 를 아래처럼 순서대로 입력한다.
+		this.api = new IamportClient("2438039052581234","5a019a626a681f4bd3902d7e2e90f87c754aa0a5bd2f3701bdbd1668cb769af4f1e6814f49a3ba77");
+	}
+	
+	@ModelAttribute("pickup")
+	public List<CodeVO> pickup(){
+		logger.debug("수령/반납 방법 공통 코드를 처리합니다.");
+		List<CodeVO> pickup = codeService.getCodeListByParent("PI00");
+		return pickup;
+	}
+	
+	@ModelAttribute("airport")
+	public List<CodeVO> airport(){
+		logger.debug("공항 공통 코드를 처리합니다.");
+		List<CodeVO> airport = codeService.getCodeListByParent("AI00");
+		return airport;
+	}
+	@ModelAttribute("pkoption")
+	public List<CodeVO> pkoption(){
+		logger.debug("포켓 와이파이 옵션 코드를 처리합니다.");
+		List<CodeVO> pkoption = codeService.getCodeListByParent("PK00");
+		return pkoption;
+	}
+	@ModelAttribute("usoption")
+	public List<CodeVO> usoption(){
+		logger.debug("유심 옵션 코드를 처리합니다.");
+		List<CodeVO> usoption = codeService.getCodeListByParent("US00");
+		return usoption;
+	}
+	@ModelAttribute("recode")
+	public List<CodeVO> recode(){
+		logger.debug("예약 항목 코드를 처리합니다.");
+		List<CodeVO> recode = codeService.getCodeListByParent("RE00");
+		return recode;
+	}
+
+	@Autowired
+	IReservationService reserveService;
+	
+	@Autowired
+	IMemberService memberService;
+	
+	@RequestMapping("/reservation/reservationHome.wow")
+	public String reservationHome() {
+		return "reservation/reservationHome";
+	}
+	
+	public String getNewOrderCode() {
+		// dao 통해 신규 번호 생성 , 주문정보테이블 입력
+		return "MERCHANT_" +  UUID.randomUUID().toString().substring(0,6) ;  // MERCHANT_ASEDE
+	}
+	
+	@RequestMapping("/reservation/product/{gubun}")
+	public String reservationPage(@PathVariable("gubun") String gubun , Model model, HttpSession session) {
+		UserVO vo = (UserVO)session.getAttribute("USER_INFO");
+		MemberVO member = memberService.getMember(vo.getUserId());
+		ReservationVO reserve = new ReservationVO();
+		reserve.setBookBuyerName(member.getMemName());
+		reserve.setBookBuyerEmail(member.getMemMail());
+		reserve.setBookBuyerAddr(member.getMemAdd1());
+		reserve.setBookBuyerTel(member.getMemHp());
+		reserve.setBookBuyerPostcode(member.getMemZip());
+		reserve.setBookId(member.getMemId());
+		logger.debug("gubun={}", gubun);
+		model.addAttribute("reserve", reserve);
+		model.addAttribute("ORDER_CODE", getNewOrderCode());
+		model.addAttribute("gubun", gubun);
+		return "reservation/reservationForm";
+	}
+
+	@RequestMapping("/reservation/hotel.wow")
+	public String HotelReservation() {
+		return "reservation/hotelReservation";
+	}
+	
+	
+	//모든 예약 정보 가져오기
+	@RequestMapping("/reservation/reservationList")
+	public String reservationList(@ModelAttribute("reserveVO") ReservationSearchVO reserveVO, Model model, HttpSession session) throws Exception{
+		UserVO vo = (UserVO)session.getAttribute("USER_INFO");
+		MemberVO member = memberService.getMember(vo.getUserId());
+		logger.debug("reserve={}", reserveVO);
+		return "reservation/reservationList";
+	}
+	
+	//예약정보 하나 가지고 오기
+	@RequestMapping(value="reservation/reservationView.wow", method= RequestMethod.GET)
+	public String reservationView(@RequestParam("bookMerchantUid") String bookMerchantUid, Model model, HttpSession session) throws Exception{
+		UserVO vo = (UserVO)session.getAttribute("USER_INFO");
+		MemberVO member = memberService.getMember(vo.getUserId());
+		logger.debug("bookMerchantUid={}",bookMerchantUid);
+//		try {
+			ReservationVO reserve = reserveService.getReserve(bookMerchantUid);
+			List<ReservationVO> reserveOption = reserveService.getReserveOption(bookMerchantUid);
+			model.addAttribute("reserve", reserve);
+			model.addAttribute("reserveOption", reserveOption);
+			return "reservation/reservationView";
+//	}catch (BizNotFoundException ex) {
+//			ResultMessageVO messageVO = new ResultMessageVO()
+//					.setResult(false)
+//					.setTitle("예약 정보 조회 실패")
+//					.setMessage(ex.getMessage())
+//					.setUrl("/reservation/reservationList.wow")
+//					.setUrlTitle("예약 목록으로");
+//			model.addAttribute("messageVO", messageVO);
+//			return "common/message";
+//		}
+	}
+	
+	@RequestMapping("reservation/reservationModify")
+	public String reservationModifyGet(@RequestParam("bookMerchantUid") String bookMerchantUid, Model model) {
+		logger.debug("bookMerchantUid={}",bookMerchantUid);
+//		try {
+			ReservationVO reserve = reserveService.getReserve(bookMerchantUid);
+			List<ReservationVO> reserveOption = reserveService.getReserveOption(bookMerchantUid);
+			model.addAttribute("reserve",reserve);
+			model.addAttribute("reserveOption", reserveOption);
+			return "reservation/reservationEdit";
+//		}catch(BizNotFoundException ex){
+//			ResultMessageVO messageVO = new ResultMessageVO()
+//					.setResult(false)
+//					.setTitle("예약 정보 조회 실패")
+//					.setMessage(ex.getMessage())
+//					.setUrl("/reservation/reservationList.wow")
+//					.setUrlTitle("예약 목록으로");
+//			model.addAttribute("messageVO", messageVO);
+//			return "common/message";
+//		}
+	}
+	
+	@RequestMapping(value="/reservation/reservationModify", method = RequestMethod.POST)
+	public String reservationModifyPost(@Validated({Default.class, ValidGroup.RegistType.class}) //validation(검증)함을 선언
+									    @ModelAttribute("reserve") ReservationVO reserve, //board의 값을 가져옴 = 사용자가 입력했던 내용을 그대로 가져옴 날라가면 슬프니까 
+									    BindingResult errors, Model model) throws Exception {
+		logger.debug("reserve={}",reserve);
+		if(errors.hasErrors()) {
+			return "reservation/reservationEdit";
+		}
+		
+		ResultMessageVO messageVO = new ResultMessageVO();
+			reserveService.modifyReserve(reserve);
+			 messageVO.setResult(true)
+				.setTitle("수정성공")
+				.setMessage("정상적으로 예약 정보 수정되었습니다.")
+				.setUrl("/reservation/reservationView.wow?bookMerchantUid="+reserve.getBookMerchantUid())
+				.setUrlTitle("예약 정보 보기");
+		model.addAttribute("messageVO", messageVO);
+		return "common/message";
+	}
+	
+	
+	//예약 정보 등록 저장
+	@RequestMapping("/reservation/reservationRegist.wow")
+	public String reservationRegistGet(Model model, HttpSession session) throws Exception {
+		
+		return "reservation/reservationForm";
+	}
+	
+	
+	@RequestMapping(value = "/reservation/reservationRegist.wow", method = RequestMethod.POST)
+	public String reservationRegistPost(@Validated({Default.class, ValidGroup.RegistType.class})
+								 @ModelAttribute("reserve") ReservationVO reserve,
+								 BindingResult errors,
+								 HttpServletRequest req, Model model) throws Exception{
+		if(errors.hasErrors()) {
+			return "reservation/reservationForm";
+		}
+		logger.debug("reserve={}",reserve);
+		reserveService.registReserve(reserve);
+		
+		return "redirect:/reservation/reservationView.wow?bookMerchantUid="+reserve.getBookMerchantUid();
+	}
+	
+	
+	//결제 검증
+	@ResponseBody
+	@RequestMapping(value="/reservation/verify/{imp_uid}")
+	public IamportResponse<Payment> paymentByImpUid(Model model, Locale locale, HttpSession session, 
+													@PathVariable(value= "imp_uid") String imp_uid) throws IamportResponseException, IOException
+	{	
+		
+		//DB넣기
+		
+		
+		return api.paymentByImpUid(imp_uid);
+	}
+	
+	
+	
+}

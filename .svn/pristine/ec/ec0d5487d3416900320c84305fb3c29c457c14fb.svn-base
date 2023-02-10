@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.kongkong.admin.dao.IAdminDao">
+ 
+ 
+ <!-- 월별 가입자 현황 -->
+	<select id="getChatYearList" resultType="hashmap">
+		<![CDATA[
+		select a.c_seq, nvl(b.c_count ,0) as c_count
+		  from (select level c_seq from dual connect by level <= 12) a
+		        left join  (select to_number(to_char(${chartGubunCulume}, 'MM')) c_month , count(1) as c_count  
+		                              from ${chartGubunTable}        
+		                           where  
+		                             to_char(${chartGubunCulume},'YYYY') = #{selectYear}
+		                            group by to_char(${chartGubunCulume}, 'MM') 
+		                       ) b
+		         on  (a.c_seq = b.c_month)   
+		order by a.c_seq asc
+		]]>	
+	</select>
+	
+	<select id="getChatMonthList"  resultType="hashmap">
+	<![CDATA[
+	SELECT a.c_seq, nvl(b.c_count, 0) AS c_count
+	  FROM (SELECT level c_seq    FROM dual CONNECT BY level <= 31) a 
+         	LEFT JOIN (SELECT to_number(to_char(${chartGubunCulume}, 'DD')) c_day , COUNT(1) AS c_count    
+                       				FROM ${chartGubunTable}
+                       			WHERE to_char(${chartGubunCulume}, 'YYYY') = #{selectYear}
+                       			and  to_number(to_char(${chartGubunCulume}, 'MM')) = #{selectMonth}
+                        		GROUP BY to_char(${chartGubunCulume}, 'DD')
+                   		) b 
+        ON ( a.c_seq = b.c_day )
+	ORDER BY a.c_seq ASC
+]]>
+	
+	</select>
+	
+
+ <!-- 년별 가입자 현황 -->
+ <!-- 월별 예약자 현황 -->
+ <!-- 년별 예약자 현황 -->
+ </mapper>

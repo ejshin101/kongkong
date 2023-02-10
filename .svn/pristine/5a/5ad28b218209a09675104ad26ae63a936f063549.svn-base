@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.kongkong.admin.dao.IAdminDao">
+ 
+ 
+ <!-- 월별 가입자 현황 -->
+	<select id="getChatYearList" resultType="hashmap">
+		<![CDATA[
+		select a.c_seq, nvl(b.c_count ,0) as c_count
+		  from (select level c_seq from dual connect by level <= 12) a
+		        left join  (select to_number(to_char(${chartGubunCulume}, 'MM')) c_month , count(1) as c_count  
+		                              from ${chartGubunTable}        
+		                           where  
+		                             to_char(${chartGubunCulume},'YYYY') = #{selectYear}
+		                            group by to_char(${chartGubunCulume}, 'MM') 
+		                       ) b
+		         on  (a.c_seq = b.c_month)   
+		order by a.c_seq asc
+		]]>	
+	</select>
+	
+	<select id="getChatMonthList"  resultType="hashmap">
+	<![CDATA[
+	SELECT a.c_seq, nvl(b.c_count, 0) AS c_count
+	  FROM (SELECT level c_seq    FROM dual CONNECT BY level <= 31) a 
+         	LEFT JOIN (SELECT to_number(to_char(${chartGubunCulume}, 'DD')) c_day , COUNT(1) AS c_count    
+                       				FROM ${chartGubunTable}
+                       			WHERE to_char(${chartGubunCulume}, 'YYYY') = #{selectYear}
+                       			and  to_number(to_char(${chartGubunCulume}, 'MM')) = #{selectMonth}
+                        		GROUP BY to_char(${chartGubunCulume}, 'DD')
+                   		) b 
+        ON ( a.c_seq = b.c_day )
+	ORDER BY a.c_seq ASC
+]]>
+	
+	</select>
+<!--  최근 10년 간 예약자, 가입자 수 -->	
+<select id="getChat10YearList"  resultType="hashmap" parameterType="com.kongkong.admin.vo.AdminVO">
+	<![CDATA[
+      SELECT a.c_seq, nvl(b.c_count ,0) as c_count   
+  		FROM   
+			(SELECT  (to_char(sysdate, 'YYYY') - level + 1)  c_seq   FROM dual CONNECT BY level <= 10)  a  
+   				 LEFT JOIN 
+        			( SELECT TO_NUMBER(TO_CHAR(${chartGubunCulume}, 'YYYY')) as year , count(${chartGubunCulume}) as c_count
+        				FROM ${chartGubunTable}
+       					WHERE ${chartGubunCulume} > TO_TIMESTAMP(TO_CHAR(SYSDATE - (INTERVAL '10' YEAR), 'yyyy-mm-dd HH:MI:SS'))  
+        				GROUP BY TO_NUMBER(TO_CHAR(${chartGubunCulume}, 'YYYY')) 
+       				 ) b
+    	on (a.c_seq = b.year)
+    	order by a.c_seq ASC
+	]]>
+	
+	</select>
+	
+	<select id="getFreeSelect" resultType="com.kongkong.free.vo.FreeBoardVO">
+		select bo_id, bo_title, bo_singo_date, bo_no
+		from free_board
+		where bo_singo = 'Y'
+	</select>
+	
+	<select id="getFreeBlockSelect" resultType="com.kongkong.free.vo.FreeBoardVO">
+		select bo_id, bo_title, bo_singo_date, bo_block_date, bo_no,b.mem_mail AS bo_block_mail 
+		from free_board a ,member b
+		where bo_block = 'Y' 
+		AND a.bo_id=b.mem_id
+	</select>
+	
+	<update id="FreeBlockUpdate">
+		UPDATE free_board
+		SET bo_block = 'Y', bo_block_date = sysdate , bo_singo = 'N'
+	    WHERE bo_no =  #{boNo}
+	</update>
+	
+	<update id="FreeBlockBack">
+		UPDATE free_board
+		SET bo_block = 'N'
+		WHERE bo_no = #{boNo}
+	</update>
+	
+	<update id="FreeBlockDelete">
+ 		UPDATE free_board             
+           SET bo_del_yn = 'Y', bo_block = 'N'	        
+         WHERE bo_no     =  #{boNo} 
+	</update>
+	
+	<select id="getMemSelect" resultType="com.kongkong.member.vo.MemberVO">
+		SELECT count(*) as mem_count
+		FROM member
+		WHERE mem_delete = 'N'
+	</select>
+ </mapper>

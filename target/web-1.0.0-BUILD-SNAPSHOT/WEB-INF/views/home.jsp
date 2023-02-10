@@ -1,0 +1,45 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+<title>Home</title>
+</head>
+<body>
+<%@ include file="/WEB-INF/inc/changingImage.jsp"%>
+<br>
+	<div class="container" style="margin-top: 50px">
+		<div class="row">
+			<div class="row justify-content-evenly">
+				<div class="col-4" style="height: 400px; background-color: blue;">
+					여긴 공지사항</div>
+				<div class="col-4" style="height: 400px; background-color: red;">
+					여긴 팁 자유게시판</div>
+			</div>
+		</div>
+	</div><br>
+	<div class="container" style="margin-top: 50px">
+		<div class="row">
+			<div class="row justify-content-evenly">
+				<div class="col-4" style="height: 400px; background-color: blue;">
+					<br><br>
+					<div style="height: 150px;background-color: red;">여긴 포켓와이파이</div>
+					<div style="height: 50px"> </div>
+					<div style="height: 150px;background-color: green;">여긴 유심 광고</div>
+					
+					
+					</div>
+				<div class="col-4" style="height: 400px;">
+					<%@ include file="googleMap.jsp"%></div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<br>
+</body>
+</html>

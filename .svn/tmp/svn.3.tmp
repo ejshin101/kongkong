@@ -1,0 +1,173 @@
+package com.kongkong.reservation.web;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+import javax.servlet.http.HttpSession;
+import javax.validation.groups.Default;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.kongkong.code.service.ICodeService;
+import com.kongkong.code.vo.CodeVO;
+import com.kongkong.common.vaild.VaildGroup;
+import com.kongkong.common.vo.ResultMessageVO;
+import com.kongkong.exception.BizNotFoundException;
+import com.kongkong.reservation.service.IReservationService;
+import com.kongkong.reservation.vo.ReservationSearchVO;
+import com.kongkong.reservation.vo.ReservationVO;
+import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.response.IamportResponse;
+import com.siot.IamportRestClient.response.Payment;
+
+@Controller
+public class reservationController {
+	
+	private IamportClient api;
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	private ICodeService codeService;
+	
+	public reservationController() {
+    	// REST API 키와 REST API secret 를 아래처럼 순서대로 입력한다.
+		this.api = new IamportClient("2438039052581234","5a019a626a681f4bd3902d7e2e90f87c754aa0a5bd2f3701bdbd1668cb769af4f1e6814f49a3ba77");
+	}
+
+	@Autowired
+	IReservationService reserveService;
+		
+	
+	@ModelAttribute("wifi")
+	public List<CodeVO> wifi(){
+		logger.debug("와이파이옵션 공통 코드");
+		List<CodeVO> wifi = codeService.getCodeListByParent("PK00");
+		return wifi;
+	}
+	
+	
+	//모든 예약 정보 가져오기
+	@RequestMapping("/reservation/reservationList.wow")
+	public String reservationList(@ModelAttribute("reserveVO") ReservationSearchVO reserveVO, Model model) throws Exception{
+		logger.debug("reserve={}", reserveVO);
+		return "reservation/reservationList";
+	}
+	
+//	//예약정보 하나 가지고 오기
+//	@RequestMapping("reservation/reservationView.wow")
+//	public String reservationView(@RequestParam("bookNo") int bookNo, Model model) throws Exception{
+//		logger.debug("bookNo={}",bookNo);
+//		try {
+//			ReservationVO reserve = reserveService.getReserve(bookNo);
+//			model.addAttribute("reserve", reserve);
+//			return "reservation/reserveView";
+//		}catch (BizNotFoundException ex) {
+//			ResultMessageVO messageVO = new ResultMessageVO()
+//					.setResult(false)
+//					.setTitle("예약 정보 조회 실패")
+//					.setMessage(ex.getMessage())
+//					.setUrl("/reservation/reservationList.wow")
+//					.setUrlTitle("예약 목록으로");
+//			model.addAttribute("messageVO", messageVO);
+//			return "common/message";
+//		}
+//	}
+//	
+//	@RequestMapping("reservation/reservationModify.wow")
+//	public String reservationModifyGet(@RequestParam("bookNo") int bookNo, Model model) {
+//		logger.debug("bookNo={}",bookNo);
+//		try {
+//			ReservationVO reserve = reserveService.getReserve(bookNo);
+//			model.addAttribute("reserve",reserve);
+//			return "reservation/reserveEdit";
+//		}catch(BizNotFoundException ex){
+//			ResultMessageVO messageVO = new ResultMessageVO()
+//					.setResult(false)
+//					.setTitle("예약 정보 조회 실패")
+//					.setMessage(ex.getMessage())
+//					.setUrl("/reservation/reservationList.wow")
+//					.setUrlTitle("예약 목록으로");
+//			model.addAttribute("messageVO", messageVO);
+//			return "common/message";
+//		}
+//	}
+//	
+//	@RequestMapping(value="/reservation/reservationModify.wow", method = RequestMethod.POST)
+//	public String reservationModifyPost(@Validated({Default.class, VaildGroup.RegistType.class}) //validation(검증)함을 선언
+//									    @ModelAttribute("reserve") ReservationVO reserve, //board의 값을 가져옴 = 사용자가 입력했던 내용을 그대로 가져옴 날라가면 슬프니까 
+//									    BindingResult errors, Model model) {
+//		logger.debug("reserve={}",reserve);
+//		if(errors.hasErrors()) {
+//			return "reservation/reservationEdif";
+//		}
+//		
+//		ResultMessageVO messageVO = new ResultMessageVO();
+//		try {
+//			reserveService.modifyReserve(reserve);
+//			 messageVO.setResult(true)
+//				.setTitle("수정성공")
+//				.setMessage("정상적으로 예약 정보 수정되었습니다.")
+//				.setUrl("/reservation/reservationView.wow?bookNo="+reserve.getBookNo())
+//				.setUrlTitle("에약 정보 보기");
+//		}catch(BizNotFoundException e) {
+//		   messageVO.setResult(false)
+//					.setTitle("이용자 정보 조회 실패")
+//					.setMessage(e.getMessage())
+//					.setUrl("/reservation/reservationList.wow")
+//					.setUrlTitle("이용자 목록으로");
+//		   model.addAttribute("messageVO", messageVO);
+//					return "common/message";
+//		}
+//		model.addAttribute("messageVO", messageVO);
+//		return "common/message";
+//	}
+//	
+//	
+//	//예약 정보 등록 저장
+//	@RequestMapping("/reservation/reservationRegist.wow")
+//	public String reservationRegistGet() throws Exception {
+//		return "reservation/reservationForm";
+//	}
+//	
+//	@RequestMapping(value = "/reservation/reservationRegist.wow", method = RequestMethod.POST)
+//	public String reservationRegistPost(@Validated({Default.class, VaildGroup.RegistType.class})
+//								 @ModelAttribute("reserve") ReservationVO reserve,
+//								 BindingResult errors) throws Exception{
+//		if(errors.hasErrors()) {
+//			return "reservation/reservationForm";
+//		}
+//		logger.debug("reserve={}",reserve);
+//		reserveService.registReserve(reserve);
+//		return "redirect:/reservation/reserveView.wow?bookNo="+reserve.getBookNo();
+//	}
+//	
+	
+	//결제 검증
+	@ResponseBody
+	@RequestMapping(value="/reservation/reservationForm/{imp_uid}")
+	public IamportResponse<Payment> paymentByImpUid(Model model, Locale locale, HttpSession session, 
+													@PathVariable(value= "imp_uid") String imp_uid) throws IamportResponseException, IOException
+	{	
+			return api.paymentByImpUid(imp_uid);
+	}
+	
+	@RequestMapping("/reservation/reservationForm.wow")
+	public String getmain() {
+		return "reservation/reservationForm";
+	}
+	
+}

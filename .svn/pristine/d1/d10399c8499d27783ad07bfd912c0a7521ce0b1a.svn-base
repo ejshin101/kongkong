@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kongkong.flight.dao.IFlightDao">
+	<select id="getkName" resultType="String">
+		select kname 
+		from airport_code
+	</select>
+	
+	<select id="geteName" resultType="String">
+		select ename
+		from airport_code
+	</select>
+	
+	<select id="getCode" parameterType="String" resultType="String">
+		select code from airport_code 
+		where ename= #{airportName}
+  		   or kname= #{airportName}
+	</select>
+	
+	<insert id="saveChat" parameterType="com.kongkong.flight.vo.FlightVO">
+		<selectKey resultType="int" keyProperty="chatNo" order="BEFORE">
+ 			SELECT seq_chat.nextval FROM dual	
+ 		</selectKey>
+		INSERT INTO CHAT (
+					CHAT_NO
+					,CHAT_ID
+					,TEXT
+					,CHAT_DATE
+				) VALUES (
+				 #{chatNo}
+				 ,#{chatId}
+				 ,#{text}
+				 ,SYSDATE
+				)
+	</insert>
+	
+	<select id="getChat" resultType="com.kongkong.flight.vo.FlightVO">
+		 select chat_id, text from (
+                select rownum as rn,CHAT_ID,TEXT from CHAT
+                order by CHAT_NO asc)
+                where rn > (select count(*) from chat)-30
+	</select>
+</mapper>

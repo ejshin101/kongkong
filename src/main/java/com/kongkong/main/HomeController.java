@@ -1,0 +1,81 @@
+package com.kongkong.main;
+
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.kongkong.free.service.IFreeBoardService;
+import com.kongkong.free.vo.FreeBoardSearchVO;
+import com.kongkong.free.vo.FreeBoardVO;
+
+/**
+ * Handles requests for the application home page.
+ */
+@Controller
+public class HomeController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	
+	@Autowired
+	IFreeBoardService freeBoardService;
+	/**
+	 * Simply selects the home view to render by returning its name.
+	 */
+	@RequestMapping(value = {"/", "/main"}, method = RequestMethod.GET)
+	public String home(Locale locale, Model model, FreeBoardSearchVO searchVO) {
+		logger.info("Welcome home! The client locale is {}.", locale);
+		
+		Date date = new Date();
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		
+		String formattedDate = dateFormat.format(date);
+		
+		model.addAttribute("serverTime", formattedDate );
+		model.addAttribute("message", "임호아빠가 열심히 해요~~" );
+		
+		// 공지사항
+		List<FreeBoardVO> NoticeList = freeBoardService.getBoardNoticeList(searchVO);
+		model.addAttribute("NoticeList", NoticeList);
+		
+		// 팁자유게시판
+		List<FreeBoardVO> QnaList = freeBoardService.getBoardQnaList(searchVO);
+		model.addAttribute("QnaList", QnaList);
+		
+		return "home";
+	}
+	
+	@RequestMapping("/kongkong")
+	private String kongkong() {
+		
+		return "kongkong";
+	}
+	
+	@RequestMapping("/kongkongError")
+	private String kongkongError() {
+		
+		return "kongkongError";
+	}
+	
+	@RequestMapping("/starPointAlert")
+	private String starPointAlert() {
+		
+		return "starPointAlert";
+	}
+	
+	@RequestMapping("/test.wow")
+	private String test() {
+		
+		return "test";
+	}
+	
+	
+}

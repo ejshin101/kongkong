@@ -1,0 +1,42 @@
+package com.kongkong.admin.service;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import com.kongkong.admin.dao.IAdminDao;
+import com.kongkong.admin.vo.AdminVO;
+
+@Service
+public class AdminServiceImpl implements IAdminService {
+
+	@Inject
+	private IAdminDao adminDao;
+	
+	@Override
+	public List<Map<String, Object>> getChatList(AdminVO adminVO) {
+		// adminVO 차트구분에 따라서 컬럼명 설정
+		if(adminVO.getChartGubun().equals("R")) {
+			adminVO.setChartGubunCulume("book_date");
+			adminVO.setChartGubunTable("reservation");
+		}else {
+			adminVO.setChartGubunCulume("mem_date");
+			adminVO.setChartGubunTable("member");
+		}
+		
+		
+		if (StringUtils.isBlank(adminVO.getSelectMonth())) {
+			List<Map<String, Object>> list = adminDao.getChatYearList(adminVO);
+			return list;
+		}else {
+			List<Map<String, Object>> list = adminDao.getChatMonthList(adminVO);
+			return list;
+		}
+	}
+
+
+}

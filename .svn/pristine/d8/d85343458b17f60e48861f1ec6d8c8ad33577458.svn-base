@@ -1,0 +1,94 @@
+package com.kongkong.free.service;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import com.kongkong.free.dao.IFreeBoardDao;
+import com.kongkong.free.vo.FreeBoardSearchVO;
+import com.kongkong.free.vo.FreeBoardVO;
+import com.kongkong.exception.BizNotFoundException;
+import com.kongkong.exception.BizPasswordNotMatchedException;
+
+@Service
+public class FreeBoardServiceImpl implements IFreeBoardService {
+
+	@Inject
+	IFreeBoardDao freeBoardDao;
+
+	@Override
+	public int getBoardCount(FreeBoardSearchVO searchVO) {
+		return freeBoardDao.getBoardCount(searchVO);
+	}
+	
+	@Override
+	public List<FreeBoardVO> getBoardList(FreeBoardSearchVO searchVO) {
+		return freeBoardDao.getBoardList(searchVO);
+	}
+	
+	@Override
+	public List<FreeBoardVO> getBoardQnaList(FreeBoardSearchVO searchVO) {
+		return freeBoardDao.getBoardQnaList(searchVO);
+	}
+
+	@Override
+	public List<FreeBoardVO> getBoardNoticeList(FreeBoardSearchVO searchVO) {
+		return freeBoardDao.getBoardNoticeList(searchVO);
+	}
+
+	@Override
+	public List<FreeBoardVO> getBoardPopularList(FreeBoardSearchVO searchVO) {
+		return freeBoardDao.getBoardPopularList(searchVO);
+	}
+
+	@Override
+	public FreeBoardVO getBoard(int boNo) {
+
+		return freeBoardDao.getBoard(boNo);
+	}
+
+	@Override
+	public void registBoard(FreeBoardVO board) {
+		
+		board.getBoNo();
+		freeBoardDao.insertBoard(board);
+	}
+
+	@Override
+	public void modifyBoard(FreeBoardVO board)throws BizNotFoundException, BizPasswordNotMatchedException {
+		FreeBoardVO vo = freeBoardDao.getBoard(board.getBoNo());
+		if(vo==null) {
+			throw new BizNotFoundException("글번호 ["+board.getBoNo()+"] 조회 실패");
+		}
+		if(! vo.getBoPass().equals(board.getBoPass())) {
+			// logger.info("board={},", board);
+			// logger.info("vo={},", vo);
+			throw new BizPasswordNotMatchedException("패스워드가 다릅니다.");
+		}
+		freeBoardDao.modifyBoard(board);
+	}
+	
+	@Override
+	public void removeBoard(FreeBoardVO board)throws BizNotFoundException, BizPasswordNotMatchedException {
+		FreeBoardVO vo = freeBoardDao.getBoard(board.getBoNo());
+		if(vo==null) {
+			throw new BizNotFoundException("글번호 ["+board.getBoNo()+"] 조회 실패");
+		}
+		if(! vo.getBoPass().equals(board.getBoPass())) {
+			// logger.info("board={},", board);
+			// logger.info("vo={},", vo);
+			throw new BizPasswordNotMatchedException("패스워드가 다릅니다.");
+		}
+		freeBoardDao.deleteBoard(board);
+	}
+
+	@Override
+	public void increaseHit(int boNo) {
+		freeBoardDao.increaseHit(boNo);
+		
+	}
+
+
+}

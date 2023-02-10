@@ -1,0 +1,27 @@
+package com.kongkong.flight.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kongkong.flight.dao.IFlightDao;
+import com.kongkong.flight.vo.FlightVO;
+@Service
+public class FlightServiceImpl implements IFlightService{
+	
+	@Autowired
+	IFlightDao flightDao;
+	@Override
+	public List<String> getkName() {
+		return flightDao.getkName();
+	}
+	public List<String> geteName() {
+		return flightDao.geteName();
+	}
+	@Override
+	public String getCode(String airportName) {
+		return 	flightDao.getCode(airportName);
+	}
+
+}

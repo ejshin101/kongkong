@@ -1,0 +1,80 @@
+package com.kongkong.admin.service;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import com.kongkong.admin.dao.IAdminDao;
+import com.kongkong.admin.vo.AdminVO;
+import com.kongkong.free.vo.FreeBoardVO;
+
+@Service
+public class AdminServiceImpl implements IAdminService {
+
+	@Inject
+	private IAdminDao adminDao;
+	
+	@Override
+	public List<Map<String, Object>> getChatList(AdminVO adminVO) {
+		// adminVO 차트구분에 따라서 컬럼명 설정
+		if(adminVO.getChartGubun().equals("R")) {
+			adminVO.setChartGubunCulume("book_date");
+			adminVO.setChartGubunTable("reservation");
+		}else if(adminVO.getChartGubun().equals("S")) {
+			adminVO.setChartGubunCulume("mem_date");
+			adminVO.setChartGubunTable("member");
+		}else if(adminVO.getChartGubun().equals("Y-R")) {
+			adminVO.setChartGubunCulume("book_date");
+			adminVO.setChartGubunTable("reservation");
+		}else if(adminVO.getChartGubun().equals("Y-S")) {
+			adminVO.setChartGubunCulume("mem_date");
+			adminVO.setChartGubunTable("member");
+		}
+		
+		if(adminVO.getChartGubun().equals("R") || adminVO.getChartGubun().equals("S")) {
+			
+				if (StringUtils.isBlank(adminVO.getSelectMonth())) { //년도만 선택
+					List<Map<String, Object>> list = adminDao.getChatYearList(adminVO);
+					System.out.println(list);
+					return list;
+				}else {  // 년도, 월 선택 둘다
+					List<Map<String, Object>> list = adminDao.getChatMonthList(adminVO);
+					System.out.println(list);
+					return list;
+				}
+		} else if(adminVO.getChartGubun().equals("Y-R") || adminVO.getChartGubun().equals("Y-S")) {
+			System.out.println(adminVO);
+			List<Map<String, Object>> list = adminDao.getChat10YearList(adminVO);
+			System.out.println(list);
+			return list;
+	}else {
+		return null;
+		
+	}
+		
+
+}
+
+	//신고관리
+	@Override
+	public List<FreeBoardVO> freeSelect(FreeBoardVO free) {
+		return adminDao.getFreeSelect(free);
+		
+	}
+	
+	public List<FreeBoardVO> freeBlockSelect(FreeBoardVO free) {
+		return adminDao.getFreeBlockSelect(free);
+		
+	}
+
+	@Override
+	public void blockUpdate(FreeBoardVO free) {
+		adminDao.FreeBlockUpdate(free);
+		
+	}
+	
+}

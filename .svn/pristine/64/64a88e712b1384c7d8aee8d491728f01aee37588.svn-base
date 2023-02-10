@@ -1,0 +1,66 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>글 등록</title>
+</head>
+<body>
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+<div class="container border" style="border-radius: 20px;">
+	<div class="page-header">
+		<h3 align="center" style="margin:20px;">글 등록</h3>
+	</div>
+	<form:form action="freeRegist.wow" id="freeForm" name="freeForm" modelAttribute="board" method="POST">
+	<table class="table table-hover text-center">
+		<colgroup>
+			<col width="20%" />
+			<col/>
+		</colgroup>
+		<form:hidden path="boId" cssClass="" value="${sessionScope.USER_INFO.userId}"/>
+		<tr>
+			<th>제목</th>
+			<td>
+				<form:input path="boTitle" cssClass="form-control input-sm"/>
+				<form:errors path="boTitle"/>
+			</td>
+		</tr>
+		<tr>
+			<th>작성자</th>
+			<td>
+			<form:input path="boWriter" cssClass="form-control input-sm" value="${sessionScope.USER_INFO.userName}"/>
+			<form:errors path="boWriter"/>
+			</td>
+		</tr>
+		<tr>
+			<th>분류</th>
+			<td>
+				<form:select path="boCategory" id="Category" name="Category" cssClass="form-control input-sm">
+					<option value="FREE">자유게시판</option>
+					<option value="QNA">QnA</option>
+					<option value="TIP">Tip</option>
+					<c:if test='${sessionScope.USER_INFO.userRole eq "admin"}'>
+					<option value="NOTICE">공지사항</option>
+					</c:if>
+				<form:errors path="boCategory"/>
+				</form:select>
+			</td>
+		</tr>
+		<tr>
+			<th>내용</th>
+			<td><textarea rows="10" name="boContent" class="form-control"></textarea>
+			</td>
+		</tr>
+	</table>
+		<div class="text-center" style="margin-bottom: 30px;">
+	       <a href="boardHome.wow" class="btn btn-dark">목록</a>
+	       <button type="submit" class="btn btn-primary">저장</button>
+	    </div> 
+	</form:form>	
+</div><!-- container -->
+</body>
+</html>
+
+

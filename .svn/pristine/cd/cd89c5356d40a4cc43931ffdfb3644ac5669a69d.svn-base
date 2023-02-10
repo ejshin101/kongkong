@@ -1,0 +1,36 @@
+package com.kongkong.member.service;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import com.kongkong.member.dao.IMemberDao;
+import com.kongkong.member.vo.MemberVO;
+
+@Service
+public class MemberServiceImpl implements IMemberService {
+
+	@Inject
+	IMemberDao memberDao;
+	
+	public List<MemberVO> getMemberList() {
+		return memberDao.getMemberList();
+	}
+
+	public MemberVO getMember(String memId) {
+		return memberDao.getMember(memId);
+	}
+
+	public void registMember(MemberVO member) {
+	}
+
+	public int changeMileage(MemberVO member) {
+		return memberDao.changeMileage(member);
+	}
+
+
+
+
+}

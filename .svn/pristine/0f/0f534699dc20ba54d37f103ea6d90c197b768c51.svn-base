@@ -1,0 +1,104 @@
+package com.kongkong.reservation.service;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.kongkong.exception.BizNotFoundException;
+import com.kongkong.reservation.dao.IReservationDao;
+import com.kongkong.reservation.dao.IReservationOptionDao;
+import com.kongkong.reservation.vo.ReservationSearchVO;
+import com.kongkong.reservation.vo.ReservationVO;
+
+@Service
+public class ReservationServiceImpl implements IReservationService{
+	
+	private static ReservationServiceImpl instance = getInstance();
+	
+	private ReservationServiceImpl() {
+	}
+	
+	private static ReservationServiceImpl getInstance() {
+		if (instance == null)
+			instance = new ReservationServiceImpl();
+		return instance;
+	}
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	private IReservationDao reservationDao;
+	
+	@Autowired
+	private IReservationOptionDao reservationOptionDao;
+
+	@Override
+	public List<ReservationVO> getReserveList(ReservationSearchVO searchVO) {
+		logger.debug("UserId={}" , searchVO);
+		List<ReservationVO> list = reservationDao.getReserveList(searchVO);
+		return list;
+	}
+	
+	@Override
+	public ReservationVO getReserve(String reMerchantUid) {
+		logger.debug("bookNo={}" , reMerchantUid);
+		ReservationVO list = reservationDao.getReserve(reMerchantUid);
+		return list;
+	}
+
+	public List<ReservationVO> getReserveOption(String reMerchantUid) {
+		logger.debug("bookNo={}" , reMerchantUid);
+		List<ReservationVO> list2 = reservationOptionDao.getReserve(reMerchantUid);
+		return list2;
+	}
+	
+	@Override
+	public void registReserve(ReservationVO reserve) {
+		logger.debug("reserve={}" , reserve);
+		reservationDao.insertReserve(reserve); //tale1 insert
+		for(int i = 0; i<reserve.getReLows().length; i++) {
+			String low = reserve.getReLows()[i];
+			System.out.println("low = " + low);
+			if(low != null && !low.equals("")) {
+				reserve.setReLow(low);
+				reservationOptionDao.insertReserve(reserve);
+			}
+			
+		}
+	}
+
+	@Override
+	public void modifyReserve(ReservationVO reserve) throws BizNotFoundException {
+		logger.debug("reserve={}" , reserve);
+		ReservationVO vo = reservationDao.getReserve(reserve.getBookMerchantUid());
+		
+		if(vo == null) {
+			throw new BizNotFoundException(reserve.getBookMerchantUid()+"가 존재하지 않습니다.");
+		}
+		reservationDao.updateReserve(reserve);
+	}
+
+	@Override
+	public void removeReserve(ReservationVO reserve) throws BizNotFoundException {
+		logger.debug("reserve={}" , reserve);
+		ReservationVO vo = reservationDao.getReserve(reserve.getReMerchantUid());
+		if(vo == null) {
+			throw new BizNotFoundException();
+		}
+		reservationDao.deleteReserve(reserve);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public int getReserveCount(ReservationSearchVO searchVO) {
+		logger.debug("searchVO={}" , searchVO);
+		return reservationDao.getReserveCount(searchVO);
+	}
+
+	
+
+}

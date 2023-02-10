@@ -1,0 +1,77 @@
+package com.kongkong.flight.vo;
+
+public class FlightVO {
+	private String ename;
+	private String kname;
+	private String code;
+	private String icaoCode;
+	private String region;
+	private String ecountry;
+	private String kcountry;
+	private String city;
+
+	public String getEname() {
+		return ename;
+	}
+
+	public void setEname(String ename) {
+		this.ename = ename;
+	}
+
+	public String getKname() {
+		return kname;
+	}
+
+	public void setKname(String kname) {
+		this.kname = kname;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getIcaoCode() {
+		return icaoCode;
+	}
+
+	public void setIcaoCode(String icaoCode) {
+		this.icaoCode = icaoCode;
+	}
+
+	public String getRegion() {
+		return region;
+	}
+
+	public void setRegion(String region) {
+		this.region = region;
+	}
+
+	public String getEcountry() {
+		return ecountry;
+	}
+
+	public void setEcountry(String ecountry) {
+		this.ecountry = ecountry;
+	}
+
+	public String getKcountry() {
+		return kcountry;
+	}
+
+	public void setKcountry(String kcountry) {
+		this.kcountry = kcountry;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+}

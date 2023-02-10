@@ -1,0 +1,61 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<html>
+<head>
+<style>
+       #sideBar {
+        	border-style: solid;
+            position: absolute;
+            top: 200px;
+            width: 150px;
+        }
+        #ad {
+        	border-style: solid;
+            position: absolute;
+            top: 550px;
+            height: 150px;
+            width: 150px;
+            background-color: aqua;
+        }
+    </style>
+	<title>Home</title>
+</head>
+<body>
+<%@ include file="/WEB-INF/inc/top.jsp"%>
+<div style="height: 70px"></div>
+<div class="row">
+<div class="col-1">
+<%@ include file="/WEB-INF/inc/ReservationSidebar.jsp"%>
+</div>
+<div class="row justify-content-evenly col-10" style ="margin-left: 150px;">
+	<div class="col-3" style="height: 400px;width:400px; padding: 50px;">
+	<a href="<%=request.getContextPath()%>/reservation/product/wifi"> 
+	<img src="<%=request.getContextPath()%>/resources/image/wifi.jpg " alt=""
+	style="width: 400px; height:400px;padding-bottom: 50px">
+	</a>
+     </div>
+	<div class="col-3" style="height: 400px;width:400px; padding: 50px;">
+	<a href="<%=request.getContextPath()%>/reservation/product/usim"> 
+	<img src="<%=request.getContextPath()%>/resources/image/usim.png " alt=""
+	style="width: 400px; height:400px;padding-bottom: 50px">
+	</a>
+	</div>
+	<div class="col-3" style="height: 400px;width:400px; padding: 50px;">
+	<a href="hotel.wow"> 
+	<img src="<%=request.getContextPath()%>/resources/image/hotelBooking.jpg " alt=""
+	style="width: 400px; height:400px;padding-bottom: 50px">
+	</a>
+	</div>
+	<div class="col-3" style="height: 400px;width:400px; padding: 50px;">
+	<a href="flightReservation"> 
+	<img src="<%=request.getContextPath()%>/resources/image/hotelBooking.jpg " alt=""
+	style="width: 400px; height:400px;padding-bottom: 50px">
+	</a>
+	</div>
+</div>
+</div>
+<div id="bottom" style="height:200px "></div>
+<%@ include file="/WEB-INF/inc/footer.jsp"%>
+</body>
+</html>

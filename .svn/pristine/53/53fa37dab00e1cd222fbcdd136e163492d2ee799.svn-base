@@ -1,0 +1,44 @@
+package com.kongkong.free.service;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import com.kongkong.free.dao.IFreeBoardDao;
+import com.kongkong.free.vo.FreeBoardVO;
+
+@Service
+public class FreeBoardServiceImpl implements IFreeBoardService {
+
+	@Inject
+	IFreeBoardDao freeBoardDao;
+
+	@Override
+	public List<FreeBoardVO> getBoardList() {
+		return freeBoardDao.getBoardList();
+	}
+	
+	@Override
+	public List<FreeBoardVO> getBoardQnaList() {
+		return freeBoardDao.getBoardQnaList();
+	}
+
+	@Override
+	public List<FreeBoardVO> getBoardNoticeList() {
+		return freeBoardDao.getBoardNoticeList();
+	}
+
+	@Override
+	public List<FreeBoardVO> getBoardPopularList() {
+		return freeBoardDao.getBoardPopularList();
+	}
+
+	@Override
+	public FreeBoardVO getBoard(int boNo) {
+//		FreeBoardVO board = freeBoardDao.getBoard(boNo);
+
+		return freeBoardDao.getBoard(boNo);
+	}
+}

@@ -1,0 +1,49 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<script>
+	$(document).ready(
+			function() {
+				var scrollSpy = new bootstrap.ScrollSpy(document.body, {
+					target : '#sideBar'
+				})
+			});
+
+	$(window).scroll(function() {
+		var scrollTop = $(document).scrollTop() + 200;
+		if (scrollTop < 200) {
+			scrollTop = 200;
+		}
+		$("#sideBar").stop();
+		$("#sideBar").animate({
+			"top" : scrollTop
+		});
+	});
+	$(window).scroll(function() {
+		var scrollTop = $(document).scrollTop() + 550;
+		if (scrollTop < 550) {
+			scrollTop = 550;
+		}
+		$("#ad").stop();
+		$("#ad").animate({
+			"top" : scrollTop
+		});
+	});
+</script>
+ <div id="sideBar">
+        <nav id="sideNav" class="navbar flex-column align-items-stretch p-3 ">
+            <nav class="nav nav-pills flex-column">
+                <a class="nav-link ms-1 my-1" href="#">Reservation</a>
+                <a class="nav-link ms-1 my-1" href="<%=request.getContextPath()%>/reservation/product/wifi">Wi-fi</a>
+                <a class="nav-link ms-1 my-1" href="<%=request.getContextPath()%>/reservation/product/usim">USIM</a>
+                <a class="nav-link ms-1 my-1" href="hotel.wow"> 호텔 찾기</a>
+            </nav>
+            <a class="nav-link ms-4" href="#"><i class="far fa-caret-square-up"></i></a>
+            <a class="nav-link ms-4" href="#bottom"><i class="far fa-caret-square-down"></i></a>
+        </nav>
+    <!--followQuick end-->
+</div>
+    <div id="ad">
+        광고 문의
+    </div>
+    <!--ad end-->
+

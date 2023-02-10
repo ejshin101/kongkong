@@ -1,0 +1,278 @@
+package com.kongkong.free.web;
+
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.groups.Default;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kongkong.code.service.ICodeService;
+import com.kongkong.code.vo.CodeVO;
+import com.kongkong.common.valid.ValidGroup;
+import com.kongkong.free.service.IFreeBoardService;
+import com.kongkong.free.vo.FreeBoardSearchVO;
+import com.kongkong.free.vo.FreeBoardVO;
+import com.kongkong.login.vo.UserVO;
+import com.kongkong.util.CookieUtils;
+
+
+@Controller
+public class FreeBoardController {
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Inject // 앞으론 Inject
+	private IFreeBoardService freeBoardService;
+	
+	@Inject
+	private ICodeService codeService;
+	
+	
+	@ModelAttribute("categories")
+	public List<CodeVO> category() {
+		logger.debug("보드 공통코드를 처리합니다.");
+		List<CodeVO> categories =  codeService.getCodeListByParent("BO00");
+		return categories;
+	}
+
+	@RequestMapping("/free/boardHome.wow")
+	public String freeList(@ModelAttribute("searchVO") FreeBoardSearchVO searchVO, Model model) {
+		
+		searchVO.setTotalRowCount(freeBoardService.getBoardCount(searchVO));
+		searchVO.setting(); 
+		
+		List<FreeBoardVO> freeBoardList = freeBoardService.getBoardList(searchVO);
+		model.addAttribute("freeBoardList", freeBoardList);
+		
+		List<FreeBoardVO> NoticeList = freeBoardService.onlyNotice();
+		model.addAttribute("NoticeList", NoticeList);
+
+		return "free/boardHome";
+	}
+	
+	@RequestMapping("/free/boardTip.wow")
+	public String boardTip(@ModelAttribute("searchVO") FreeBoardSearchVO searchVO, Model model, HttpSession session, String Code) {
+		
+		searchVO.setTotalRowCount(freeBoardService.getTipBoardCount(searchVO));
+		UserVO user = (UserVO)session.getAttribute("USER_INFO");
+		searchVO.setting(); 
+		
+		if(user != null) {
+			Code = user.getUserLike();
+		}
+		
+		List<FreeBoardVO> onlyQna = freeBoardService.onlyTip(Code);
+		model.addAttribute("onlyQna", onlyQna);
+		
+		List<FreeBoardVO> NoticeList = freeBoardService.onlyNotice();
+		model.addAttribute("NoticeList", NoticeList);
+
+		List<FreeBoardVO> TipList = freeBoardService.getBoardTip(searchVO);
+		model.addAttribute("TipList", TipList);
+
+		return "free/boardTip";
+	}
+	
+	@RequestMapping("/free/boardNotice.wow")
+	public String boardNotice(@ModelAttribute("searchVO") FreeBoardSearchVO searchVO, Model model) {
+		
+		searchVO.setTotalRowCount(freeBoardService.getNoticeBoardCount(searchVO));
+		searchVO.setting(); 
+		
+		List<FreeBoardVO> NoticeLists = freeBoardService.getBoardNoticeList(searchVO);
+		model.addAttribute("NoticeLists", NoticeLists);
+		
+		List<FreeBoardVO> NoticeList = freeBoardService.onlyNotice();
+		model.addAttribute("NoticeList", NoticeList);
+
+		return "free/boardNotice";
+	}
+	
+	@RequestMapping("/free/boardQna.wow")
+	public String boardQna(@ModelAttribute("searchVO") FreeBoardSearchVO searchVO, Model model) {
+		
+		searchVO.setTotalRowCount(freeBoardService.getQnaBoardCount(searchVO));
+		searchVO.setting(); 
+		
+		List<FreeBoardVO> NoticeList = freeBoardService.onlyNotice();
+		model.addAttribute("NoticeList", NoticeList);
+
+		List<FreeBoardVO> QnaList = freeBoardService.getBoardQnaList(searchVO);
+		model.addAttribute("QnaList", QnaList);
+
+		return "free/boardQna";
+	}
+
+	
+	
+	
+	@RequestMapping("/free/freeView.wow")
+	public String freeView(int boNo, HttpServletResponse resp, HttpServletRequest req) throws Exception {
+		
+		FreeBoardVO boards = freeBoardService.getBoard(boNo);
+		CookieUtils utils = new CookieUtils(req);
+		
+		if(!utils.existsHit("FREE",boards.getBoNo())){
+			freeBoardService.increaseHit(boNo);	
+			Cookie cook = utils.saveHit("FREE", boards.getBoNo());
+			resp.addCookie(cook);
+		}
+			req.setAttribute("boards", boards);
+			return "free/freeView";
+	}
+	
+	@RequestMapping("/free/qnaView.wow")
+	public String qnaView(int boNo, HttpServletResponse resp, HttpServletRequest req) throws Exception {
+		
+		FreeBoardVO boards = freeBoardService.getQnaBoard(boNo);
+		CookieUtils utils = new CookieUtils(req);
+		
+		if(!utils.existsHit("FREE",boards.getBoNo())){
+			freeBoardService.increaseHit(boNo);	
+			Cookie cook = utils.saveHit("FREE", boards.getBoNo());
+			resp.addCookie(cook);
+		}
+			req.setAttribute("boards", boards);
+			return "free/qnaView";
+	}
+	
+	@GetMapping("/free/freeRegist.wow")
+	public String freeForm(@ModelAttribute("board") FreeBoardVO board) {
+		
+		return "free/freeForm";
+	}
+	
+	@PostMapping("/free/freeRegist.wow")
+	public String freeRegist(@Validated({Default.class, ValidGroup.RegistType.class}) @ModelAttribute("board") FreeBoardVO board
+							 , BindingResult errors, HttpSession session) {
+		
+		if (errors.hasErrors()) {
+			return "free/freeForm";
+		}
+		
+		freeBoardService.registBoard(board);
+		
+		return "kongkong";
+	}
+	
+	// tipRegist
+	@GetMapping("/free/tipRegist.wow")
+	public String tipForm(@ModelAttribute("board") FreeBoardVO board) {
+		
+		return "free/tipForm";
+	}
+	
+	@PostMapping("/free/tipRegist.wow")
+	public String tipRegist(@Validated({Default.class, ValidGroup.RegistType.class}) @ModelAttribute("board") FreeBoardVO board
+							 , BindingResult errors, HttpSession session) {
+		
+		if (errors.hasErrors()) {
+			return "free/tipForm";
+		}
+		
+		freeBoardService.registBoard(board);
+		
+		return "kongkong";
+	}
+	
+	// noticeRegist
+		@GetMapping("/free/noticeRegist.wow")
+		public String noticeForm(@ModelAttribute("board") FreeBoardVO board) {
+			
+			return "free/noticeForm";
+		}
+		
+		@PostMapping("/free/noticeRegist.wow")
+		public String noticeRegist(@Validated({Default.class, ValidGroup.RegistType.class}) @ModelAttribute("board") FreeBoardVO board
+								 , BindingResult errors, HttpSession session) {
+			
+			if (errors.hasErrors()) {
+				return "free/noticeForm";
+			}
+			
+			freeBoardService.registBoard(board);
+			
+			return "kongkong";
+		}
+		
+		// qnaRegist
+		@GetMapping("/free/qnaRegist.wow")
+		public String qnaForm(@ModelAttribute("board") FreeBoardVO board) {
+			
+			return "free/qnaForm";
+		}
+		
+		@PostMapping("/free/qnaRegist.wow")
+		public String qnaRegist(@Validated({Default.class, ValidGroup.RegistType.class}) @ModelAttribute("board") FreeBoardVO board
+								 , BindingResult errors, HttpSession session) {
+			
+			if (errors.hasErrors()) {
+				return "free/qnaForm";
+			}
+			
+			freeBoardService.registBoard(board);
+			
+			return "kongkong";
+		}
+	
+	
+	@GetMapping("/free/freeModify.wow")
+	public String freeModify(int boNo, Model model) {
+		
+		FreeBoardVO board = freeBoardService.getBoard(boNo);
+		model.addAttribute("board", board);
+		
+		return "free/freeEdit";
+	}
+	
+	@PostMapping("/free/freeModify.wow")
+	public String freeModify(@Validated({Default.class, ValidGroup.ModifyType.class}) @ModelAttribute("board") FreeBoardVO board
+						     , BindingResult errors) throws Exception {
+		
+		if (errors.hasErrors()) {
+			return "free/freeEdit";
+		}
+		
+		freeBoardService.modifyBoard(board);
+
+		return "kongkong";
+	}
+	
+	@PostMapping("/free/qnaModify.wow")
+	public String qnaModify(@ModelAttribute("boards") FreeBoardVO board) {
+		
+		freeBoardService.modifyQna(board);
+
+		return "kongkong";
+	}
+	
+	
+
+	@RequestMapping("/free/freeDelete.wow")
+	public String freeDelete(@ModelAttribute("board") FreeBoardVO board) throws Exception {
+		
+		if(board.getBoNo()<1){
+			return "redirect:/free/boardHome.wow";
+		}
+
+		freeBoardService.removeBoard(board);
+
+		return "kongkong";
+	}
+
+}

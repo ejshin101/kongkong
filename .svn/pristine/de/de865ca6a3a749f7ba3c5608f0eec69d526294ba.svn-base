@@ -1,0 +1,143 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.5/sockjs.min.js"></script>
+<style>
+#messageArea{
+height: 400px;
+width:  380px;
+overflow: auto;
+}
+#message{
+width: 300px
+}
+#chatbot{
+bottom: 1px;
+right : 30px;
+position: fixed;
+z-index: 10;
+}
+
+.messageBox{
+visibility:hidden;
+bottom: 200px;
+right : 30px;
+position: fixed;
+height: 440px;
+width:  380px;
+border: 1px solid;
+border-radius: 5px;
+border-color: #2493e0;
+z-index: 10;
+background-color: #A3C9F2;
+}
+.message{
+border-top: 2px solid;
+border-top-color: #2493e0;
+}
+.myText{
+text-align: right;
+margin-top: 3px
+}
+.myText span{
+padding-left: 3px;
+padding-right: 3px;
+border-radius : 20px;
+background-color:#fdf3b9;
+
+}
+.othersText{
+left: 3px;
+text-align: left;
+margin-top: 3px
+}
+.othersText span{
+padding-left: 3px;
+padding-right: 3px;
+border-radius : 10px;
+background-color: white;
+}
+
+</style>
+</head>
+<body>
+
+<div class="messageBox">
+<div id="messageArea">
+</div>
+<div class="message">
+<c:if test="${not empty sessionScope.USER_INFO}">
+<input type="text" id="message" onkeydown="enter()"/>
+<input type="button" id="sendBtn" value="전송!"/>
+</c:if>
+<c:if test="${empty sessionScope.USER_INFO}">
+	<a href="<%=request.getContextPath()%>/login/login.wow">로그인</a>시 채팅서비스를 사용할 수 있습니다.  </c:if>
+</div>
+</div><!--  messageBox end -->
+<a id="chatbot" onclick="fn_chat()"> 
+	<img src="<%=request.getContextPath()%>/resources/image/chat.png " alt=""
+	style="width: 100px; height:150px; padding-bottom: 50px">
+</a>
+<script type="text/javascript">
+	var chat =2;
+	function fn_chat(){
+	if(chat==1){
+		$('.messageBox').css('visibility','hidden')
+	chat=2;
+	}else{
+		$('.messageBox').css('visibility','visible')
+	chat=1;		
+		}
+	};
+
+	$("#sendBtn").click(function() {
+		sendMessage();
+		$('#message').val('')
+	});
+	
+	let sock = new SockJS("<%=request.getContextPath()%>/chatting/");
+	sock.onmessage = onMessage;
+	sock.onclose = onClose;
+	sock.onopen = onOpen;
+	// 메시지 전송
+	function sendMessage() {
+		sock.send($("#message").val());
+	}
+	// 서버로부터 메시지를 받았을 때
+	function onMessage(msg) {
+		var data = msg.data;
+		var arr = data.split(":");
+		var myName='${sessionScope.USER_INFO.userName}';
+		if(myName ==arr[0]){
+		$("#messageArea").append("<div class='myText'><span>"+arr[1] + "</span></div>");
+		}else{
+		$("#messageArea").append("<div>"+arr[0]+"</div><div class='othersText'><span>"+arr[1] + "</span></div>");
+		}
+		
+		$('#messageArea').scrollTop(9999999);
+	}
+	// 서버와 연결을 끊었을 때
+	function onClose(evt) {
+		$("#messageArea").append("연결이 끊겼습니다.");
+
+	}
+	function onOpen(evt) {
+		$("#messageArea").append("채팅방에 연결되었습니다<br>");
+
+	}
+	function enter(){
+	     if(window.event.keyCode == 13){
+	    	 sendMessage();
+	    	 $('#message').val('');
+	     } 
+	}
+</script>
+</body>
+</html>

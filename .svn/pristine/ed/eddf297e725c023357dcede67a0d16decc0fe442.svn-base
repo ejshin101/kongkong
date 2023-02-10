@@ -1,0 +1,161 @@
+package com.kongkong.reservation.web;
+
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+import javax.validation.groups.Default;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.kongkong.code.service.ICodeService;
+import com.kongkong.code.vo.CodeVO;
+import com.kongkong.common.valid.ValidGroup;
+import com.kongkong.common.vo.ResultMessageVO;
+import com.kongkong.login.vo.UserVO;
+import com.kongkong.member.service.IMemberService;
+import com.kongkong.member.vo.MemberVO;
+import com.kongkong.reservation.service.IReservationService;
+import com.kongkong.reservation.vo.ReservationSearchVO;
+import com.kongkong.reservation.vo.ReservationVO;
+import com.siot.IamportRestClient.IamportClient;
+
+@Controller
+public class ReservationAdminController {
+	private IamportClient api;
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@Autowired
+	private ICodeService codeService;
+	
+	@ModelAttribute("pickup")
+	public List<CodeVO> pickup(){
+		logger.debug("수령/반납 방법 공통 코드를 처리합니다.");
+		List<CodeVO> pickup = codeService.getCodeListByParent("PI00");
+		return pickup;
+	}
+	
+	@ModelAttribute("airport")
+	public List<CodeVO> airport(){
+		logger.debug("공항 공통 코드를 처리합니다.");
+		List<CodeVO> airport = codeService.getCodeListByParent("AI00");
+		return airport;
+	}
+	@ModelAttribute("pkoption")
+	public List<CodeVO> pkoption(){
+		logger.debug("포켓 와이파이 옵션 코드를 처리합니다.");
+		List<CodeVO> pkoption = codeService.getCodeListByParent("PK00");
+		return pkoption;
+	}
+	@ModelAttribute("usoption")
+	public List<CodeVO> usoption(){
+		logger.debug("유심 옵션 코드를 처리합니다.");
+		List<CodeVO> usoption = codeService.getCodeListByParent("US00");
+		return usoption;
+	}
+	@ModelAttribute("recode")
+	public List<CodeVO> recode(){
+		logger.debug("예약 항목 코드를 처리합니다.");
+		List<CodeVO> recode = codeService.getCodeListByParent("RE00");
+		return recode;
+	}
+	@Autowired
+	IReservationService reserveService;
+	
+	@Autowired
+	IMemberService memberService;
+	
+	//모든 예약 정보 가져오기
+		@RequestMapping("admin/reservation/reservationList")
+		public String reservationList(@ModelAttribute("searchVO") ReservationSearchVO searchVO, Model model, HttpSession session) throws Exception{
+			UserVO vo = (UserVO)session.getAttribute("USER_INFO");
+			MemberVO member = memberService.getMember(vo.getUserId());
+			if(!StringUtils.contains(vo.getUserRole(), "admin")) {
+				searchVO.setUserId(vo.getUserId());
+			}
+			logger.debug("reserve={}", searchVO);
+			//건수 조회 및 페이징 변수 계산 호출
+			searchVO.setTotalRowCount(reserveService.getReserveCount(searchVO));
+			searchVO.setting(); //변수 할당
+			List<ReservationVO> results = reserveService.getReserveList(searchVO);
+			
+			model.addAttribute("results", results);
+			
+			return "reservation/reservationList";
+		}
+		
+		//예약정보 하나 가지고 오기
+		@RequestMapping(value="admin/reservation/reservationAdminView.wow", method= RequestMethod.GET)
+		public String reservationView(@RequestParam("bookMerchantUid") String bookMerchantUid, Model model, HttpSession session) throws Exception{
+			UserVO vo = (UserVO)session.getAttribute("USER_INFO");
+			MemberVO member = memberService.getMember(vo.getUserId());
+			logger.debug("bookMerchantUid={}",bookMerchantUid);
+//			try {
+				ReservationVO reserve = reserveService.getReserve(bookMerchantUid);
+				List<ReservationVO> reserveOption = reserveService.getReserveOption(bookMerchantUid);
+				model.addAttribute("reserve", reserve);
+				model.addAttribute("reserveOption", reserveOption);
+				return "reservation/reservationAdminView";
+//		}catch (BizNotFoundException ex) {
+//				ResultMessageVO messageVO = new ResultMessageVO()
+//						.setResult(false)
+//						.setTitle("예약 정보 조회 실패")
+//						.setMessage(ex.getMessage())
+//						.setUrl("/reservation/reservationList.wow")
+//						.setUrlTitle("예약 목록으로");
+//				model.addAttribute("messageVO", messageVO);
+//				return "common/message";
+//			}
+		}
+		
+		@RequestMapping("admin/reservation/reservationAdminModify")
+		public String reservationModifyGet(@RequestParam("bookMerchantUid") String bookMerchantUid, Model model) {
+			logger.debug("bookMerchantUid={}",bookMerchantUid);
+//			try {
+				ReservationVO reserve = reserveService.getReserveEditPage(bookMerchantUid);
+				List<ReservationVO> reserveOption = reserveService.getReserveOption(bookMerchantUid);
+				model.addAttribute("reserve",reserve);
+				model.addAttribute("reserveOption", reserveOption);
+				return "reservation/reservationAdminEdit";
+//			}catch(BizNotFoundException ex){
+//				ResultMessageVO messageVO = new ResultMessageVO()
+//						.setResult(false)
+//						.setTitle("예약 정보 조회 실패")
+//						.setMessage(ex.getMessage())
+//						.setUrl("/reservation/reservationList.wow")
+//						.setUrlTitle("예약 목록으로");
+//				model.addAttribute("messageVO", messageVO);
+//				return "common/message";
+//			}
+		}
+		
+		@RequestMapping(value="admin/reservation/reservationAdminModify", method = RequestMethod.POST)
+		public String reservationModifyPost(@Validated({Default.class, ValidGroup.RegistType.class}) //validation(검증)함을 선언
+										    @ModelAttribute("reserve") ReservationVO reserve, //board의 값을 가져옴 = 사용자가 입력했던 내용을 그대로 가져옴 날라가면 슬프니까 
+										    BindingResult errors, Model model) throws Exception {
+			logger.debug("reserve={}",reserve);
+			if(errors.hasErrors()) {
+				return "reservation/reservationAdminEdit";
+			}
+			
+			ResultMessageVO messageVO = new ResultMessageVO();
+				reserveService.modifyReserve(reserve);
+				 messageVO.setResult(true)
+					.setTitle("수정성공")
+					.setMessage("정상적으로 예약 정보 수정되었습니다.")
+					.setUrl("/reservation/reservationView.wow?bookMerchantUid="+reserve.getBookMerchantUid())
+					.setUrlTitle("예약 정보 보기");
+			model.addAttribute("messageVO", messageVO);
+			return "common/message";
+		}
+}

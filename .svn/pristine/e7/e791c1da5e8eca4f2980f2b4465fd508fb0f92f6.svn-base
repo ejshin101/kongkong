@@ -1,0 +1,40 @@
+package com.kongkong.free.web;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.kongkong.free.service.IFreeBoardService;
+import com.kongkong.free.vo.FreeBoardVO;
+
+@Controller
+public class FreeBoardController {
+	
+	
+	@Autowired	// 앞으론 Inject
+	IFreeBoardService freeBoardService;
+
+	@RequestMapping("/free/boardHome.wow")
+	public String eventHome() {
+		return "free/boardHome";
+	}
+	
+	@RequestMapping("/free/freeList.wow")
+	public String freeList(Model model) {
+		List<FreeBoardVO> freeBoardList = freeBoardService.getBoardList();
+		model.addAttribute("freeBoardList",freeBoardList);
+		
+		return "free/freeList";
+	}
+	
+	@RequestMapping("/free/freeView.wow")
+	public String freeView(int boNo, Model model) {
+		FreeBoardVO boards = freeBoardService.getBoard(boNo);
+		model.addAttribute("boards", boards);
+		return "free/freeView";
+		
+	}
+}

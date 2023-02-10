@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kongkong.reservation.dao.IReservationOptionDao">
+
+<select id="getReserveCountByParent" parameterType="com.kongkong.reservation.vo.ReservationVO" resultType="int">
+	SELECT COUNT(*) as tot
+	  FROM reservation
+	 WHERE book_del = 'N',
+	 	   book_name = #{bookBuyerName}
+</select>
+
+<select id="getReserveList" parameterType="com.kongkong.reservation.vo.ReservationVO" resultType="com.kongkong.reservation.vo.ReservationVO">
+
+</select>
+
+<select id="getReserve" parameterType="String" resultType="com.kongkong.reservation.vo.ReservationVO">
+	SELECT re_merchant_uid
+       , re_top
+       , (select comm_nm from comm_code where comm_cd = re_low) as re_low_nm
+       , re_low
+       , re_price
+       , re_cnt
+FROM re_option
+WHERE re_merchant_uid = #{bookMerchantUid}
+	
+</select>
+<insert id="insertReserve">
+	INSERT INTO re_option (
+	      re_merchant_uid
+    , re_top
+    , re_low
+    , re_price
+    , re_cnt
+	) VALUES (
+	      #{reMerchantUid}
+	    , #{reTop}
+	    , #{reLow}
+	    , #{rePrice}
+	    , #{reCnt}
+	    
+	   
+	    
+	)
+</insert>
+
+<update id="updateAdminReserve">
+
+</update>
+
+<delete id="deleteReserve">
+
+</delete>
+
+
+</mapper>
